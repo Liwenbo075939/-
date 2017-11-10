@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<script src="../../js/com.js"></script>
+		<style>
+			.mui-bar {background-color: #d62a2a;}
+			body{
+				background: url(../../images/background/login.jpg);
+				background-size: 100%;
+			}
+		</style>
+		<script>
+			mui.plusReady(function(){
+				var w=plus.webview.currentWebview();
+				document.getElementById('btn').addEventListener('tap',function(){
+					//组织架构
+						mui.openWindow({
+							url: 'dangwei.html',
+							id: 'dangwei02.html',
+							show: {
+								aniShow: 'zoom-fade-out'
+							},
+							extras: {
+
+								fatherName: name
+                                
+							}
+
+						});
+				});
+			});
+		</script>
+	</head>
+	<body >
+		<div class="mui-content" style="margin-top: 50px;background: transparent;text-align: center;margin-bottom: 10%;margin-top:25%">
+		<h3>邢台市地方税务局</h3>
+		<h3>基层党建概述</h3>
+		</div>
+		<p  style="font-size: 20px;text-indent:2em;color:#000000;margin: 2%;line-height: 2em;">邢台市地方税务局现有基层党组织83个，其中有1个党委，10个党总支，72个党支部。党员共计1492名，其中在职党员1163名，退休党员326名。</p>
+		<button id="btn" type="button" style="width: 50%;margin:0 auto;margin-top: 30% ;" class="mui-btn mui-btn-danger mui-btn-block">点击进入</button>
+	</body>
+</html>

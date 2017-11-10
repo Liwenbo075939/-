@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta name="viewport" content="width=device-width">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<title></title>
+		<script src="../../js/com.js"></script>
+		<style>
+		      html,body {
+				height: 100%;
+				background:url(../../images/activities/bj002.jpg);
+				background-size:100% 100% ;
+			}
+		     #content p{
+				
+				color: #000000;
+				text-indent:2em;
+				font-size: 1.2em;
+			};
+			
+			
+		</style>
+		 <script id="article" type="text/html">
+		 
+	     <div style="margin:0 auto;">  
+	    
+		 <div style="margin:0 auto;width:100%;padding-top:2% ;"><h3 style="text-align: center;" >{{item.title}}</h3></div>	
+		 <div style="width:80%;padding-top:2%;margin:0 auto ;text-align: center;"><p><font size="2">发布人:&nbsp;{{item.inputerName}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{item.createtime}}</font></p></div>	
+		 <div id="content"style="width:95%;margin:0 auto;">{{item.content}}</div>
+         </div>
+		</script>
+		<script type="text/javascript">
+		     var articleId="";
+		      mui.plusReady(function() {
+		      	articleId=plus.webview.currentWebview().articleId;
+		      		mui.ajax(GetPostUrl.gUrl()  +'/getArtById.json', {
+					data: {
+						articleId:articleId,
+						token: localStorage.getItem("token")
+					},
+					type: 'post',
+					dataType: 'json',
+					async: 'true',
+					success: function(data) {
+                         var datak={"item":data.obj};
+					     var html=template("article",datak);
+					     document.getElementById("c").innerHTML=html;
+					     var a= data.obj.content
+					    	 .replace(/&lt;/g,'<')
+					    	 .replace(/p&gt;/g,'p>')
+					    	 .replace(/&quot;/g,'"').replace(/&gt;/g,">").replace(/&amp;/g,"&");
+					    	 document.getElementById("content").innerHTML=a;
+					}
+				});
+		      });
+			  
+			
+			
+			
+		</script>
+	</head>
+	<body>
+		<header class="mui-bar mui-bar-nav" style="background-color: #d62a2a;">
+			<a id="back" style="color:#EFEFF4" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 id="head" style="color:#EFEFF4" class="mui-title">详情</h1>
+			
+		</header>
+		<div class="mui-content" id="c" style="background: transparent;">
+			
+			
+			
+		</div>
+	</body>
+</html>

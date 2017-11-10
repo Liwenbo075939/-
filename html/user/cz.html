@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>Hello MUI</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../../css/main.css" />
+		<link rel="stylesheet" href="../../css/style2.css" />
+		
+		<style>
+		 #czb{
+		 	margin-top: 1em;
+		 	
+		 }
+		 .c::before {
+         content: '';
+         position: absolute;
+         top: 0;
+         left: 18px;
+         height: 110%;
+         width: 4px;
+         background: #d7e4ed;
+         }
+		</style>
+	</head>
+
+	<body>
+		<!--下拉刷新容器-->
+		<div id="pullrefresh" class="mui-content mui-scroll-wrapper">
+			<div class="mui-scroll">
+				<!--数据列表-->
+				<ul class="mui-table-view mui-table-view-chevron" >
+					     <div>
+					     <section  class="cd-container" id="czb">
+			             </section>
+					     </div>
+					   <div style="margin-top: 10%;"><p></p></div>
+				</ul>
+				
+			</div>
+		</div>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		<script id="cz"  type="text/html">
+			  {{each items as item}}
+			 
+	                            <div class="cd-timeline-block c">
+		                              <div class="cd-timeline-img cd-picture">
+			                          <img src="../../img/cd-icon-picture.svg" data-q="{{item.questionScore}}"  data-a="{{item.totalArticleScore}}"alt="Picture">
+		                             </div>
+		                              <div class="cd-timeline-content">
+			                          <h2>阅读文章</h2>
+			                          <p>{{item.article}}</p>
+			                          <p>共看{{item.articleNum}}篇文章</p>
+			                          <p>共获积分:{{item.totalArticleScore}}分</p>
+			                          <h2>参加活动</h2>
+			                          <p>{{item.question}}</p>
+			                          <p>共答题{{item.questionNum}}道</p>
+			                          <p>共获积分:{{item.questionScore}}分</p>
+			                          <span class="cd-date">{{item.time}}</span>
+		                       </div>
+	                           </div>
+                      
+              {{/each}}         
+		</script>
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/ty.js"></script>
+		<script src="../../js/artTemplate.js" ></script>
+		<script type="text/javascript" src="../../js/mui.lazyload.js" ></script>
+		<script type="text/javascript" src="../../js/mui.lazyload.img.js" ></script>
+		<script>
+		    mui.plusReady(function(){
+		    	data(0,3);
+		    	plus.webview.currentWebview().setStyle({scrollIndicator:'none'});
+		    });
+			mui.init({
+				pullRefresh: {
+					container: '#pullrefresh',
+					down: {
+						callback: pulldownRefresh
+					},
+					up: {
+						contentnomore:'没有更多数据了',
+						callback: pullupRefresh
+					}
+				}
+			});
+			/**
+			 * 下拉刷新具体业务实现
+			 */
+			var start=0;
+			function pulldownRefresh() {
+				setTimeout(function() {
+					data(0,3);
+					start=0;
+					mui('#pullrefresh').pullRefresh().endPulldownToRefresh(); //refresh completed
+					mui('#pullrefresh').pullRefresh().refresh(true);
+				}, 1500);
+			}
+		
+			/**
+			 * 上拉加载具体业务实现
+			 */
+			
+			function pullupRefresh() {
+				setTimeout(function() {
+						mui.ajax(GetPostUrl.gUrl()+'/czlist.json',{
+		    		data:{
+		    			start:start+=3,
+		    			end:3,
+		    			token:localStorage.getItem('token')
+		    		},
+		    		dataType:'json',
+		    		type:'post',
+		    		async:'true',
+		    		success:function(data){
+		    			if(data.success){
+		    				var json={"items":data.obj};
+		    				var html=template("cz",json);
+		    				document.getElementById("czb").innerHTML=document.getElementById("czb").innerHTML+html;
+		    				if(data.msg=="0"){
+		    					mui('#pullrefresh').pullRefresh().endPullupToRefresh(true); //参数为true代表没有更多数据了。
+		    					
+		    				}else{
+		    					mui('#pullrefresh').pullRefresh().endPullupToRefresh(false); //参数为true代表没有更多数据了。
+		    				}
+		    				mui("#czb").imageLazyload({placeholder: '../../img/cd-icon-picture.svg'});
+		    			}else if(data=="-1"){
+		    				return mui.toast("请重新登录!")
+		    			}else{
+		    				return mui.toast("数据加载失败!")
+		    			}
+		    		},error:function(){
+		    			return mui.toast("系统异常!");
+		    		}
+		    	})
+					
+					
+					
+				}, 1500);
+			}
+			
+		    var data=function(start,end){
+		    	mui.ajax(GetPostUrl.gUrl()+'/czlist.json',{
+		    		data:{
+		    			start:start,
+		    			end:end,
+		    			token:localStorage.getItem('token')
+		    		},
+		    		dataType:'json',
+		    		type:'post',
+		    		async:'true',
+		    		success:function(data){
+		    			if(data.success){
+		    				if(data.obj.length==0){
+		    					var k=new Array();
+		    					var j=new Object();
+		    					j.articleNum=0;
+		    					j.totalArticleScore=0;
+		    					j.questionNum=0;
+		    					j.questionScore=0;
+		    					k[0]=j;
+		    					data.obj=k;
+		    				}
+		    				var json={"items":data.obj};
+		    				var html=template("cz",json);
+		    				document.getElementById("czb").innerHTML=html;
+		    				mui("#czb").imageLazyload({placeholder: '../../img/cd-icon-picture.svg'});
+		    			}else if(data=="-1"){
+		    				return mui.toast("请重新登录!")
+		    			}else{
+		    				return mui.toast("数据加载失败!")
+		    			}
+		    		},error:function(){
+		    			return mui.toast("系统异常!");
+		    		}
+		    	})
+		    }
+		    
+		   
+		</script>
+	</body>
+
+</html>

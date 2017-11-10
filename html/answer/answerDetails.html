@@ -1,0 +1,742 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<style>
+			html,
+			body{
+				background: url(../../images/answer/bj02.jpg);	
+				height: 100%;
+				width: 100%;
+				background-size:100% 100% ;
+				background-attachment:scroll;
+			}
+			#dati{
+				margin-top: 20px;
+			}
+			#xxnr{
+				margin-top: -5px;
+			}
+			#neirq{
+				margin-top: 20px;
+			}
+			#djt{
+				position:absolute;
+				background-color: red;
+				width: 80px;
+				height: 25px;
+				margin-left: 20px;
+				font-size: 12px;
+				float: left;
+				margin-top: -20px;
+			}
+			#wtlist{
+				background: transparent;
+				background-color: ;
+				padding:5px 20px;
+				width:96%;
+				margin: auto;
+				margin-top: 30px;
+				text-indent:20px;
+				font-size: 20px;
+				}
+			.mui-popup{
+				top:40%;
+				width: 77%;
+				background-color: #EEEEEE;
+			}
+			.mui-checkbox input[type=checkbox], .mui-radio input[type=radio]{
+				top:20%;
+				
+			}	
+			.mui-checkbox input[type=checkbox]:checked:before, .mui-radio input[type=radio]:checked:before{
+				color: red;
+		</style>
+	</head>
+	<body>
+		<script src="../../js/ty.js"></script>
+		<script src="../../js/mui.enterfocus.js"></script>
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/artTemplate.js"></script>
+		<script id="listshow"type="text/html"> 
+				<div style="background-color:#D9B300;width:100%;height:25px;overflow:hidden;line-height:25px; ">
+					<span style="font-size:15px;color:red;margin-left:19%; width:100%;">*本题为</span>
+					<span id="hst" style="font-size:15px;color:#00FFFF;width:100%;"></span>					
+					<span style="font-size:15px;color:red;width:100%;">,答对加{{score}}分,不可不填。</span>
+				</div>
+					<div class="mui-card-content" id="wtlist">
+						 <div id="djt">
+						    <span style="margin-top: 40px;color:white;" >第</span>
+							<span style="margin-top: 40px;color:white;" id="wthm">{{answer}}</span>
+							<span style="margin-top: 40px;color:white;" >题</span>
+						</div>						
+							<div id="neirq">
+							<span style="letter-spacing:1px;text-indent:10px;">
+								{{topic}}
+							</span>	
+							</div>
+					</div>	
+		</script>
+		<script id="dati1"type="text/html">
+					<li id="dati1">
+						<div class="mui-input-row mui-checkbox mui-left">
+						  <label id="xx1"">
+						  	<span>{{num}}.</span>
+						  	{{content}}
+						  </label>
+						  <input name="checkbox1" id="A" class="checkbox"value="{{num}}" type="checkbox">
+						</div>
+					</li>
+		</script>
+		<script id="dati2"type="text/html">
+					<li id="dati2">
+						<div class="mui-input-row mui-checkbox mui-left">
+						  <label  id="xx1">
+						  	<span>{{num}}.</span>
+						  	{{content}}
+						  </label>
+						  <input name="checkbox2" id="B" class="checkbox"value="{{num}}" type="checkbox">
+						</div>
+					</li>
+		</script>
+		<script id="dati3"type="text/html">			
+					<li id="dati3"> 
+						<div class="mui-input-row mui-checkbox mui-left">
+						  <label id="xx1">
+						  	<span>{{num}}.</span>
+						  	{{content}}
+						  </label>
+						  <input name="checkbox3" id="C" class="checkbox"value="{{num}}" type="checkbox">
+						</div>
+					</li>
+		</script>
+		<script id="dati4"type="text/html">				
+					<li id="dati4">
+						<div class="mui-input-row mui-checkbox mui-left">
+						  <label id="xx1"> 
+						  	<span>{{num}}.</span>
+						  	{{content}}
+						  </label>
+						  <input name="checkbox4" id="D" class="checkbox"value="{{num}}" type="checkbox">
+						</div>
+					</li>
+		</script>
+		<script id="dati5"type="text/html">				
+					<li id="dati5">
+						<div class="mui-input-row mui-checkbox mui-left">
+						  <label id="xx1"> 
+						  	<span>{{num}}.</span>
+						  	{{content}}
+						  </label>
+						  <input name="checkbox5" id="E" class="checkbox"value="{{num}}" type="checkbox">
+						</div>
+					</li>
+		</script>
+		<script>
+				function timedCount(){
+				    var HH = 0;
+					var mm = 0;
+					var ss = 0;
+					var str = '';
+					var timer = setInterval(function(){
+						str = "";						
+						if(++ss==60){
+							if(++mm==60){
+								mm=0;
+							}
+							ss=0;
+						}
+						str+=mm<10?"0"+mm:mm;
+						str+=":";
+						str+=ss<10?"0"+ss:ss;
+						document.getElementById("title").innerHTML = str;
+					},1000);
+					};
+		</script>
+		
+		<script type="text/javascript">
+			mui.init({
+				  gestureConfig:{
+				   tap: true, //默认为true
+				   doubletap: true, //默认为false
+				   swipeBack:false //关闭-右滑关闭功能
+				  }
+			});
+			    //题号
+				var xxh=1;
+				//定义总得分
+				var zscore=0;
+				//每题分数
+				var fs=0;
+				//正确答案
+				var zqda = [];
+				//th默认为1
+				var th =1;
+				//存储题目
+				var xh=[];
+				//为了显示正确答案   设置以下缓存
+				//  xh-t  题目名  xh题号
+				//  xh-1    选项号
+				//  xh-c  选择
+				//  xh-a  正确答案
+				//先储存值  最后提交后 显示    推出后删除
+				//退出答题
+				mui.plusReady(function() {
+					//监听手机返回键
+					mui.back=function () {  
+                    var btnArray = ['否', '是'];  
+                    mui.confirm('是否退出答题', '退出后，本次答题无效！', btnArray, function(e) {  
+                              if (e.index == 1) {  
+                              	//清空选项的缓存
+                              	for(var i=0;i<=xxh;i++){
+                              		//遍历所有选项  ---------
+                              		localStorage.removeItem(i);
+                              	}
+                                 //关闭答题列表页面
+								 var curr0 = plus.webview.getWebviewById('answerDetails.html');
+								 curr0.close();
+								 //打开首页
+								 var curr = plus.webview.getWebviewById('pullrefresh_main.html');
+								 plus.webview.show(curr); 
+                               } 
+                        },'div')  
+             		}
+					
+					
+					
+					//加载题目
+					var self = plus.webview.currentWebview();
+					var cx_id = self.cx_id;
+					//首先加载第一题
+					var wd = plus.nativeUI.showWaiting("正在加载...","width:100px;"); 
+					mui.ajax(GetPostUrl.gUrl()+'/question/answerlist.json',{
+						data:{
+							cx_id:cx_id,
+							xxh:xxh
+						},
+						type: 'post',
+						dataType: 'json',
+						async:'true',
+						timeout: 10000, //超时时间设置为10秒
+						crossDomain: true, //强制使用5+跨域
+					    success: function(data) {
+					    	console.log(JSON.stringify(data));
+					    	var xxhm = localStorage.getItem('xxhm');
+					    	console.log(xxh+"===="+xxhm);
+					    	if(xxh>=xxhm){
+					    		document.getElementById('xyt').innerHTML='提交';
+					    	}else{
+					    		document.getElementById('xyt').innerHTML='下一题';
+					    	}
+					    	//调用计时方法
+							timedCount(); 
+					    	wd.close();
+					    	if(data.msg=="-1"){
+					    		mui.toast("请检查网络连接...");
+					    	}else if(data.msg=="0"){
+					    		mui.toast("没有题目");
+					    	}else{
+					    		for(var key in data.obj){ 
+					    			var name1=key;
+					    			
+					    			
+					    			
+					    			
+					    			
+					    			//values就是选项  取得该题的所有选项
+					    			var values= data.obj[key];
+					    			
+					    			//-------------------------------
+					    			
+					    			
+					    			var j=1;
+					    			for(var i=0;i<values.length;i++){
+					    				//找到答案
+					    				if(values[i].isanswer=="1"){
+					    					if(values[i].num!=""){
+					    					//将答案存到数组中
+					    					zqda.push(values[i].num);
+					    					//答案储存到缓存中
+					    					
+					    					
+					    					
+					    					}
+					    				}
+					    			}
+					    			
+					    			
+					    			
+					    			//储存题目名
+					    			localStorage.setItem(xxh+'-ti_mu',name1);
+					    			//存储本题选项
+					    			
+					    			
+					    			localStorage.setItem(xxh+'-xuan_xiang',JSON.stringify(values));
+					    			//正确答案
+					    			localStorage.setItem(xxh+'-zheng_que',zqda);
+					    			//-------------------------------
+					    			
+								//得到问题的分数
+								if(name1 !=""){
+									fs = JSON.parse(name1).score;
+								}
+					    		var html=template("listshow",JSON.parse(name1));
+					    		 document.getElementById("listshowwz").innerHTML=html;
+					    		 if(values[0]!=null){
+					    		var html2 = template("dati1",values[0]);
+								document.getElementById("listshowwz1").innerHTML=html2;	
+								}
+								if(values[1]!=null){
+								var html3 =template("dati2",values[1]);
+								document.getElementById("listshowwz2").innerHTML=html3;	
+								}
+								if(values[2]!=null){
+								var html4 =template("dati3",values[2]);
+								document.getElementById("listshowwz3").innerHTML=html4;	
+								}
+								if(values[3]!=null){
+									var html5 =template("dati4",values[3]);
+								document.getElementById("listshowwz4").innerHTML=html5;	
+								}
+								if(values[4]!=null){
+									var html6 =template("dati5",values[4]);
+								document.getElementById("listshowwz5").innerHTML=html6;	
+								}
+								if(values[5]!=null){
+									var html7 =template("dati5",values[5]);
+								document.getElementById("listshowwz6").innerHTML=html7;	
+								}
+								if(document.getElementById('wthm').innerHTML=='1'){
+								 	document.getElementById("syt").style.display='none'; 
+								}else{
+									document.getElementById("syt").style.display='';
+								}
+									if(zqda.length<=1){
+										
+								 		document.getElementById('hst').innerHTML='单选题';
+								 		
+								 	}else{
+								 		document.getElementById('hst').innerHTML='多选题';
+								 	}
+										//获取答题号，查出用户的选项,修改选中状态
+										var dajh = new Array();
+							   		 	var k    = 1;
+							   			dajh = localStorage.getItem(xxh);
+									    if(dajh!=null){
+											for(var i=0;i<=dajh.length;i++){
+												var xxk=dajh[i];
+											    chk = document.getElementById(xxk);
+											    localStorage.setItem()
+											    if(chk!=null){
+											    chk.checked=true;
+											    }
+											}
+									    }
+					    		}
+					    	}
+					    },
+					    error:function(){}
+					});
+					
+					
+					
+					
+				// 加载上题
+				var syt1 = document.getElementById("syt");
+				syt1.addEventListener('tap',function(){
+					var wd = plus.nativeUI.showWaiting("正在加载...","width:100px;"); 
+					 var self = plus.webview.currentWebview();
+						var cx_id = self.cx_id;
+						var sftx = localStorage.getItem(xxh);
+			    		 if(sftx!="" && sftx!=null){
+			    		 	mui.ajax(GetPostUrl.gUrl()+'/question/answerlist.json',{
+								data:{
+									cx_id:cx_id,
+									xxh:--xxh
+								},
+							type: 'post',
+							dataType: 'json',
+							async:'true',
+							timeout: 10000, //超时时间设置为10秒
+							crossDomain: true, //强制使用5+跨域
+						    success: function(data) {
+							    var xxhm = localStorage.getItem('xxhm');
+					    		if(xxh>=xxhm){
+						    		document.getElementById('xyt').innerHTML='提交';
+						    	}else{
+						    		document.getElementById('xyt').innerHTML='下一题';
+						    	}
+						    	wd.close();
+						    	zqda.splice(0,zqda.length);
+								for(var key in data.obj){ 
+					    			var name1=key;
+					    			var values= data.obj[key];
+					    			var dajh = new Array();
+							  	 	var k    = 1;
+					    		for(var i=0;i<values.length;i++){
+					    				if(values[i].isanswer=="1"){
+					    					zqda.push(values[i].num);
+					    				}
+					    			}
+					    		}
+								if(name1 !=null && name1 !=""){
+							    	fs = JSON.parse(name1).score;
+								}
+						    	if(data.msg=="-1"){
+					    		mui.toast("请检查网络连接...");
+					    	}else if(data.msg=="0"){
+					    		
+					    	
+					    		xxh++;
+					    	}else{
+					    		
+					    		for(var key in data.obj){ 
+					    			var name1=key;
+					    			var values= data.obj[key];
+					    			if(name1 !="" && name1 !=null){
+					    			fs = JSON.parse(name1).score;
+					    			}
+					    		var html=template("listshow",JSON.parse(name1));
+					    		 document.getElementById("listshowwz").innerHTML=html;
+					    		 if(values[0]!=null){
+					    		var html2 = template("dati1",values[0]);
+								document.getElementById("listshowwz1").innerHTML=html2;	
+								}
+								if(values[1]!=null){
+								var html3 =template("dati2",values[1]);
+								document.getElementById("listshowwz2").innerHTML=html3;	
+								}
+								if(values[2]!=null){
+								var html4 =template("dati3",values[2]);
+								document.getElementById("listshowwz3").innerHTML=html4;	
+								}
+								if(values[3]!=null){
+									var html5 =template("dati4",values[3]);
+								document.getElementById("listshowwz4").innerHTML=html5;	
+								}
+								if(values[4]!=null){
+									var html6 =template("dati5",values[4]);
+								document.getElementById("listshowwz5").innerHTML=html6;	
+								}
+								if(values[5]!=null){
+									var html7 =template("dati5",values[5]);
+								document.getElementById("listshowwz6").innerHTML=html7;	
+								}
+								//判断为第一题时,隐藏上一题按钮
+								if(document.getElementById('wthm').innerHTML=='1'){
+								 	document.getElementById("syt").style.display='none'; 
+								}else{
+									document.getElementById("syt").style.display='';
+								}
+									if(zqda.length<=1){
+								 		document.getElementById('hst').innerHTML='单选题';
+								 	}else{
+								 		document.getElementById('hst').innerHTML='多选题';
+								 	}
+								//获取答题号，查出用户的选项,修改选中状态
+								var dajh = new Array();
+							    var k    = 1;
+							    dajh = localStorage.getItem(xxh);
+								for(var i=0;i<=dajh.length;i++){
+									var xxk=dajh[i];
+								    chk = document.getElementById(xxk);
+								    if(chk!=null){
+								    chk.checked=true;
+								    }
+								}
+					    		}
+					    		//减分
+		    					var wt = document.getElementById('wthm');
+								 th= wt.innerText;
+					    		if(zqda==localStorage.getItem(th)){
+								    zscore=parseInt(zscore)-parseInt(fs);
+						    	}
+					    		
+					    	}
+					    
+						    },
+						    error:function(){
+						    	
+						    }
+						});
+			    		 
+			    		 }else{
+			    		 	mui.toast("请填写答案！！！");
+			    		 	wd.close();
+			    		 }
+			});	
+			
+			
+			
+			
+			//监听向左滑动,加载下一题
+			var xyt1 = document.getElementById("xyt");	
+			xyt1.addEventListener("tap",function(){
+				var wd = plus.nativeUI.showWaiting("正在加载...","width:100px;"); 
+				var self = plus.webview.currentWebview();
+					var cx_id = self.cx_id;
+			     var sftx = localStorage.getItem(xxh);
+			     
+			     //console.log(sftx);
+			     if(sftx!="" && sftx!=null){
+			     	mui.ajax(GetPostUrl.gUrl()+'/question/answerlist.json',{
+						data:{
+							cx_id:cx_id,
+							xxh:++xxh
+						},
+						type: 'post',
+						dataType: 'json',
+						async:'true',
+						timeout: 10000, //超时时间设置为10秒
+						crossDomain: true, //强制使用5+跨域
+					    success: function(data) {
+					    	//题目数量
+					    	var xxhm = localStorage.getItem('xxhm');
+					    	if(xxh>=xxhm){
+					    		document.getElementById('xyt').innerHTML='提交';
+					    	}else{
+					    		document.getElementById('xyt').innerHTML='下一题';
+					    	}
+						   	var wt = document.getElementById('wthm');
+							th= wt.innerText;
+							//判断正确答案
+					    	if(zqda==localStorage.getItem(th)){
+							zscore=parseInt(zscore)+parseInt(fs);
+							}
+					    	wd.close();
+					    	if(data.msg=="-1"){
+					    		mui.toast("请检查网络连接...");
+					    	}else if(data.msg=="0"){
+					    		
+					    		xxh--;
+					    	}else if(data.msg=="1"){
+					    		//保存最后一题选项
+					    			if(localStorage.getItem('zhzqda')==null){
+					    				var zhzqda = localStorage.setItem('zhzqda',zqda);
+					    			}	
+					    		//开始处理答题的提交
+					    		var btnArray = ['返回', '确认'];
+								var total = "提交问卷，确认？";
+								mui.confirm('您确认提交问卷吗？, 点击确认提交', total, btnArray, function(e) {
+									if (e.index == 1) {
+										//清空zqda
+										localStorage.removeItem('zhzqda');
+										
+										//存储题目总数
+										
+										
+										
+										localStorage.setItem("ti_num",xxh);
+										//获取时间
+										var sj = document.getElementById("title").innerText;
+										var Temp = sj.split(':');
+										var seconds = 60 * Number(Temp[0]) +Number(Temp[1]);
+									  	//缓存答题时间
+									  	localStorage.setItem('seconds',seconds);
+									  	
+									
+					    			
+									  	
+									  //获取选项
+									  var dajh = new Array();
+									   var k        = 0;
+										for(var i=1;i<=xxh;i++){
+											dajh[k]=localStorage.getItem(i);
+											k++;
+										}
+										//清空本地记录的选项
+										for(var i=1;i<=xxh;i++){
+											dajh[k]=localStorage.getItem(i);
+											localStorage.removeItem(i);
+										}
+										//分数存到本机
+										localStorage.setItem('score',zscore);
+										//打开新的页面
+										mui.openWindow({
+											url: 'submitAnswers.html', 
+											id:'submitAnswers.html',
+											show:{
+												autoShow:true,//页面loaded事件发生后自动显示，默认为true
+											}
+										});
+									}else{
+										var zh = localStorage.getItem('zhzqda');
+										//减分
+				    					var wt = document.getElementById('wthm');
+										 th= wt.innerText; 
+									    	if(zh==localStorage.getItem(th)){
+												zscore=parseInt(zscore)-parseInt(fs);
+										}
+									}
+								},'div');
+					    		//选项号--
+					    		xxh--;
+					    	}else{
+					    		//清空数组
+					    		zqda.splice(0,zqda.length);
+					    		for(var key in data.obj){ 
+					    			var name1=key;
+					    			var values= data.obj[key];
+					    				for(var i=0;i<values.length;i++){
+					    				if(values[i].isanswer=="1"){
+					    					if(values[i].num!=""){
+					    					zqda.push(values[i].num);
+					    					}
+					    				}
+					    			}
+					    				
+					    		    //储存题目名
+					    			localStorage.setItem(xxh+'-ti_mu',name1);
+					    			//存储本题选项
+					    			localStorage.setItem(xxh+'-xuan_xiang',JSON.stringify(values));
+					    			//正确答案
+					    			localStorage.setItem(xxh+'-zheng_que',zqda);		
+					    				
+					    				
+					    				
+					    		var html=template("listshow",JSON.parse(name1));
+					    		 document.getElementById("listshowwz").innerHTML=html;
+					    		 if(values[0]!=null){
+					    		var html2 = template("dati1",values[0]);
+								document.getElementById("listshowwz1").innerHTML=html2;	
+								}
+								if(values[1]!=null){
+								var html3 =template("dati2",values[1]);
+								document.getElementById("listshowwz2").innerHTML=html3;	
+								}
+								if(values[2]!=null){
+								var html4 =template("dati3",values[2]);
+								document.getElementById("listshowwz3").innerHTML=html4;	
+								}
+								if(values[3]!=null){
+									var html5 =template("dati4",values[3]);
+								document.getElementById("listshowwz4").innerHTML=html5;	
+								}
+								if(values[4]!=null){
+									var html6 =template("dati5",values[4]);
+								document.getElementById("listshowwz5").innerHTML=html6;	
+								}
+								if(values[5]!=null){
+									var html7 =template("dati5",values[5]);
+								document.getElementById("listshowwz6").innerHTML=html7;	
+								}
+								//判断为第一题时,隐藏上一题按钮
+								if(document.getElementById('wthm').innerHTML=='1'){
+								 	document.getElementById("syt").style.display='none'; 
+								}else{
+									document.getElementById("syt").style.display='';
+								}
+									if(zqda.length<=1){
+								 		document.getElementById('hst').innerHTML='单选题';
+								 	}else{
+								 		document.getElementById('hst').innerHTML='多选题';
+								 	}
+								//获取答题号，查出用户的选项,修改选中状态
+								var dajh = new Array();
+							    var k    = 1;
+							    dajh = localStorage.getItem(xxh);
+								if(dajh!=null){
+									for(var i=0;i<=dajh.length;i++){
+										var xxk=dajh[i];
+								    		chk = document.getElementById(xxk);
+								    		if(chk!=null){
+								    		 chk.checked=true;
+								    		}
+									}
+								}
+									if(name1!=null && name1 !=""){
+						    			fs = JSON.parse(name1).score;
+					    			}
+					    		}
+					    	}
+					    	
+					    },
+					    error:function(){}
+					});
+			     }else{
+			     	mui.toast("请填写答案！！！");
+			     	wd.close();
+			     }
+			});	
+		});
+			//监听选项,并存储到本地
+		     var th=null;
+			 window.addEventListener('change',function(e){
+			 	if(zqda.length<=1){
+			 				var dajh = new Array();
+							    var k    = 1;
+							    dajh = localStorage.getItem(xxh);
+									var xxk=dajh;
+								    chk = document.getElementById(xxk);
+								    if(chk!=null){
+								    chk.checked=false;
+								    }
+			 	}
+		        var checkVal = new Array();
+				var wt = document.getElementById('wthm');
+				 th= wt.innerText;
+				 
+				 
+				 
+				localStorage.removeItem(th);//删除存储到本地的答案
+				getCheckBoxRes('checkbox'); //获得用户的选项
+				localStorage.setItem(th, checkVal); //把用户的答案存到本地
+				function getCheckBoxRes(className){
+				    var rdsObj   = document.getElementsByClassName(className);
+				    var k        = 0;
+				    for(var i = 0; i < rdsObj.length; i++){
+				        if(rdsObj[i].checked){
+				            checkVal[k] = rdsObj[i].value;
+				            k++;
+				        }
+				    }
+				    
+				    
+				    //存储本题答案
+			        localStorage.setItem(xxh+'-da_an',checkVal);
+				    return checkVal;
+				}
+			 });
+		</script>
+		<header class="mui-bar mui-bar-nav" style="background-color: #d62a2a;">
+			<a id="back" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"style="color: white;font-size: 16px;margin-top: 5px;"> 结束答题</a>
+			<h1 id="title" class="mui-title" style="color: white;"></h1>
+		</header>
+		<div class="mui-content" id="ddiv">
+			<div id="ulwz" class="mui-scroll">
+				<div style="background-color: #EFEFF4;height: 100%; width: 100%;margin: auto;opacity: 0.7; 
+background: rgba(255, 255, 255, 0.7); ">
+				<ul class="mui-table-view mui-table-view-chevron" id="listshowwz"style="background: transparent;">
+					
+				</ul>
+				<ul class="mui-table-view mui-table-view-chevron" id="listshowwz1" style="width: 90%;background: transparent;">
+					
+				</ul>
+				<ul class="mui-table-view mui-table-view-chevron" id="listshowwz2" style="width: 90%;background: transparent;">
+					
+				</ul>
+				<ul class="mui-table-view mui-table-view-chevron" id="listshowwz3" style="width: 90%;background: transparent;">
+					
+					
+				</ul>
+				<ul class="mui-table-view mui-table-view-chevron" id="listshowwz4" style="width: 90%;background: transparent;">
+					
+				</ul>
+				<ul class="mui-table-view mui-table-view-chevron" id="listshowwz5">
+					
+				</ul>
+				</div>
+				<div style="margin-top:5%;margin-left: 13%;">
+					<button id="syt" type="button" class="mui-btn mui-btn-danger" style="width: 35%;height: 40px;position:absolute;left: 10%;">上一题</button>
+					<button id="xyt" type="button" class="mui-btn mui-btn-danger" style="width: 35%;height: 40px;position:absolute;left: 55%;">下一题</button>
+				</div>
+			</div>
+			
+		</div>
+		
+	</body>
+
+</html>

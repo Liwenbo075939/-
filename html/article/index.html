@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<style>
+			.mui-bar {background-color: #d62a2a;}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav" >
+			<a id="back" style="color:#EFEFF4" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 id="head" style="color:#EFEFF4" class="mui-title"></h1>
+			<div style="float: right;"><a id="addArticle"><span style="color:#EFEFF4" class="mui-icon mui-icon-plusempty"></span></a></div>
+		</header>
+		<div class="mui-content"></div>
+		<input id="cataId"  value="" type="hidden"/>
+	</body>
+	<script src="../../js/mui.min.js"></script>
+	<script type="text/javascript">
+	 mui.plusReady(function() {
+	 	plus.webview.currentWebview().setStyle({scrollIndicator:'none'});
+	 	var self = plus.webview.currentWebview();    
+			  var cataID=self.cataId;
+			  document.getElementById("cataId").value=cataID;
+			  var fatherName=self.fatherName;
+			  var organId=self.organId;
+			  //党组介绍   新闻栏目 不能添加文章 或新闻
+			  if(cataID=='101'||cataID=='111'||cataID=='102'||cataID=='555'||cataID=='666'||cataID=='121'){
+			  	document.getElementById("addArticle").innerHTML="";
+			  }
+			  if(localStorage.getItem("organId")!=organId){
+			  	document.getElementById("addArticle").innerHTML="";
+			  }
+			  
+			  var templateId=self.templateId;
+			  document.getElementById("head").innerHTML=fatherName;
+			  
+			  var type=self.type;
+		//启用双击监听
+		mui.init({
+			
+			subpages:[{
+				url:'articleList.html',
+				id:'articleList.html',
+				styles:{
+					top: '45px',
+					bottom: '0px'
+				},
+                extras:{cataId:cataID,templateId:templateId,type:type}//额外扩展参数
+			}]
+		});
+		
+		
+		 //添加文章
+             document.getElementById("addArticle").addEventListener('tap',function(){
+             	var cataID=document.getElementById("cataId").value;
+             	mui.openWindow({
+             		
+             		url:'../article/addArticle.html',
+                    extras:{
+                    cataId:cataID  //扩展参数
+                    },
+                show:{
+                aniShow:'zoom-fade-out'	
+                }   		
+             	});
+             });
+		
+	});
+		
+	</script>
+
+</html>

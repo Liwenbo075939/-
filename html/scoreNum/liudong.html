@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<style>
+		 
+		   #segmentedControl{
+		    	border:1px solid floralwhite;
+		    }
+			#segmentedControl .mui-active{
+				background-color:#FFB400;
+				color: #FFFFFF;
+				
+			}
+			#segmentedControl a{
+				color: #FFB400;
+				border-left:1px solid #FFB400 ;
+			}
+			#li1{
+				background-color: #FFFFF4;
+				
+			}
+			#li2{
+				background-color: #FFFFF4;
+				
+			}
+			#li1 h5{
+				color: #A62700;
+			}
+			#li2 h5{
+				color: #A62700;
+			}
+			
+		 #ul .mui-switch {
+				width:90px;
+			}
+			/*开关的样式*/
+		 #ul .mui-switch:before {
+				content:'市支部';
+				right: 10px;
+			}
+		  #ul .mui-switch.mui-active:before {
+				content:'县支部';
+				
+			}
+			#ul .mui-switch.mui-dragging {
+				border-color: #f7f7f7;
+				/*托拽时的背景色*/
+	            background-color: #f7f7f7
+			}
+			 #ul .mui-switch.mui-active .mui-switch-handle {
+	           -webkit-transform: translate(60px, 0);
+	            transform: translate(60px, 0)
+            }
+		</style>
+		<script src="../../js/com.js"></script>
+		<!--
+        	作者：offline
+        	时间：2017-07-27
+        	描述：个人积分排名模板
+        -->
+		<script type="text/html" id="scores">
+			{{each items as item i}}
+			<li data-time={{item.ctime}} class="mui-table-view-cell">
+				<div class="mui-table">
+					<div class="mui-table-cell mui-col-xs-3 mui-text-center">
+						<span class="mui-h5 abc" style="color: #000000;">{{item.ctime}}</span>
+					</div>
+
+					<div class="mui-table-cell mui-col-xs-3 mui-text-center">
+						<p class=" mui-ellipsis" style="color: #000000;">{{item.name}}</p>
+					</div>
+
+					<div class="mui-table-cell mui-col-xs-3 mui-text-center">
+						<span class="mui-h5" style="color: #000000;">{{item.liveness}}</span>
+					</div>
+					<div class="mui-table-cell mui-col-xs-3 mui-text-center">
+						<img style="width:25%;" src="../../img/189.png"/>
+					</div>
+				</div>
+			</li>
+			{{/each}}
+		</script>
+		<!--
+        	作者：offline
+        	时间：2017-07-27
+        	描述：支部排名模板
+        -->
+		<script type="text/html" id="zhibuscores">
+			{{each items as item i}}
+			<li data-time={{item.ctime}} class="mui-table-view-cell">
+				<div class="mui-table">
+		                <div class="mui-table-cell mui-col-xs-10">
+		                    <h4 class="mui-ellipsis-2">{{item.name}}</h4>
+		                    <h5>积分值:{{item.scores}}</h5>
+		                    <h5 class="mui-h5">{{item.ctime}}</h5>
+		                </div>
+		                <div class="mui-table-cell mui-col-xs-2 mui-text-center">
+						    <img style="width:50%;" src="../../img/189.png"/>
+					    </div>
+		            </div>
+			</li>
+			{{/each}}
+		</script>
+		<script type="text/javascript" charset="utf-8">
+			var count = 0;
+			var pageSize = 10;
+			var sw=0;//支部和个人之间的切换
+			var level=localStorage.getItem('ecode');  //市局和县的标识
+			var oid=localStorage.getItem('organId');
+			mui.init({
+				pullRefresh: {
+					container: '#pullrefresh',
+					down: { //下拉刷新					       
+
+						auto: true,
+						contentdown: "下拉可以刷新", //可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+						contentover: "释放立即刷新", //可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+						contentrefresh: "正在刷新...", //可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+						callback: pulldownRefresh
+					},
+					up: { //上拉加载
+
+						//auto:true,//自动上拉加载一次,可选,默认false.
+						contentrefresh: '正在加载...',
+						contentnomore: '没有更多数据了', //可选，请求完毕若没有更多数据时显示的提醒内容；
+						callback: pullupRefresh
+					}
+				}
+			});
+			
+			
+			function pulldownRefresh() {
+				setTimeout(function() {
+					count = 1; //刷新并显示第一页
+					data = {
+
+						pageNum: count,
+						pageSize: pageSize,
+						token: localStorage.getItem("token"),
+						level:level,
+						oid:oid
+					};
+					if(sw==0){
+						//1代表下拉刷新
+						toList(data, 1); //具体取数据的方法
+					}
+					if(sw==1){
+						toList2(data, 1); //具体取数据的方法
+					}
+				    
+					
+					
+					
+					
+				}, 100);
+			};
+			
+			function pullupRefresh() {
+				return	mui('#pullrefresh').pullRefresh().endPullupToRefresh(true);
+				setTimeout(function() {
+					count++; //翻下一页
+					data = {
+						pageNum: count,
+						pageSize: pageSize,
+						token: localStorage.getItem("token"),
+						level:level,
+						oid:oid
+					};
+					    if(sw==0){
+					    	 //2代表上拉加载
+						     toList(data, 2); //具体取数据的方法
+					    }
+					    if(sw==1){
+					    	 toList2(data, 2); //具体取数据的方法
+					    }
+					
+					
+				}, 100);
+			}
+			
+			var toList = function(data, a) {
+
+				mui.ajax(GetPostUrl.gUrl() + '/grldhq.json', {
+					data: data,
+					type: 'post',
+					dataType: 'json',
+					async: false,
+					success: function(data) {
+						if(data.success) {
+							for(var x in data.obj){
+								data.obj[x].ctime=data.obj[x].ctime.substring(0,4)+"年"+data.obj[x].ctime.substring(5,7)+"月";
+								data.obj[x].scores=parseFloat(data.obj[x].scores).toFixed(2);
+							}
+							
+							if(a == 1) {
+								mui('#pullrefresh').pullRefresh().refresh(true);
+								var data1 = {
+									"items": data.obj
+								};
+								var html = template('scores', data1);
+								document.querySelector("#scorelist").innerHTML = html;
+								
+								plus.nativeUI.closeWaiting();
+								mui('#pullrefresh').pullRefresh().endPulldownToRefresh();
+                                 
+							};
+							//2代表上拉加载
+							if(a == 2) {
+								var data1 = {
+									"items": data.obj
+								};
+								var html = template('scores', data1);
+								mui('#pullrefresh').pullRefresh().endPullupToRefresh(false);
+								plus.nativeUI.closeWaiting();
+								document.querySelector("#scorelist").innerHTML = document.querySelector("#scorelist").innerHTML + html;
+								if(data.msg == "over") {
+									mui('#pullrefresh').pullRefresh().endPullupToRefresh(true);
+									plus.nativeUI.closeWaiting();
+								}
+							};
+
+						
+
+						};
+
+					}
+				})
+
+			}
+			
+			var toList2=function(data,a){
+				
+				mui.ajax(GetPostUrl.gUrl() + "/dwldhq.json", {
+						data: data,
+						type: 'post',
+						dataType: 'json',
+						async: 'true',
+						success: function(data) {
+							if(data.success) {
+								for(var x in data.obj){
+									data.obj[x].ctime=data.obj[x].ctime.substring(0,4)+"年"+data.obj[x].ctime.substring(5,7)+"月";
+									data.obj[x].scores=parseFloat(data.obj[x].scores).toFixed(2);
+									
+								}
+								//设置数据
+								var data1 = {
+									"items": data.obj
+								};
+								var html = template('zhibuscores', data1);
+								if(a==1){
+									mui('#pullrefresh').pullRefresh().refresh(true);
+									mui('#pullrefresh').pullRefresh().endPulldownToRefresh();
+								}
+								
+								
+								
+								document.querySelector("#scorelist2").innerHTML = html;
+						
+							sw=1;
+							} else {
+
+								return mui.toast('请重试！');
+
+							}
+
+						}
+
+					});
+			}
+			
+			
+			
+			
+		    	
+		    	
+		 
+		  
+		  mui.plusReady(function() {
+		  	  plus.webview.currentWebview().setStyle({scrollIndicator:'none'});
+			  document.getElementById('it2').addEventListener('tap', function() {
+			  	    document.getElementById("item2").style.display="block";
+			  	    sw=1;
+					pulldownRefresh();
+					
+					
+			  });
+			   document.getElementById('it1').addEventListener('tap', function() {
+			   	    level=localStorage.getItem('ecode');
+			   	    document.getElementById("item2").style.display="none";
+			   	    sw=0;
+					pulldownRefresh();
+					
+					
+			  });
+			  mui(".mui-switch")[0].addEventListener('toggle', function(event) {
+			  	    if(event.detail.isActive){
+			  	    	level=1;
+			  	    }else{
+			  	    	level=2;
+			  	    }
+			  	    pulldownRefresh();
+			  });
+			  mui(".mui-table-view").on('tap','.mui-table-view-cell',function(){
+			  	var time=this.getAttribute('data-time').substr(5,2);
+			  	var extras={time:time,sw:sw,level:level};
+			  	var wb=plus.webview.create('testindex.html','testindex.html',{},extras);
+			  	wb.show();
+                console.log(time);
+			  });
+			  
+			 });
+		</script>
+		<!--标准mui.css-->
+		<style>
+			
+		</style>
+	</head>
+
+	<body>
+		
+		    <div class="mui-content" style="background-color: #FFFFFF;">
+		   <div id="title" style="height:145px;background:url(../../images/score/liudonghongqi.png) ;background-size: 100%;background-repeat: no-repeat"></div>
+
+			<div >
+				<div id="segmentedControl" class="mui-segmented-control">
+					<a class="mui-control-item mui-active" href="#item1" id="it1">
+				个人
+			</a>
+					<a class="mui-control-item" href="#item2" id="it2">
+				支部
+			</a>
+					
+				</div>
+			</div>
+			
+			<div>
+	   <div id="item1" class="mui-control-content mui-active">
+		<div id="pullrefresh" class="mui-content mui-scroll-wrapper" style="height:100%;background: transparent;">
+				<div class="mui-scroll">
+					<ul class="mui-table-view mui-table-view-striped mui-table-view-condensed">
+						<li id="li1" class="mui-table-view-cell">
+							<div class="mui-table">
+								<div class="mui-table-cell mui-col-xs-3 mui-text-center">
+									<h5>时间</h5>
+								</div>
+								<div class="mui-table-cell mui-col-xs-3 mui-text-center">
+									<h5 >党员姓名</h5>
+								</div>
+								<div class="mui-table-cell mui-col-xs-3 mui-text-center">
+									<h5 >分值</h5>
+								</div>
+								<div class="mui-table-cell mui-col-xs-3 mui-text-center">
+									<img style="width:25%;" src="../../img/189.png"/>
+								</div>
+							</div>
+						</li>
+					</ul>
+                    
+					<ul class="mui-table-view mui-table-view-striped mui-table-view-condensed" id="scorelist">
+
+					</ul>
+					
+				</div>
+			</div>
+		</div>
+				
+		<div id="item2" class="mui-control-content mui-active" style="display: none;">
+			
+			 <div id="pullrefresh" class="mui-content mui-scroll-wrapper" style="height:100%;background: transparent;">
+				<div class="mui-scroll">
+					 <ul id="ul" style="background-color: #FFFFFF;margin:0 0 0 0;">
+				        <li class="mui-table-view-cell">
+					    <span></span>
+					    <div class="mui-switch mui-active">
+						<div class="mui-switch-handle"></div>
+					    </div>
+				       </li>
+				    </ul>
+					<ul class="mui-table-view mui-table-view-striped mui-table-view-condensed" id="scorelist2">
+
+					</ul>
+				   
+				</div>
+			</div>
+			
+			
+		   </div>
+
+			</div>
+				
+				
+				
+				
+			</div>
+		
+	</body>
+	
+
+</html>

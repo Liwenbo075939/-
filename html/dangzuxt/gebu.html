@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<script src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/ty.js" ></script>
+		<script type="text/javascript" src="../../js/artTemplate.js" ></script>
+        <style>
+        	.mui-bar {background-color: #d62a2a;}
+        	
+        	 .m {
+                   width: 100%;
+                   height: 200px;
+                   }
+        </style>
+        <script type="text/html" id="user">
+			{{each items as item}}
+			<div class="mui-btn mui-btn-warning" 
+				style="width: 48%;margin-bottom: 2%;padding-bottom: 0px;" 
+				id='{{item.id}}' 
+				data-name="{{item.name}}" data-intime="{{item.intime}}" data-motto="{{item.motto}}" data-postName="{{item.postName}}">
+					<p style="text-align: right;width: 40%;float: right;color: #FFFFF4;">{{item.name}}</p>
+					<p style="text-align: left;width: 40%;color: #FFFFF4;">{{item.postName}}</p>
+			</div>
+			{{/each}}
+		</script>
+		
+        	<script>
+		    mui.plusReady(function(){
+		    	
+		        var self=plus.webview.currentWebview();
+		        var resiveID=self.orgId;
+		        var name=self.fatherName;
+		        document.getElementById('head').innerHTML=name;
+		    	mui.ajax(GetPostUrl.gUrl()+'/organUsers.json',{
+				data:{
+					token:localStorage.getItem('token'),
+					id:resiveID
+				},
+				type:'post',
+				dataType:'json',
+				async:false,
+				success:function(data){
+					if(data){
+						var json={"items":data};
+						var html=template('user',json);
+						document.getElementById('person').innerHTML=html;
+					}
+				}
+			});
+			
+			
+			mui("#person").on('tap','.mui-btn',function(){
+				var name=this.getAttribute('data-name');
+				var id=this.getAttribute('id');
+				var intime=this.getAttribute('data-intime');
+				var postName=this.getAttribute('data-postName');
+				var motto=this.getAttribute('data-motto');
+				mui.openWindow({
+							url: 'person.html',
+							id: 'person.html',
+							show: {
+								autoShow: true, //页面loaded事件发生后自动显示，默认为true
+								aniShow: 'zoom-fade-out', //页面显示动画，默认为”slide-in-right“；
+							},
+							extras: {
+								
+								name: name,
+								id:id,
+								intime:intime,
+								motto:motto,
+								postName:postName
+							}
+						});
+			});
+			
+			
+			 document.getElementById('home').addEventListener('tap',function(){
+	        	var home=plus.webview.getWebviewById('layout.html');
+	        	home.show();
+	        });
+			
+		    });
+			
+		</script>
+	</head>
+	<body>
+		<div class="mui-content">
+		<header class="mui-bar mui-bar-nav" >
+			<a id="home"><span style="color:#EFEFF4" class="mui-icon mui-icon-home mui-pull-right"></span></a>
+			<a id="back" style="color:#EFEFF4" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 id="head" style="color:#EFEFF4" class="mui-title"></h1>
+		</header>
+		<div class="mui-card" style="margin-bottom: 35px;margin-top: 50px;padding-left: 2%;">
+			<div style="background: url(../../images/loginy/logo1.png);width: 100%;height: 250px;background-size:80%;background-repeat: no-repeat;background-position: center 10%;"></div>
+			
+				<div id="person">
+				
+				<div>
+			</div>
+		</div>	
+	</body>
+</html>

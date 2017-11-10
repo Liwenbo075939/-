@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		
+		<script src="../../js/com.js" ></script>
+		<!--标准mui.css-->
+		<style>
+			.mui-bar {background-color: #d62a2a;}
+		</style>
+		<script type="text/html" id="ps">
+			{{each items as item i}}
+			<li  id="{{item.id}}"  data-organName="{{item.organName}}" 
+				data-userName="{{item.userName}}" 
+				data-dictName="{{item.dictName}}"
+				data-honorname="{{item.honorname}}"
+				data-gettime="{{item.gettime}}"
+				data-imgurl="{{item.imgurl}}"
+				class="mui-table-view-cell">
+					<div class="mui-table" style="height: 120px;">
+		                <div class="mui-table-cell mui-col-xs-10" style="padding-top:2% ;">
+		                    <h4>{{item.honorname}}</h4>
+		                    <p>获奖者&nbsp;&nbsp;&nbsp;&nbsp;：{{item.userName}}</p>
+		                    <p>荣誉级别：{{item.dictName}}</p>
+		                    <p>支部名称：{{item.organName}}</p>
+		                    <p>获奖时间：{{item.gettime}}</p>
+		                </div>
+		            </div>
+			 </li>
+			{{/each}}
+		</script>
+		<script type="text/javascript">
+                //注意：下拉刷新完毕后执行如下方法
+                //该方法的作用是关闭“正在刷新”的样式提示，内容区域回滚顶部位置
+                //mui('#pullrefresh').pullRefresh().endPulldown();
+                //上拉加载完毕后执行如下方法
+                //mui('#pullrefresh').pullRefresh().endPullupToRefresh(false);
+                //该方法的作用是 显示“上拉显示更多”的提示语或显示“没有更多数据了”的提示语
+                //若还有更多数据，则传入false; 否则传入true.		
+			mui.plusReady(function() {
+				var cru=plus.webview.currentWebview();
+				var data={
+				level:cru.level,
+				type:cru.type,oid:cru.oid,yearly:cru.yearly,dictid:cru.dictid,token:localStorage.getItem('token')
+				};
+                var json=ajaxL(GetPostUrl.gUrl()+"/honorlist.json",data);
+                con(json);
+                templateL("ps",json.obj,"paylist",null); 
+			    mui("#paylist").on('tap','.mui-table-view-cell',function(){
+		        var organName= this.getAttribute('data-organName'); 
+			    var userName= this.getAttribute('data-userName'); 
+			   var dictName= this.getAttribute('data-dictName'); 
+			   var honorname= this.getAttribute('data-honorname'); 	
+			   var gettime= this.getAttribute('data-gettime'); 
+			   var imgurl= this.getAttribute('data-imgurl');  
+			     	var extras={organName:organName,userName:userName,dictName:dictName,honorname:honorname,
+			     	gettime:gettime,imgurl:imgurl};
+			     	var w=plus.webview.create('datil.html','datil.html',{},extras);
+			     	w.show();
+			     })
+
+			});
+			mui.plusReady(function() {//去除滚动条
+		    	plus.webview.currentWebview().setStyle({scrollIndicator:'none'});
+		    	
+		    });
+		</script>
+		
+	</head>
+
+	<body>
+		
+		     <div class="mui-bar mui-bar-nav" >
+			  <a id="back" style="color:#EFEFF4" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			  <h1 id="head" style="color:#EFEFF4" class="mui-title">获奖列表</h1>
+			  <div style="float: right;"></div>
+		     </div>
+		      <div class="mui-content" style="margin-top: 15%;"><!-- 分页显示的内容区 这里的例子是一个列表 -->
+		      	    
+          			<ul class="mui-table-view mui-table-view-striped mui-table-view-condensed" id="paylist">
+                    <!-- 动态加载列表的数据区 -->
+					</ul>
+				</div>
+			   
+
+		
+			
+
+		
+	</body>
+	
+
+</html>

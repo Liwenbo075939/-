@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<script src="../../js/mui.min.js"></script>
+		<script>
+			mui.plusReady(function(){
+				//Native.js for Android封装一条通过JS语法直接调用Native Java接口通道，通过plus.android可调用几乎所有的系统API。
+				    //play();
+				document.getElementById('btn').addEventListener('tap',function(){
+					play();
+					
+				});
+				
+			});
+			  var play=function(){
+			  	var Intent = plus.android.importClass("android.content.Intent"); //// 导入android.content.Intent类对象  
+                var Uri = plus.android.importClass("android.net.Uri");   //importClass: 导入Java类对象
+                var main = plus.android.runtimeMainActivity();
+                var intent=new Intent(Intent.ACTION_VIEW);
+                var uri=Uri.parse("http://180.76.134.63:88/files/upload/shipin.MP4");
+                intent.setDataAndType(uri,"video/*");
+                main.startActivity(intent);
+			  }
+		</script>
+	</head>
+	<body style="background: url(../../images/kzdx/kzdxbj.jpg);background-size:100% ;">
+		
+		
+		 <div id="btn" style="background:url(../../img/play.png);background-size:60%,60%;background-repeat:no-repeat;width:45%;height:130px;margin: 0 auto;margin-top: 65%;margin-left: 35%;">
+		 </div>
+		 
+		 
+		 
+	</body>
+</html>

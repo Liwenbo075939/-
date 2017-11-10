@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		
+		<script src="../../js/com.js" ></script>
+		<!--标准mui.css-->
+		<style>
+		    #segmentedControl{
+		    	border:1px solid floralwhite;
+		    }
+			#segmentedControl .mui-active{
+				background-color:#FFB400;
+				color: #FFFFFF;
+			}
+			#segmentedControl a{
+				color: #FFB400;
+				border-left: 1px solid #FFB400;
+			}
+			#li1{
+				background-color: rgb(255,243,163);
+				
+			}
+			#li2{
+				background-color: rgb(255,243,163);
+				
+			}
+			h5{
+				color: rgb(255,18,0);
+			}
+		</style>
+		<script type="text/html" id="ps">
+			{{each items as item i}}
+		 <li class="mui-table-view-cell">
+				<div class="mui-table">
+					<div class="mui-table-cell mui-col-xs-3 mui-text-center">
+						<p class=" mui-ellipsis" style="color: #000000;">{{item.user.name}}</p>
+					</div>
+
+					<div class="mui-table-cell mui-col-xs-3 mui-text-center">
+						<span class="mui-h5" style="color: #000000;">{{item.money}}元</span>
+					</div>
+					<div class="mui-table-cell mui-col-xs-3 mui-text-center">
+						<span class="mui-h5 abc" style="color: #000000;">{{item.month}}月份</span>
+					</div>
+					<div class="mui-table-cell mui-col-xs-3 mui-text-center">
+						<span class="mui-h5 abc" style="color:{{item.color}};">{{item.state}}</span>
+					</div>
+				</div>
+			</li>
+			{{/each}}
+		</script>
+		
+		<script type="text/html" id="ps2">
+			{{each items as item i}}
+		 <li class="mui-table-view-cell">
+				<div class="mui-table">
+					<div class="mui-table-cell mui-col-xs-3 mui-text-center">
+						<p class=" mui-ellipsis" style="color: #000000;">{{item.uname}}</p>
+					</div>
+					<div class="mui-table-cell mui-col-xs-3 mui-text-center">
+						<span class="mui-h5 abc" style="color: #000000;">{{item.month}}月份</span>
+					</div>
+					<div class="mui-table-cell mui-col-xs-3 mui-text-center">
+						<span class="mui-h5 abc" style="color:{{item.color}};">{{item.state}}</span>
+					</div>
+				</div>
+			</li>
+			{{/each}}
+		</script>
+		<script type="text/javascript">
+		    var count = 0;//当前页数
+			var pageSize = 10;//每页显示多少
+			var sw=0;      //个人和支部之间的切换
+			mui.init({
+				pullRefresh: {
+					container: '#pullrefresh',
+					down: { //下拉刷新					       
+						auto: true,
+						contentdown: "下拉可以刷新", //可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+						contentover: "释放立即刷新", //可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+						contentrefresh: "正在刷新...", //可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+						callback: pulldownRefresh     //下拉刷新要执行的方法
+					},
+					up: { //上拉加载
+
+						//auto:true,//自动上拉加载一次,可选,默认false.
+						contentrefresh: '正在加载...',
+						contentnomore: '没有更多数据了', //可选，请求完毕若没有更多数据时显示的提醒内容；
+						callback: pullupRefresh         //上拉加载执行的方法
+					}
+				}
+			});
+			function pulldownRefresh() {
+				setTimeout(function() {
+					count = 1; //刷新并显示第一页
+					data = {
+
+						pageNum: count,
+						pageSize: pageSize,
+						token: localStorage.getItem("token"),
+						userid:localStorage.getItem('userId')
+					};
+				    //1代表下拉刷新
+				    sw==0?toList(data, 1):toList2(data, 1);
+				}, 100);
+			};
+			function pullupRefresh() {
+				setTimeout(function() {
+					count++; //翻下一页
+					data = {
+						pageNum: count,
+						pageSize: pageSize,
+						token: localStorage.getItem("token"),
+						userid:localStorage.getItem('userId')
+					};
+					 //2代表上拉加载
+					sw==0?toList(data, 2):toList2(data,2); //具体取数据的方法
+				}, 100);
+			}
+			var toList = function(data, type) {
+                var data=ajaxL(GetPostUrl.gUrl() + '/pay.json',data);
+               //参数1 模板id 必选 参数2 加载数据 必须  参数3 dom id 必须  参数4 上拉下拉 标志 可选
+               for(var x in data.obj){
+               	if(data.obj[x].state=="已交"){
+               		data.obj[x].color="green";
+               	}else if(data.obj[x].state=="代交"){
+               		data.obj[x].color="blue";
+               	}else if(data.obj[x].state=="未交"){
+               		data.obj[x].color="red";
+               	}
+               }
+               templateL('ps',data.obj,'paylist',type);
+			}
+			
+			var toList2=function(data,type){
+				 data.organ=localStorage.getItem('organId');
+				 var data=ajaxL(GetPostUrl.gUrl() + '/organPay.json',data);
+				  for(var x in data.obj){
+               	if(data.obj[x].state=="已交"){
+               		data.obj[x].color="green";
+               	}else if(data.obj[x].state=="代交"){
+               		data.obj[x].color="blue";
+               	}else if(data.obj[x].state=="未交"){
+               		data.obj[x].color="red";
+               	}
+               }
+                con(data);
+               //参数1 模板id 必选 参数2 加载数据 必须  参数3 dom id 必须  参数4 上拉下拉 标志 可选
+               templateL('ps2',data.obj,'paylist2',type);
+				
+				
+				
+			}
+			
+			mui.plusReady(function() {
+				  var self=plus.webview.currentWebview();
+				  if(self.extras!=null){
+				  	 var content=self.extras.content;
+				  	document.getElementById('msg').innerText=content;
+				  	document.getElementById('ulmsg').style.display="block";
+				  }
+			      document.getElementById('it2').addEventListener('tap', function() {
+			  	    document.getElementById("item2").style.display="block";
+			  	    sw=1;
+					pulldownRefresh();
+					
+					
+			  });
+			   document.getElementById('it1').addEventListener('tap', function() {
+			   	    document.getElementById("item2").style.display="none";
+			   	    sw=0;
+					pulldownRefresh();
+					
+					
+			  });
+
+			});
+			
+			mui.plusReady(function() {//去除滚动条
+		    	plus.webview.currentWebview().setStyle({scrollIndicator:'none'});
+		    	
+		    });
+		</script>
+		
+	</head>
+
+	<body>
+		
+		    
+		    <div class="mui-content" style="background:#FFFFFF;"><!-- 分页显示的内容区 这里的例子是一个列表 -->
+		    <div id="title" style="height:175px;background:url(../../images/pay/dangfei.png) ;background-size: 100%;background-repeat: no-repeat"></div>
+            <div >
+				<div id="segmentedControl" class="mui-segmented-control"  >
+					<a class="mui-control-item mui-active"  href="#item1" id="it1">
+				个人
+			</a>
+					<a class="mui-control-item"  href="#item2" id="it2">
+				支部
+			</a>
+					
+				</div>
+			</div>
+			<div>
+				<div id="item1" class="mui-control-content mui-active">	
+				   <div id="pullrefresh" class="mui-content mui-scroll-wrapper" style="height:100%;background: transparent;">
+				   <div class="mui-scroll">
+					<ul class="mui-table-view mui-table-view-striped mui-table-view-condensed">
+					<!-- 第一行用一个单独的ul表示能省去许多麻烦 -->
+						<li id="li1" class="mui-table-view-cell">
+							<div class="mui-table">
+								
+								<div class="mui-table-cell mui-col-xs-3 mui-text-center">
+									<h5 >姓名</h5>
+								</div>
+								<div class="mui-table-cell mui-col-xs-3 mui-text-center">
+									<h5 >党费</h5>
+								</div>
+								<div class="mui-table-cell mui-col-xs-3 mui-text-center">
+									<h5 >日期</h5>
+								</div>
+								<div class="mui-table-cell mui-col-xs-3 mui-text-center">
+									<h5 >状态</h5>
+								</div>
+							</div>
+						</li>
+					</ul>
+					<ul id="ulmsg" class="mui-table-view mui-table-view-striped mui-table-view-condensed" style="padding: 2%;display: none;">
+						<div id="msg" class="mui-table" style="height: 100px;">
+							
+						  
+								
+						</div>
+					</ul>
+					<ul class="mui-table-view mui-table-view-striped mui-table-view-condensed"  id="paylist">
+                    <!-- 动态加载列表的数据区 -->
+					</ul>
+				</div>
+			       </div>
+				
+				</div>
+				<div id="item2" class="mui-control-content mui-active" style="display: none;">
+					   <div id="pullrefresh" class="mui-content mui-scroll-wrapper" style="height:100%;background: transparent;">
+				   <div class="mui-scroll">
+					<ul class="mui-table-view mui-table-view-striped mui-table-view-condensed">
+					<!-- 第一行用一个单独的ul表示能省去许多麻烦 -->
+						<li id="li1" class="mui-table-view-cell">
+							<div class="mui-table">
+								
+								<div class="mui-table-cell mui-col-xs-3 mui-text-center">
+									<h5 >姓名</h5>
+								</div>
+								<div class="mui-table-cell mui-col-xs-3 mui-text-center">
+									<h5 >日期</h5>
+								</div>
+								<div class="mui-table-cell mui-col-xs-3 mui-text-center">
+									<h5 >状态</h5>
+								</div>
+							</div>
+						</li>
+					</ul>
+					
+					<ul class="mui-table-view mui-table-view-striped mui-table-view-condensed"  id="paylist2">
+                    <!-- 动态加载列表的数据区 -->
+					</ul>
+				</div>
+			       </div>
+					
+					
+					
+				</div>
+				
+				
+				
+				
+			</div>
+		
+
+		</div>
+	</body>
+	
+
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="css/mui.min.css">
+		<link rel="stylesheet" type="text/css" href="css/app.css" />
+		<script src="js/mui.min.js"></script>
+		<script src="js/ty.js"></script>
+		<script>
+			
+			mui.plusReady(function() {
+				
+				             var cur=plus.webview.currentWebview();
+				             var p = plus.audio.createPlayer( "music/Mike Post - Law & Order.MP3" );
+	                             p.play( function () {
+		                        // alert( "Audio play success!" ); 
+	                             }, function ( e ) {
+		                         alert( "Audio play error: " + e.message ); 
+	                             } ); 
+				            var i=14;
+				            var a="";
+							var ids=setInterval(function(){
+									a=i--;
+									document.getElementById('m').innerText=a+"s";
+									if(a==0){
+										clearInterval(ids);
+										p.stop();
+										cur.hide();
+										login("login1")
+									}
+							},1000);
+							
+							document.getElementById('open').addEventListener('tap',function(){
+						    p.stop();
+						    cur.hide();
+						    clearInterval(ids);
+				            login("login2");   
+			                });
+			                
+			                function login(id){
+			                	 mui.openWindow({
+						               url: 'login.html',
+						               id: id,
+						               extras: {},
+						               show: {
+							           aniShow: 'zoom-fade-out'
+						               }
+					                   });
+			                }
+			              		                
+			});
+			
+			
+			
+		</script>
+		<style>
+			body{
+				background: url(images/480x762.png);
+				background-size:100%;
+				background-repeat: no-repeat;
+			}
+		</style>
+	</head>
+	<body >
+		 <span style="display: block;float: left;margin:2% ;"><font id="m" color="#929292" weight="600"></font></span>
+		 <span id="open" style="float: right;margin:2% ;position: absolute;top:90%;left:70%;"><font  color="#929292" weight="600">点击跳过>></font></span>
+         
+	</body>
+</html>

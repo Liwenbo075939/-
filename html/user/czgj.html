@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<link rel="stylesheet" href="../../css/main.css" />
+		<link rel="stylesheet" href="../../css/style2.css" />
+		<script src="../../js/com.js" ></script>
+		
+		<!--标准mui.css-->
+		<style>
+			#czb{
+		 	margin-top: 1em;
+		 	
+		 }
+		 .c::before {
+         content: '';
+         position: absolute;
+         top: 0;
+         left: 18px;
+         height: 110%;
+         width: 4px;
+         background: #d7e4ed;
+         }
+		</style>
+			<script id="cz"  type="text/html">
+			  {{each items as item}}
+			 
+	                            <div class="cd-timeline-block c">
+		                              <div class="cd-timeline-img cd-picture">
+			                          <img src="../../img/cd-icon-picture.svg" data-q="{{item.questionScore}}"  data-a="{{item.totalArticleScore}}"alt="Picture">
+		                             </div>
+		                              <div class="cd-timeline-content">
+			                          <h2>阅读文章</h2>
+			                          <p>{{item.article}}</p>
+			                          <p>共看{{item.articleNum}}篇文章</p>
+			                          <p>共获积分:{{item.totalArticleScore}}分</p>
+			                          <h2>参加活动</h2>
+			                          <p>{{item.question}}</p>
+			                          <p>共答题{{item.questionNum}}道</p>
+			                          <p>共获积分:{{item.questionScore}}分</p>
+			                          <span class="cd-date">{{item.time}}</span>
+		                       </div>
+	                           </div>
+                      
+              {{/each}}         
+		</script>
+		<script type="text/javascript">
+		    var start = 0;//当前页数
+			var end = 3;//每页显示多少
+			var type=0;     //上拉或加载的标识
+			mui.init({
+				pullRefresh: {
+					container: '#pullrefresh',
+					down: { //下拉刷新					       
+						auto: true,
+						contentdown: "下拉可以刷新", //可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+						contentover: "释放立即刷新", //可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+						contentrefresh: "正在刷新...", //可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+						callback: pulldownRefresh     //下拉刷新要执行的方法
+					},
+					up: { //上拉加载
+
+						//auto:true,//自动上拉加载一次,可选,默认false.
+						contentrefresh: '正在加载...',
+						contentnomore: '没有更多数据了', //可选，请求完毕若没有更多数据时显示的提醒内容；
+						callback: pullupRefresh         //上拉加载执行的方法
+					}
+				}
+			});
+			function pulldownRefresh() {
+				setTimeout(function() {
+					count = 1; //刷新并显示第一页
+					data = {
+
+						start: start,
+						end: end,
+						token: localStorage.getItem("token"),
+						userid:localStorage.getItem('userId')
+					};
+				    type = 1;        //1代表下拉刷新
+					toList(data, type); //具体取数据的方法
+				}, 100);
+			};
+			function pullupRefresh() {
+				setTimeout(function() {
+					count++; //翻下一页
+					data = {
+						start: start,
+						end: end,
+						token: localStorage.getItem("token"),
+						userid:localStorage.getItem('userId')
+					};
+					type = 2; //2代表上拉加载
+					toList(data, type); //具体取数据的方法
+				}, 100);
+			}
+			var toList = function(data, type) {
+                //注意：下拉刷新完毕后执行如下方法
+                //该方法的作用是关闭“正在刷新”的样式提示，内容区域回滚顶部位置
+                //mui('#pullrefresh').pullRefresh().endPulldown();
+                //上拉加载完毕后执行如下方法
+                //mui('#pullrefresh').pullRefresh().endPullupToRefresh(false);
+                //该方法的作用是 显示“上拉显示更多”的提示语或显示“没有更多数据了”的提示语
+                //若还有更多数据，则传入false; 否则传入true.
+                	mui.ajax(GetPostUrl.gUrl()+'/czlist.json',{
+					data: data,
+					type: 'post',
+					dataType: 'json',
+					async: 'true',
+					success: function(data) {
+                    if(data.success){
+                    	        con(data);
+                    	        var flag=data.obj.length>0?false:true;
+                    	        //2.创建数据json
+								var data1 = {"items": data.obj};
+								//3.关联模板第一个参数是模板id
+								var html = template('cz', data1);
+								
+                    	if(type==1){
+                    		mui('#pullrefresh').pullRefresh().refresh(true);
+                    		mui('#pullrefresh').pullRefresh().endPulldownToRefresh();
+                    	}
+                    	if(type==2){
+                    		mui('#pullrefresh').pullRefresh().endPullupToRefresh(flag);
+                    		html=document.getElementById("czb").innerHTML+html;
+                    	}
+                    	//4. 插入html
+						document.querySelector("#czb").innerHTML = html;
+                    	
+                    }
+					
+					}
+				});
+			}
+			mui.plusReady(function() {
+			     
+
+			});
+			
+			mui.plusReady(function() {//去除滚动条
+		    	plus.webview.currentWebview().setStyle({scrollIndicator:'none'});
+		    	
+		    });
+		</script>
+		
+	</head>
+
+	<body>
+		      
+
+			<div id="pullrefresh" class="mui-content mui-scroll-wrapper" style="height:100%;background: transparent;">
+				<div class="mui-scroll">
+					<!--数据列表-->
+				<ul class="mui-table-view mui-table-view-chevron" >
+					     <div>
+					     <section  class="cd-container" id="czb">
+			             </section>
+					     </div>
+					   <div style="margin-top: 10%;"><p></p></div>
+				</ul>
+				</div>
+			</div>
+
+		
+	</body>
+	
+
+</html>

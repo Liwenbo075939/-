@@ -1,0 +1,246 @@
+<!doctype html>  
+<html>  
+   <head>  
+    <meta charset="UTF-8">  
+    <title></title>  
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />  
+    <link href="css/mui.min.css" rel="stylesheet" />  
+    <script src="js/mui.min.js"></script> 
+    <script src="js/mui.js"></script> 
+    <script src="js/ty.js"></script>
+    <style type="text/css">  
+        #bcid{  
+            width: 100%;  
+            height: 100%;  
+            position: absolute;  
+            background: #000000;  
+        }  
+        html, body ,div{  
+            height:100%;  
+            width: 100%;  
+        }  
+        .fbt{  
+            color: #0E76E1;  
+            width: 50%;  
+            background-color: #ffffff;  
+            float: left;   
+            line-height: 44px;  
+            text-align: center;  
+        }  
+    </style>  
+   </head>  
+  <body>  
+    <header class="mui-bar mui-bar-nav" style="background-color: #ffffff;">  
+      <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>  
+      <h1 class="mui-title" style="color: #0E76E1;">二维码扫描</h1>  
+      <span class="mui-spin mui-pull-right" id="turnTheLight" style="display: none;">打开闪光灯</span>  
+      <span class="mui-spin mui-pull-right" id="turnTheLight2" style="display: none;">关闭闪光灯</span>
+    </header>  
+          
+    <div id="bcid">     
+         <!--盛放扫描控件的div-->          
+    </div>  
+          
+    
+          
+    <script type="text/javascript">  
+        scan = null;//扫描对象  
+        /**
+         * 界面初始化
+         */
+        mui.plusReady(function () {  
+               mui.init(); 
+               /**
+                * 
+                */
+               startRecognize();
+           });  
+           var currentLon;
+           var currentLat;
+        function translatePoint(position){
+			    currentLon = position.coords.longitude;
+			    
+			    currentLat = position.coords.latitude;
+			    
+			    console.log( currentLon+":"+currentLat);
+			}  
+			
+	    /**
+	     * 二维码扫描方法
+	     */
+        function startRecognize(){  
+           try{  
+            var filter = [plus.barcode.QR,plus.barcode.AZTEC,plus.barcode.EAN13]; 
+             //自定义的扫描控件样式  
+            var styles = {frameColor: "#29E52C",scanbarColor: "#29E52C",background: ""}  
+            //扫描控件构造  
+            scan = new plus.barcode.Barcode('bcid',filter,styles);  
+            scan.onmarked = onmarked; //scan的属性是方法 
+            scan.onerror = onerror;  
+            scan.start();  
+           
+          }catch(e){  
+            alert("出现错误啦:\n"+e);  
+             }  
+          }; 
+          
+           /**
+             * 二维码识别失败后的事件
+             * @param {Object} e
+             */
+          
+            function onerror(e){  
+                   console.log(e);  
+            };  
+          /**
+           * 二维码识别成功后的方法
+           * @param {Object} type
+           * @param {Object} result
+           */
+          function onmarked( type, result ) {
+            	    console.log(result);//----扫描获取的字符串值
+                    var text = '';   
+                    switch(type){  
+                        case plus.barcode.QR:  
+                        text = 'QR: ';  
+                        break;  
+                        case plus.barcode.EAN13:  
+                        text = 'EAN13: ';  
+                        break;  
+                        case plus.barcode.EAN8:  
+                        text = 'EAN8: ';  
+                        break;  
+             } 
+                    
+                    
+                    
+                    if(result.indexOf("http")!=-1){
+                    	
+                    	mui.openWindow({
+                    		url:"downLoad.html",
+                    		id:"downLoad.html",
+                    		show:{
+                    			autoShow:true,
+                    			aniShow:'zoom-fade-out'
+                    		},extras:{"result":result}
+                    		
+                    	});
+                    	
+                    }else{
+                    	
+                    	
+                    	
+                    	
+                   
+           
+                    /**
+                     *扫码后的结果 
+                     */
+                 	var r=JSON.parse(result);
+                 	var d=new Date().getTime();
+                 	etime=r.etime;
+                 	
+                 	
+                 	var  date = new Date(etime).getTime()
+                 	if(etime!=null&&etime!=""&&date<d){
+                 		 mui.toast("二维码已过期");
+                 		 mui.back();
+                 		 return;
+                 		 
+                 	};
+                 	if(r.type!=null){
+                 		mui.ajax(GetPostUrl.gUrl()+'/scanQrcode.json',{
+							data:{
+								qrcodeid:r.id,
+								type:r.type,
+								token:localStorage.getItem("token"),
+								currentLat:currentLat,
+								currentLon:currentLon
+								
+						},
+							timeout:5000,
+							type:'post',
+							dataType:'json',
+							async:'true',
+							success:function(data){
+								if(data=='-1'){
+								    var btnArray = ['确认'];
+						                mui.confirm("请重新登录!", '提示', btnArray, function(e) {
+						                    mui.back();
+						                })
+								   
+								};
+								if(data.success){
+									mui.openWindow({
+										url:'html/activities/codeReindex.html',
+										id:'codeReindex',
+										show:{
+				                             aniShow:'zoom-fade-out'},
+				                       extras:{
+				                       	 type:r.type,
+				                       	 info:r.info,
+				                       	 qrcodeid:r.id
+				                       }
+									});
+									return;
+								}else{
+									    var btnArray = ['确认'];
+						                mui.confirm(data.msg, '提示', btnArray, function(e) {
+						                    mui.back();
+						                })
+								}
+							}
+					 });
+                 		
+                 	}else{
+                 		 var btnArray = ['确认'];
+						                mui.confirm(result, '提示', btnArray, function(e) {
+						                    mui.back();
+						                })
+                 		
+                 	}
+                 	
+                 	
+                 	 }
+              //}
+            };    
+            window.addEventListener('refresh',function(){
+            	       //mui.init(); 
+					//startRecognize();
+					plus.webview.currentWebview().reload();
+		   }); 
+		    //打开关闭闪光灯处理  
+            document.getElementById("turnTheLight").addEventListener('tap',function(){ 
+            
+            
+            	scan.setFlash(true);
+               
+                document.getElementById('turnTheLight').style.display="none";
+                document.getElementById('turnTheLight2').style.display="block";
+               
+
+            });
+            document.getElementById("turnTheLight2").addEventListener('tap',function(){ 
+          
+            
+            	scan.setFlash(false);
+                
+                document.getElementById('turnTheLight2').style.display="none";
+                document.getElementById('turnTheLight').style.display="block";
+               
+
+            });  
+        // 从相册中选择二维码图片   
+       /* function scanPicture() {  
+            plus.gallery.pick(function(path){  
+                plus.barcode.scan(path,onmarked,function(error){  
+                    plus.nativeUI.alert( "无法识别此图片" );  
+                });  
+            },function(err){  
+                plus.nativeUI.alert("Failed: "+err.message);  
+            });  
+        }  */       
+                  
+        </script>  
+    </body>  
+</html>

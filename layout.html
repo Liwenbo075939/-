@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>首页</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" href="css/mui.min.css">
+		<link rel="stylesheet" href="css/style.css">
+		<link rel="stylesheet" href="css/icons-extra.css">
+		<link rel="stylesheet" href="css/cxl.css">
+		<style>
+			html,
+			body {
+				background-color: #efeff4;
+			}
+			
+			.jcytitle {
+				background-color: #d62a2a;
+				
+			}
+			
+			.mui-title {
+				color: #eee;
+			}
+			
+			.mui-bar-tab .mui-tab-item {
+				display: table-cell;
+				overflow: hidden;
+				width: 1%;
+				height: 50px;
+				text-align: center;
+				vertical-align: middle;
+				white-space: nowrap;
+				text-overflow: ellipsis;
+				color: #FFFFFF;
+			}
+			
+			.mui-bar-tab .mui-tab-item.mui-active {
+				color: #FFFF00;
+			}
+			
+			.mui-bar-tab .mui-tab-item .mui-icon~.mui-tab-label {
+				font-size: 16px;
+			}
+			
+			.title{
+				background: url(img/logo.png);background-size:100%,100%;
+				height: 38px;
+				width: 37px;
+				float: right;
+				background-repeat: no-repeat;
+				margin-top: 6%;
+				
+			}
+		</style>
+	</head>
+	<body>
+		<header class=" mui-bar mui-bar-nav jcytitle" >
+			<p class="mui-title " style="margin-left: 60px;color: #FFFFFF;margin-right: 30px;height: 75%;font-size:1.1em">
+				邢台地税智能党建平台</p>
+			<!--
+            	作者：offline
+            	时间：2017-07-29
+            	描述：扫描二维码
+            -->
+			<div style="float: left;width:26.5%;margin-top: -2px;" >
+				<div class="title"  ></div>
+				<span id="tocode" style="color:#EFEFF4;display: block;margin-top: 16%;" class="mui-icon-extra mui-icon-extra-sweep"></span>
+				
+			</div>
+			<!--
+            	作者：offline
+            	时间：2017-07-29
+            	描述：消息提醒
+            -->
+			<div style="float: right;margin-right:2%;">
+				<a>
+					<span id='msg' style="color:#EFEFF4" class="mui-icon mui-icon-chat">
+						<span id="num" style="top:5px;margin-left:-15px;" class="mui-badge mui-badge-warning"></span>
+					</span>
+
+				</a>
+			</div>
+		</header>
+		<div class="mui-content">
+		</div>
+		<nav class="mui-bar mui-bar-tab" id="tab" style="background-image: url(images/nav.png);height: 60px;">
+
+			<a id="defaultTab" class="mui-tab-item mui-active" href="cata.html">
+				<img class="mui-icon" src="images/sy.png" style="top:10px;margin-bottom: 2px;"/>
+				<span class="mui-tab-label" style="font-size: 11px;">首 页</span>
+
+			</a>
+			<a id="faxian" class="mui-tab-item " href="scoreSeclet.html">
+
+				<img class="mui-icon" src="images/kzdx.png" style="top:10px;margin-bottom: 2px;"/>
+				<span class="mui-tab-label" style="font-size: 11px;">积分管理</span>
+
+			</a>
+			<a id="ajcx" class="mui-tab-item" href="html/pay/pay.html">
+				<img class="mui-icon" src="images/huodong.png"  style="top:10px;margin-bottom: 2px;"/>
+				<span class="mui-tab-label" style="font-size: 11px;" >党费管理</span>
+
+			</a>
+			<a id="wode" class="mui-tab-item" href="setting.html">
+				<img class="mui-icon" src="images/wode.png"  style="top:10px;margin-bottom: 2px;"/>
+				<span class="mui-tab-label" style="font-size: 11px;">我的</span>
+			</a>
+		</nav>
+		<script src="js/mui.min.js"></script>
+		<script src="js/ty.js"></script>
+		<script type="text/javascript" charset="utf-8">
+			//mui初始化
+			mui.init();
+			var subpages = ['cata.html', 'scoreSeclet.html', 'html/pay/pay.html', 'setting.html'];
+			var subpage_style = {
+				top: '41px',
+				bottom: '52px'
+			};
+			var aniShow = {};
+
+			//创建子页面，首个选项卡页面显示，其它均隐藏；
+			mui.plusReady(function() {
+				if(plus.webview.getWebviewById('login1')!=null){
+					plus.webview.getWebviewById('login1').close();
+				}
+				
+				if(plus.webview.getWebviewById('login2')!=null){
+					plus.webview.getWebviewById('login2').close();
+				}
+				
+				//plus.runtime.setBadgeNumber(1);
+				var self = plus.webview.currentWebview();
+				for(var i = 0; i < 4; i++) {
+					var temp = {};
+					var sub = plus.webview.create(subpages[i], subpages[i], subpage_style);
+
+					if(i > 0) {
+						sub.hide();
+					} else {
+						temp[subpages[i]] = "true";
+						mui.extend(aniShow, temp);
+					}
+					self.append(sub);
+				}
+
+			});
+			//当前激活选项
+			var activeTab = subpages[0];
+			var header = document.getElementById("header");
+			//选项卡点击事件
+			mui('.mui-bar-tab').on('tap', 'a', function(e) {
+				//更换标题
+				/*  if(this.getAttribute('href') == 'kzdx-contact.html') {
+					var ajxc = plus.webview.create('kzdx_web.html', 'ajxc')
+					ajxc.addEventListener('loaded', function() {
+						ajxc.show('slide-in-bottom', 300);
+					});
+					}*/
+				var targetTab = this.getAttribute('href');
+				if(targetTab == activeTab) {
+					return;
+				}
+				//显示目标选项卡
+				//若为iOS平台或非首次显示，则直接显示
+				if(mui.os.ios || aniShow[targetTab]) {
+					plus.webview.show(targetTab);
+				} else {
+					//否则，使用fade-in动画，且保存变量
+					var temp = {};
+					temp[targetTab] = "true";
+					mui.extend(aniShow, temp);
+					plus.webview.show(targetTab, "fade-in", 300);
+				}
+				//隐藏当前;
+				plus.webview.hide(activeTab);
+				//更改当前活跃的选项卡
+				activeTab = targetTab;
+
+			});
+			//自定义事件，模拟点击“首页选项卡”
+			document.addEventListener('gohome', function() {
+				var defaultTab = document.getElementById("defaultTab");
+				//模拟首页点击
+				mui.trigger(defaultTab, 'tap');
+				//切换选项卡高亮
+				var current = document.querySelector(".mui-bar-tab>.mui-tab-item.mui-active");
+				if(defaultTab !== current) {
+					current.classList.remove('mui-active');
+					defaultTab.classList.add('mui-active');
+				}
+			});
+
+			//自定义事件，模拟点击“首页选项卡”
+			document.addEventListener('gowode', function() {
+				var defaultTab = document.getElementById("wode");
+				//模拟首页点击
+				mui.trigger(defaultTab, 'tap');
+				//切换选项卡高亮
+				var current = document.querySelector(".mui-bar-tab>.mui-tab-item.mui-active");
+				if(defaultTab !== current) {
+					current.classList.remove('mui-active');
+					defaultTab.classList.add('mui-active');
+				}
+			});
+			var backButtonPress = 0;
+			mui.back = function(event) {
+				backButtonPress++;
+				if(backButtonPress > 1) {
+					//localStorage.clear();
+					plus.runtime.quit();
+				} else {
+					plus.nativeUI.toast('再按一次退出应用');
+				}
+				setTimeout(function() {
+					backButtonPress = 0;
+				}, 1000);
+				return false;
+			};
+		</script>
+
+		<script>
+			(function($, doc) {
+				$.init();
+				var account = doc.getElementById('account');
+				var tocode = doc.getElementById("tocode");
+				tocode.addEventListener("tap", function() {
+					mui.openWindow({
+						url: 'code.html',
+						id: 'code'
+					});
+
+				});
+				//
+				window.addEventListener('show', function() {
+					var state = app.getState();
+					account.innerText = state.account;
+				}, false);
+				$.plusReady(function() {
+					//--
+					$.oldBack = mui.back;
+					var backButtonPress = 0;
+					$.back = function(event) {
+						backButtonPress++;
+						if(backButtonPress > 1) {
+							plus.runtime.quit();
+						} else {
+							plus.nativeUI.toast('再按一次退出应用');
+						}
+						setTimeout(function() {
+							backButtonPress = 0;
+						}, 1000);
+						return false;
+					};
+				});
+			}(mui, document));
+			//监听推送消息
+			mui.plusReady(function() {
+				plus.push.addEventListener('receive', function(msg) {
+					
+					
+					/*//判断消息类型
+					if(msg.title.indexOf('消息')){
+						//刷新消息列表
+						document.getElementById('num').innerText=document.getElementById('num').innerText+1;
+						
+					}else if(msg.title.indexOf('通告')){
+						//刷新通知通告
+						var cata=plus.webview.getWebviewById('cata.html');
+						cata.evalJS('document.getElementbyId("num").innerText=document.getElementbyId("num").innerText+1');
+						
+					}*/
+					
+						//打开消息或通告
+					if(msg.content.substr(0,4)=='消息通知'){
+						
+					    alert(JSON.stringify(msg));
+						mui.openWindow({
+						url: 'html/msg/msg.html',
+						id: 'html/msg/msg.html',
+						show: {
+							aniShow: 'zoom-fade-out'
+						}
+					});
+					}else if(msg.content.substr(0,4)=='通知通告'){
+						mui.openWindow({
+						url: 'html/tongzhi/index3.html',
+						id: 'index3.html',
+						show: {
+							aniShow: 'zoom-fade-out'
+						}
+					});
+					}else if(msg.content.substr(0,4)=='党费通知'){
+						//党费管理
+						var extras = {
+							subpage: "html/pay/pay.html",
+							title: "党费管理",
+							extras:{content:msg.content}
+						};
+						var df = plus.webview.create("coreIndex.html", "coreIndex.html", {}, extras);
+						df.show();
+					}
+				},false);
+				mui.ajax(GetPostUrl.gUrl() + '/loginjm/postCid.json', {
+					data: {
+						clientid: plus.push.getClientInfo().clientid,
+						token: localStorage.getItem('token')
+					},
+					dataType: 'json',
+					type: 'post',
+					success: function(data) {
+						if(data.success) {
+							var nn = document.getElementById('num');
+							nn.innerText = data.obj;	
+							}else {
+							document.getElementById('num').innerText = 0;
+						}
+							
+						}
+					
+
+				})
+			}, false);
+			/**
+			 * 显示消息的数量
+			 */
+			window.addEventListener('refresh', function() {
+				mui.ajax(GetPostUrl.gUrl() + '/loginjm/msgnum.json', {
+					data: {
+						token: localStorage.getItem('token')
+					},
+					dataType: 'json',
+					type: 'post',
+					success: function(data) {
+						if(data.success) {
+							var nn = document.getElementById('num');
+								nn.innerText = data.obj;
+							
+						} else {
+							document.getElementById('num').innerText = 0;
+						}
+					}
+
+				})
+			});
+			//打开消息列表
+			document.getElementById('msg').addEventListener('tap', function() {
+				setTimeout(function() {
+					var extras={subpage:'html/msg/msg.html',title:'消息列表'};
+					var wb=plus.webview.create("coreIndex.html", "coreIndex.html", {}, extras);
+					wb.show();
+				}, 550);
+			});
+		</script>
+
+	</body>
+
+</html>

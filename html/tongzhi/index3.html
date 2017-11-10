@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<style>
+			.mui-bar {background-color: #d62a2a;}
+		</style>
+		<script src="../../js/mui.min.js"></script>
+		<script>
+		 mui.plusReady(function() {
+		    plus.webview.currentWebview().setStyle({scrollIndicator:'none'});
+	 	    var self = plus.webview.currentWebview();    
+			 
+			  var fatherName=self.fatherName;
+			  document.getElementById("head").innerHTML=fatherName;
+			});
+			
+			
+			
+			
+			mui.init({
+			
+			subpages:[{
+				url:'tongzhi.html',
+				id:'tongzhi.html',
+				styles:{
+					top: '45px',
+					bottom: '0px'
+				}
+			}],
+	    beforeback: function(){
+		//获得列表界面的webview	
+		var list = plus.webview.getWebviewById('cata.html');	
+		
+		
+		
+		
+		  //触发列表界面的自定义事件（refresh）,从而进行数据刷新
+		  mui.fire(list,'refresh');
+		 //返回true，继续页面关闭逻辑
+		return true;	
+		
+	    
+	    }
+		});
+		</script>
+		<script>
+		mui.init({
+	
+        });
+		</script>
+	</head>
+	<body>
+		<header class="mui-bar mui-bar-nav" >
+			<a id="back" style="color:#EFEFF4" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 id="head" style="color:#EFEFF4" class="mui-title"></h1>
+			<div style="float: right;"></div>
+		</header>
+	</body>
+</html>

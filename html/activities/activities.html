@@ -1,0 +1,135 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<style>
+			#li{
+				margin-left: 10px;
+				width: 30%;
+				height: 100%;
+			}
+			html,body {
+				height: 100%;
+				background: url(../../images/activities/bjtt.jpg);
+				background-size:100% 100% ;
+				border: none;
+			}
+			#listshowwz{
+				background: transparent;
+			}
+			.mui-table-view:after{
+				height: 0;
+			}
+		</style>
+	</head>
+
+	<body>
+		<script src="../../js/ty.js"></script>
+		<script src="../../js/mui.enterfocus.js"></script>
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/artTemplate.js"></script>
+		<script type="text/javascript">
+			mui.init({
+				
+			})
+		</script>
+		<script id="listshow"type="text/html">
+			{{each items as item i}}
+					<li class="mui-table-view-cell" id="li" data-pic='{{item.pic}}' data-id='{{item.id}}' data-name='{{item.name}}' data-templateId="{{item.templateId}}>
+							<a id="lanmu" herf="#"> 	
+		    		            <img style="width:45%" src="{{item.pic}}" >
+		            		    <div class="mui-media-body" >
+		            		 	   {{item.name}}
+		                		</div> 
+							</a>
+					</li> 
+			{{/each}}		
+		</script>
+		<script>
+			mui.plusReady(function() {
+				var self = plus.webview.currentWebview();
+				var hd_id = self.hd_id;
+				var name = self.name;
+				document.getElementById('title').innerHTML=name;
+				//返回
+				document.getElementById("go_back").addEventListener("tap", function() {
+					mui.back();
+				});
+				//获取栏目列表
+				var str = GetPostUrl.gUrl()+"/activities/catalogList.json";
+				mui.ajax(str,{
+					data:{
+						hdid:hd_id
+					},
+					type: 'post',
+					dataType: 'json',
+					async:'true',
+					timeout: 10000, //超时时间设置为10秒
+					crossDomain: true, //强制使用5+跨域
+				    success: function(data) {
+				    	if(data.msg=="0"){
+				    	    mui.back();
+				    		plus.nativeUI.toast("内容没有上传,请通知管理员。");
+				    	}else{
+					    	var datak={"items":data.obj};
+					    	 var html=template("listshow",datak);
+						    document.getElementById("listshowwz").innerHTML=html;	
+					    }
+				    },
+					error:function(){
+						mui.toast("请检查网络连接...");
+					}
+				});
+				//监听用户点击事件
+				mui('#listshowwz').on('tap', 'li', function() {
+					var id = this.getAttribute('data-id');
+					var name = this.getAttribute('data-name');
+					var templateId = this.getAttribute('data-templateId');
+					var token = localStorage.getItem('token');
+					if(name=="积分答题"){
+						mui.openWindow({
+							url:'../answer/pullrefresh_main.html',
+		              		id:'pullrefresh_main.html',
+		              		extras:{
+			            		hd_id:hd_id,
+					  	  	},
+                show:{
+                aniShow:'zoom-fade-out'	
+                }
+						});
+						
+					}else{
+						    mui.openWindow({
+					            url:'../article/index.html',
+		              		    id:'index',
+		                		extras:{
+			                     	 cataId:id,  //扩展参数
+			                     	 fatherName:name,
+			                     	 templateId:templateId
+		                     	},
+		                     	show:{
+		               				 aniShow:'zoom-fade-out'	
+		               			 }
+			      			 }); 
+					}
+				   
+				});
+				
+			});
+			
+		</script>
+		<header class="mui-bar mui-bar-nav" style="background-color: #d62a2a;height: 45px;">
+			<a id="go_back" class=" mui-icon mui-icon-left-nav mui-pull-left jcytitleFont" style="color:white"></a>
+			<h1 id="title" class="mui-title" style="color:white"></h1>
+		</header>
+			 <div class="mui-scroll" id="aaa"style="margin-top: 45px;">
+                 <ul class=" mui-table-view-chevron mui-table-view mui-grid-view" id="listshowwz">
+                </ul> 
+          </div>
+	</body>
+
+</html>

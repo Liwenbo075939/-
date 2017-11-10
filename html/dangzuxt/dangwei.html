@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<script src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/ty.js" ></script>
+		<script type="text/javascript" src="../../js/artTemplate.js" ></script>
+        <style>
+        	.mui-bar {background-color: #d62a2a;}
+        	
+        	 .m {
+                   line-height: 50px;
+                   max-width: 50px;
+                   height: 50px;
+                   }
+        </style>
+		<title>党委</title>
+		
+		<script type="text/html" id="zhibu">
+			{{each items as item}}
+			<div class="mui-btn mui-btn-danger" style="width: 90%;margin-bottom: 2%;" 
+				id='{{item.id}}' 
+				data-name="{{item.name}}"
+				data-state="{{item.state}}"
+				data-grade="{{item.grade}}">
+					 {{item.name}}
+			</div>
+			{{/each}}
+		</script>
+		<script type="text/javascript">
+			mui.plusReady(function(){
+			    	var self=plus.webview.currentWebview();
+		    	self.setStyle({scrollIndicator:'none'});
+		      mui.ajax(GetPostUrl.gUrl()+'/organlist.json',{
+		    	data:{
+		    		token:localStorage.getItem('token'),
+		    		level:"2",
+		    		id:'1'
+		    	},
+		    	type:'post',
+		    	dataType:'json',
+		    	async:false,
+		    	success:function(data){
+		    		if(data){
+		    			var json={"items":data};
+		    			var html =template('zhibu',json);
+		    			document.getElementById('gebu').innerHTML=document.getElementById('gebu').innerHTML+html;
+		    		}else if(data=='-1'){
+		    			return mui.toast('请重新登录!');
+		    		}
+		    	},
+		    	error:function(e){
+		    		return mui.toast(e.message);
+		    	}
+		    });	
+				
+					
+			mui("#gebu").on('tap','.mui-btn',function(){
+				var name=this.getAttribute('data-name');
+				var id=this.getAttribute('id');
+				var state=this.getAttribute('data-state');
+				var grade=this.getAttribute('data-grade');
+				if(state=='open'){
+						mui.openWindow({
+							url: 'gebu.html',
+							id: 'gebu.html',
+							show: {
+								autoShow: true, //页面loaded事件发生后自动显示，默认为true
+								aniShow: 'zoom-fade-out', //页面显示动画，默认为”slide-in-right“；
+							},
+							extras: {
+								
+								fatherName: name,
+								orgId:id,
+								grade:grade
+							}
+						});
+				}
+				if(state=='closed'){
+					    mui.openWindow({
+							url: 'xiaozu.html',
+							id: 'xiaozu.html',
+							show: {
+								autoShow: true, //页面loaded事件发生后自动显示，默认为true
+								aniShow: 'zoom-fade-out', //页面显示动画，默认为”slide-in-right“；
+							},
+							extras: {
+								
+								fatherName: name,
+								orgId:id,
+								grade:grade
+							}
+						});
+				}
+			
+			});
+			
+			
+			 document.getElementById('home').addEventListener('tap',function(){
+	        	var home=plus.webview.getWebviewById('layout.html');
+	        	home.show();
+	        });
+			
+			   	
+			
+			
+			
+			});
+			
+			
+		</script>
+	</head>
+	<body>
+		<div class="mui-bar mui-bar-nav" >
+			<a id="home"><span style="color:#EFEFF4" class="mui-icon mui-icon-home mui-pull-right"></span></a>
+			<a id="back" style="color:#EFEFF4" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 id="head" style="color:#EFEFF4" class="mui-title">基层党建</h1>
+		</div>
+		<div class="mui-content">
+		<div class="mui-card" style="margin-bottom: 35px;margin-top: 10px;text-align: center;">
+				
+				
+				
+				<h3>基层党组织</h3>
+				 <div style="border:1px solid #ACB7C0;width: 100%;height:1px;margin-bottom: 5%;"></div>
+				<div id="gebu" >
+			
+				</div>
+					
+				
+			</div>
+		</div>	
+	</body>
+</html>

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" href="../../css/icons-extra.css">
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/ty.js"></script>
+		<script src="../../js/artTemplate.js" ></script>
+		<style>
+			.mui-bar {background-color: #d62a2a;}
+			
+			html,
+			body {
+				height: 100%;
+				background:url(../../images/activities/bt.png);
+				background-size:100% 100%;
+			}
+			
+			#title{
+				height:180px;
+				background-size: 100%;
+			}
+		</style>
+		<script>
+	mui.init({
+		});
+		mui.ready(function() {
+			var deceleration = mui.os.ios ? 0.003 : 0.0009;
+			mui('.mui-scroll-wrapper').scroll({
+				bounce: false,
+				indicators: true, //是否显示滚动条
+				deceleration: deceleration,
+			});
+		    
+			
+			
+		});
+		mui.plusReady(function() {
+			var cataid=plus.webview.currentWebview().cataId;
+			if(cataid==555){
+				document.getElementById('head').innerText="两学一做";
+				document.getElementById('title').style.backgroundImage="url(../../images/activities/liangxue.png)";
+				document.getElementById('fa').style.display="block";
+			}else if(cataid==444){
+				document.getElementById('head').innerText="三会一课";
+				document.getElementById('title').style.backgroundImage="url(../../images/activities/sanhui.png)";
+				document.getElementById('zd').style.display="block";
+			}else if(cataid==666){
+				document.getElementById('head').innerText="四个意识";
+				document.getElementById('title').style.backgroundImage="url(../../images/activities/sigeyishi.png)";
+				document.getElementById('fa').style.display="block";
+			}
+		    
+		    
+		    mui(".mui-table-view").on('tap','.mui-table-view-cell',function(){
+		    	var cataID=cataid;
+		    	console.log(cataID);
+		    	var type=this.getAttribute("data-type");
+		    	var fatherName=this.getAttribute("data-name");
+		    	mui.openWindow({
+             		url:'../article/index.html',
+                    extras:{
+                    cataId:cataID,  //扩展参数
+                    type:type,
+                    fatherName:fatherName
+                    },
+                show:{
+                aniShow:'zoom-fade-out'	
+                }   		
+             	});
+		    	
+		    });
+		    
+		})
+	    	
+			
+							
+		</script>
+	</head>
+	<body>
+		<header class="mui-bar mui-bar-nav" >
+			<a id="back" style="color:#EFEFF4" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 id="head" style="color:#EFEFF4" class="mui-title"></h1>
+		</header>
+		<div style="padding-top: 45px;">
+		<div id="title" >
+			
+		</div>
+		<ul class="mui-table-view">
+				<li id="fa" data-type="1" data-name="活动方案" class="mui-table-view-cell" style="display: none;">
+					<a class="mui-navigate-right">
+						<span style="display: block;width: 40%;">
+					<img src="../../img/fangan1.png" style="width:16%; float: left;"/> &nbsp;活动方案</span>
+					</a>
+				</li>
+				<li id="zd" data-type="3"  data-name="制度规定" class="mui-table-view-cell" style="display: none;">
+					<a class="mui-navigate-right">
+						<span style="display: block;width: 40%;">
+					<img src="../../img/zhidu.png" style="width:16%; float: left;"/> &nbsp;制度规定</span>
+					</a>
+				</li>
+				<li data-type="2" data-name="活动图片" class="mui-table-view-cell">
+					<a class="mui-navigate-right">
+						<span style="display: block;width: 40%;">
+					<img src="../../img/huodong1.png" style="width:16%; float: left;"/> &nbsp;活动图片</span>
+					</a>
+				</li>
+				
+				<li data-type="4" data-name="学习资料" class="mui-table-view-cell">
+					<a class="mui-navigate-right">
+						<span style="display: block;width: 40%;">
+					<img src="../../img/ziliao.png" style="width:16%; float: left;"/> &nbsp;学习资料</span>
+					</a>
+				</li>
+			</ul>
+		</div>
+	</body>
+</html>

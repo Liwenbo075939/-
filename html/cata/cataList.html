@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html style="height:100%">
+
+	<head>
+		<meta charset="utf-8">
+		<title>Hello MUI</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<script id='cata' type="text/html">
+		{{each items as item i}}
+			<li class="mui-table-view-cell mui-media"  id="{{item.id}}" 
+				data-showNextClumn="{{item.showNextColumn}}"  
+				data-templateId="{{item.templateId}}"
+				data-name="{{item.name}}"
+				data-organId="{{item.organ}}" style="height: 60px;">
+						<a href="javascript:;">
+							<img class=" mui-pull-left" src="{{item.pic}}" style="width: 25px;">
+							<div class="mui-media-body" style="font-size: 1em;line-height: 1.5em;margin-left: 10%;">
+								{{item.name}}	
+							</div>
+						</a>
+					</li>
+		{{/each}}	
+		</script>
+	</head>
+
+	    <body style="height:100%">
+	
+					   <ul class="mui-table-view "  id="c" >
+					  </ul>
+				
+			
+		</div>
+		 <input id="cataId" vaue="" type="hidden"/>
+		<script src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/ty.js" ></script>
+		<script type="text/javascript" src="../../js/artTemplate.js" ></script>
+		<script>
+		    
+			mui.plusReady(function() {	
+			var self=plus.webview.currentWebview();
+			var cataID=self.cataId;
+			var num=self.num;
+			var fatherName=self.fatherName;
+			document.getElementById("cataId").value=cataID;
+			//本来如果是学习心声 在这里就会加载的  但是现在 学习心声 变成了二级栏目
+			data("-1","-1",cataID);
+			//加载子栏目或文章
+			mui("#c").on('tap','li',function(e){
+				var showNextClumn=this.getAttribute("data-showNextClumn");
+				var cataId=this.getAttribute("id");
+				var name=this.getAttribute("data-name");
+				var organId=this.getAttribute("data-organId");
+				if(showNextClumn=="1"){
+					//有子栏目
+					mui.openWindow({
+                    url:'../cata/index.html',
+                    id:'index'+num,
+                    extras:{
+                    cataId:cataId,  //扩展参数
+                    fatherName:name,
+                    num:num+1
+                    
+                    }
+                 });
+                //打开学习心声界面
+				}else if(cataId==112){
+					 mui.openWindow({
+                     url:'xuexixinsheng.html',
+                id:'xuexixinsheng.html',
+                extras:{
+                cataId:cataId,  //扩展参数
+                fatherName:name
+                }
+                });
+				}else if(cataId==128){
+					//党纪党规
+						var extras = {
+							subpage: "html/danggui/dangguiList.html",
+							title: "党纪党规",
+							extras:{cataId: cataId}
+						};
+						var df = plus.webview.create("../../coreIndex.html", "../../coreIndex.html", {}, extras);
+						df.show();
+				}else if(cataId=='131'){
+						var extras={subpage:'html/dangzuxt/jianjie.html',title:'基层党建',extras:{jc:"jc"}};
+						var liu =  plus.webview.create("../../coreIndex.html", "../../coreIndex.html", {}, extras);
+						liu.show();
+				}else if(cataId == "101") {
+						//组织架构
+						mui.openWindow({
+							url: '../dangzu/jianjie.html',
+							id: 'jianjie.html',
+							show: {
+								aniShow: 'zoom-fade-out'
+							},
+							extras: {
+
+								fatherName: name
+                               
+							}
+
+						});
+				}else{
+				var  templateId=this.getAttribute("data-templateId");	
+				//打开文章列表页面
+		    	 mui.openWindow({
+                url:'../article/index.html',
+                id:'articleList',
+                extras:{
+                cataId:cataId,  //扩展参数
+                fatherName:name,
+                templateId:templateId,
+                organId:organId
+                }
+                });
+																				
+				}								
+			});		  
+			});
+		</script>
+		<script>
+			
+			var data=function(pageNum,pageSize,cataId){
+				
+				 mui.ajax(GetPostUrl.gUrl()+'/cata.json', {
+			data: {
+				
+				catalogId:cataId,				
+				pageSize:pageSize,
+				pageNum:pageNum,
+				token:localStorage.getItem("token")
+			},
+			type: 'post',
+			dataType: 'json',
+			async: false,
+			success: function(data) {
+					if(data.success) {
+						var level=localStorage.getItem('level');
+						console.log(level);
+						if(level=='2'){
+							//县区局不显示基层党建  并且将 名称从  机关党委 改为  组织架构
+							var array=new Array();
+							for(var x in data.obj){
+								console.log(JSON.stringify(data.obj));
+								if(data.obj[x].id!='131'){
+									
+									array[x]=data.obj[x];
+								}
+								if(data.obj[x].id=='101'){
+									data.obj[x].name='组织架构';
+								}
+							}
+							data.obj=array;
+						}
+						var datak={"items":data.obj};
+				        var html=template("cata",datak);
+					    document.getElementById("c").innerHTML=html;
+					} else {
+						mui.toast("很抱歉，获取失败 ");
+					}
+			
+			}
+		    })
+				
+			}
+		</script>
+	</body>
+
+</html>

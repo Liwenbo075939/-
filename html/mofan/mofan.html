@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/ty.js"></script>
+		<script src="../../js/artTemplate.js"></script>
+		<style>
+			  #segmentedControl{
+		    	border:1px solid floralwhite;
+		    }
+			#segmentedControl .mui-active{
+				background-color:#FFB400;
+				color: #FFFFFF;
+			}
+			#segmentedControl a{
+				color: #FFB400;
+				border-left: 1px solid #FFB400;
+			}
+			#li1{
+				background-color: rgb(255,243,163);
+				
+			}
+			#li2{
+				background-color: rgb(255,243,163);
+				
+			}
+			h5{
+				color: rgb(255,18,0);
+			}
+			#title{
+				height: 170px;
+				background: url(../../images/shidai/shidaixian.png);
+				background-size:100%;
+				background-repeat: no-repeat;
+			}
+			.mui-switch {
+				width:90px;
+			}
+			/*开关的样式*/
+			.mui-switch:before {
+				content:'市局';
+				right: 10px;
+			}
+			.mui-switch.mui-active:before {
+				content:'县局';
+				
+			}
+			.mui-switch.mui-dragging {
+				border-color: #f7f7f7;
+				/*托拽时的背景色*/
+	            background-color: #f7f7f7
+				
+			}
+			.mui-switch.mui-active .mui-switch-handle {
+	           -webkit-transform: translate(60px, 0);
+	            transform: translate(60px, 0)
+            }
+		</style>
+			<!--
+            	作者：offline
+            	时间：2017-08-03
+            	描述：集体荣誉
+            -->
+			<script type="text/html" id="ps">
+			{{each items as item i}}
+			<li  data-dictid="{{item.dictid}}" data-yearly="{{item.yearly}}" class="mui-table-view-cell">
+					<div class="mui-table mui-navigate-right">
+					<div class="mui-table-cell mui-col-xs-4 mui-text-center">
+						<span class="mui-h5 abc" style="color: #000000;">{{item.yearly}}年</span>
+					</div>
+
+					<div class="mui-table-cell mui-col-xs-4 mui-text-center">
+						<p class=" mui-ellipsis" style="color: #000000;">{{item.dictName}}</p>
+					</div>
+
+					<div class="mui-table-cell mui-col-xs-4 mui-text-center">
+						<span class="mui-h5" style="color: #000000;">{{item.countNum}}</span>
+					</div>
+				</div>
+			 </li>
+			{{/each}}
+		</script>
+		<script type="text/javascript" charset="utf-8">
+			var count = 0;//当前页数
+			var pageSize = 10;//每页显示多少
+			var type=0;     //上拉或加载的标识
+			var type2=1;    //个体荣誉和集体荣誉的标识
+			var level=localStorage.getItem('ecode');  //市局和县的标识
+			var oid=localStorage.getItem('organId');
+			
+			mui.init({
+				pullRefresh: {
+					container: '#pullrefresh',
+					down: { //下拉刷新					       
+						auto: true,
+						contentdown: "下拉可以刷新", //可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+						contentover: "释放立即刷新", //可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+						contentrefresh: "正在刷新...", //可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+						callback: pulldownRefresh     //下拉刷新要执行的方法
+					}
+				}
+			});
+			function pulldownRefresh() {
+				setTimeout(function() {
+					count = 1; //刷新并显示第一页
+					data = {
+
+						pageNum: count,
+						pageSize: pageSize,
+						token: localStorage.getItem("token"),
+						type:type2,
+						level:level,
+						oid:oid
+					};
+				    type = 1;        //1代表下拉刷新
+					toList(data, type); //具体取数据的方法
+				}, 100);
+			};
+		
+			var toList = function(data, type) {
+                //注意：下拉刷新完毕后执行如下方法
+                //该方法的作用是关闭“正在刷新”的样式提示，内容区域回滚顶部位置
+                //mui('#pullrefresh').pullRefresh().endPulldown();
+                //上拉加载完毕后执行如下方法
+                //mui('#pullrefresh').pullRefresh().endPullupToRefresh(false);
+                //该方法的作用是 显示“上拉显示更多”的提示语或显示“没有更多数据了”的提示语
+                //若还有更多数据，则传入false; 否则传入true.
+                	mui.ajax(GetPostUrl.gUrl() + '/lasthonor.json', {
+					data: data,
+					type: 'post',
+					dataType: 'json',
+					async: 'true',
+					success: function(data) {
+						console.log(JSON.stringify(data));
+                    if(data.success){
+                    	        var flag=data.obj.length>0?false:true;
+                    	        //2.创建数据json
+								var data1 = {"items": data.obj};
+								//3.关联模板第一个参数是模板id
+								var html = template('ps', data1);
+								
+                    	if(type==1){
+                    		mui('#pullrefresh').pullRefresh().refresh(true);
+                    		mui('#pullrefresh').pullRefresh().endPulldownToRefresh();
+                    	}
+                    	if(type==2){
+                    		mui('#pullrefresh').pullRefresh().endPullupToRefresh(flag);
+                    		if(type2==1){
+                    			html=document.getElementById("paylist").innerHTML+html;
+                    		}else{
+                    			html=document.getElementById("paylist2").innerHTML+html;
+                    		}
+                    		
+                    	}
+                    	//4. 插入html
+                    	if(type2==1){
+                    		document.querySelector("#paylist").innerHTML = html;
+                    	}else{
+                    		document.querySelector("#paylist2").innerHTML = html;
+                    	}
+						
+                    	localStorage.removeItem('time');
+                    }
+					
+					}
+				});
+			}
+			
+			mui.plusReady(function() {//去除滚动条
+				if(level=="2"){
+					document.getElementById("switch").style.visibility="hidden";;
+				}
+		    	plus.webview.currentWebview().setStyle({scrollIndicator:'none'});
+		    	
+		    	document.getElementById('jt').addEventListener('tap',function(){
+		    		type2=2;
+		    		pulldownRefresh();
+		    		mui("#item2")[0].style.display="block";
+		    	});
+		    	document.getElementById('gr').addEventListener('tap',function(){
+		    		level=localStorage.getItem('ecode');
+		    		type2=1;
+		    		pulldownRefresh();
+		    		mui("#item2")[0].style.display="none";
+		    	});
+		    	/**
+		    	 * 点击事件
+		    	 */
+		    	mui("#paylist").on('tap',".mui-table-view-cell",function(){
+		    		//查看获奖年度人员列表
+		    		var dictid=this.getAttribute('data-dictid');
+		    		var yearly=this.getAttribute('data-yearly');
+		    	    var extras={dictid:dictid,yearly:yearly,type:type2,oid:oid,level:level};
+		    		var wb=plus.webview.create("yearList.html","yearList.html",{},extras);
+		    		wb.show();
+		    	});
+		    	mui("#paylist2").on('tap',".mui-table-view-cell",function(){
+		    		//查看获奖年度支部列表
+		    	    var dictid=this.getAttribute('data-dictid');
+		    		var yearly=this.getAttribute('data-yearly');
+		    		console.log(type2);
+		    	    var extras={dictid:dictid,yearly:yearly,type:type2,oid:oid,level:level};
+		    		var wb=plus.webview.create("yearList.html","yearList.html",{},extras);
+		    		wb.show();
+		    	});
+		    	//切换市和县
+		    	mui(".mui-switch")[0].addEventListener('toggle', function(event) {
+			  	    if(event.detail.isActive){
+			  	    	level=1;
+			  	    }else{
+			  	    	level=2;
+			  	    }
+			  	    pulldownRefresh();
+			  });
+		    	
+		    });
+		</script>
+	</head>
+
+	<body>
+		<div class="mui-content" style="background-color:#FFFFFF ;"><!-- 分页显示的内容区 这里的例子是一个列表 -->
+			<div id="title"></div>
+             <div >
+				<div id="segmentedControl" class="mui-segmented-control">
+					<a class="mui-control-item mui-active" href="#item1" id="gr">
+				个人荣誉
+			</a>
+					<a class="mui-control-item" href="#item2" id="jt">
+				集体荣誉
+			</a>
+					
+				</div>
+			</div>
+			
+			<div>
+				<div id="item1" class="mui-control-content mui-active">
+						<div id="pullrefresh" class="mui-content mui-scroll-wrapper" style="height:100%;background: transparent;">
+				<div class="mui-scroll">
+					<ul class="mui-table-view mui-table-view-striped mui-table-view-condensed" id="item2ul" >
+						<li id="li2"  class="mui-table-view-cell" >
+							<div class="mui-table">
+								<div class="mui-table-cell mui-col-xs-4 mui-text-center">
+									<h5>获得时间</h5>
+								</div>
+								<div class="mui-table-cell mui-col-xs-4 mui-text-center">
+									<h5>荣誉名称</h5>
+								</div>
+								<div class="mui-table-cell mui-col-xs-4 mui-text-center">
+									<h5>数量</h5>
+								</div>
+							</div>
+						</li>
+					</ul>
+
+					<ul class="mui-table-view mui-table-view-striped mui-table-view-condensed" id="paylist">
+                    <!-- 动态加载列表的数据区 -->
+					</ul>
+				</div>
+			</div>
+				</div>
+				<div id="item2" class="mui-control-content mui-active" style="display: none;">
+							<div id="pullrefresh" class="mui-content mui-scroll-wrapper" style="height:100%;background: transparent;">
+				<div class="mui-scroll">
+					 <ul id="switch" style="background-color: #FFFFFF;margin:0 0 0 0;">
+				        <li class="mui-table-view-cell">
+					    <span></span>
+					    <div class="mui-switch mui-active">
+						<div class="mui-switch-handle"></div>
+					    </div>
+				       </li>
+				    </ul>
+			        <ul class="mui-table-view mui-table-view-striped mui-table-view-condensed" id="item2ul" >
+						<li id="li2"  class="mui-table-view-cell" >
+							<div class="mui-table">
+								<div class="mui-table-cell mui-col-xs-4 mui-text-center">
+									<h5>获得时间</h5>
+								</div>
+								<div class="mui-table-cell mui-col-xs-4 mui-text-center">
+									<h5>荣誉名称</h5>
+								</div>
+								<div class="mui-table-cell mui-col-xs-4 mui-text-center">
+									<h5>数量</h5>
+								</div>
+							</div>
+						</li>
+					</ul>
+                    
+					<ul class="mui-table-view mui-table-view-striped mui-table-view-condensed" id="paylist2">
+                    <!-- 动态加载列表的数据区 -->
+					</ul>
+				</div>
+			</div>
+				</div>
+				
+				
+				
+				
+			</div>
+		
+
+		</div>
+	</body>
+	
+
+</html>

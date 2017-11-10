@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../../css/mui.min.css">	
+	    <style>
+			ul{
+				background: transparent;
+			}
+			html,body {
+				
+				background:url(../../images/activities/bj3.jpg);
+				background-size:cover ;
+				border: none;
+			}
+			.mui-content{
+				background: transparent;
+			}
+			#msglist{
+				background: transparent;
+			}
+	    </style>
+	</head>
+	<body >
+		<div id="pullrefresh" class="mui-content mui-scroll-wrapper">
+		     <div class="mui-scroll" >
+		          <ul class="mui-table-view mui-table-view-chevron " id="msglist">
+		              
+		          </ul>
+		     </div>     
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js" ></script>
+		<script type="text/javascript" src="../../js/ty.js" ></script>
+		<script src="../../js/artTemplate.js"></script>
+		<script type="text/html" id="mm">
+			{{each items as item}}
+			    <li class="mui-table-view-cell mui-media" data-id="{{item.id}}" data-ctime="{{item.ctime}}" data-headpic = "{{item.puter.headpic}}"
+			    	  data-puter="{{item.puter.name}}" data-content="{{item.content}}"  data-hasRead="{{item.hasRead}}" style="padding-right: 2%;border-top: 3px solid 	#D2E9FF;"> 
+			    	      <span style="display: block;float: right;"><font class="hasRead" size="2" >{{item.hasRead}}</font></span>
+			    	     <!-- <span style="display: block;float: left;width: 20%;"><img src="{{item.puter.headpic}}" style="border-radius:50%; width: 16vw;"/></span>-->
+				          <div class="mui-media-body" > 
+			                      <font size='3em'>发自:</font>
+			                      <font size='3em'> {{item.puter.name}} </font>                
+			                      <p  class='mui-ellipsis' style="color: #000000;">{{item.content}}</p>
+			                      <p> <font size='2em' style="color: #000000;">{{item.ctime}}</font></p>
+					           
+				         </div>
+				</li>
+		    {{/each}}
+		</script>
+		<script>
+			mui.init({
+				swipeBack: false,
+				pullRefresh: {
+					container: '#pullrefresh',
+					down: {
+						callback: pulldownRefresh
+					},
+					up: {
+						contentrefresh: '正在加载...',
+						callback: pullupRefresh
+					}
+				},
+				beforeback: function(){
+				     var layout = plus.webview.getWebviewById('layout.html');	
+					if(layout==null){
+
+					  return true;
+					}else{
+
+					  mui.fire(layout,'refresh');
+					  return true;	
+					}
+		       }
+				
+			});
+			/**
+			 * 下拉刷新具体业务实现
+			 */
+			
+			function pulldownRefresh() {
+				type=0;
+				setTimeout(function() {
+					count=1;
+					data(count,pageSize);					
+					mui('#pullrefresh').pullRefresh().endPulldownToRefresh(); //refresh completed
+					mui('#pullrefresh').pullRefresh().refresh(true);
+				}, 1000);
+			}
+			var count = 1;
+			var pageSize=5;
+			var type=0; //刷新
+			/**
+			 * 上拉加载具体业务实现
+			 */
+			function pullupRefresh() {
+				
+				setTimeout(function() {
+					//向后台发送请求消息列表的请求
+					count++
+			mui.ajax(GetPostUrl.gUrl()+'/msglist.json',{
+				data:{
+					token:localStorage.getItem('token'),
+					pageNum:count,
+					pageSize:pageSize
+				},
+				dataType:'json',
+				type:'post',
+				success:function(data){
+					if(data.obj.length>0){
+					 var data1 = { "items": data.obj };
+					
+					 var html = template('mm', data1);
+
+					 document.querySelector("#msglist").innerHTML=document.querySelector("#msglist").innerHTML+html;
+					 mui('#pullrefresh').pullRefresh().endPullupToRefresh((false));
+   	
+					}else{
+						mui('#pullrefresh').pullRefresh().endPullupToRefresh((true)); //参数为true代表没有更多数据了。
+					}
+					
+					var hasRead= document.getElementsByClassName("hasRead");
+					for(var i=0;i<hasRead.length;i++){
+						if(hasRead[i].innerHTML=="0"){
+							hasRead[i].innerHTML="未读";
+						};
+						if(hasRead[i].innerHTML=="1"){
+							hasRead[i].innerHTML="已读";
+						};
+						
+					}
+					 
+				},
+				error:function(data){
+					mui.toast("加载消息失败");
+				}
+			});
+					
+				}, 1000);
+			}
+			
+			var data=function(pageNum,pageSize){
+				
+			//向后台发送请求消息列表的请求
+			mui.ajax(GetPostUrl.gUrl()+'/msglist.json',{
+				data:{
+					token:localStorage.getItem('token'),
+					pageNum:pageNum,
+					pageSize:pageSize
+				},
+				dataType:'json',
+				type:'post',
+				success:function(data){
+					if(data.obj!=null&&data.obj.length>0){
+					 var data1 = { "items": data.obj };
+					
+					 var html = template('mm', data1);
+					 if(type==0){
+					 	document.querySelector("#msglist").innerHTML=html;
+					 };
+					 if(type==1){
+					 	document.querySelector("#msglist").innerHTML=document.querySelector("#msglist").innerHTML+html;
+					 	mui('#pullrefresh').pullRefresh().endPullupToRefresh((false));
+					 };
+					        	
+					}else{
+						mui('#pullrefresh').pullRefresh().endPullupToRefresh((true)); //参数为true代表没有更多数据了。
+					}
+					
+					var hasRead= document.getElementsByClassName("hasRead");
+					for(var i=0;i<hasRead.length;i++){
+						if(hasRead[i].innerHTML=="0"){
+							hasRead[i].innerHTML="未读";
+						};
+						if(hasRead[i].innerHTML=="1"){
+							hasRead[i].innerHTML="已读";
+						};
+						
+					}
+					 
+				},
+				error:function(data){
+					mui.toast("加载消息失败");
+				}
+			});
+			};
+			mui.plusReady(function(){
+			plus.webview.currentWebview().setStyle({scrollIndicator:'none'});
+			data(count,pageSize);
+			
+			});
+			
+				mui('#msglist').on('tap','li',function(){
+					var msgPutId=this.getAttribute("data-id");
+					var ctime=this.getAttribute("data-ctime");
+					var puter=this.getAttribute("data-puter");
+					var content=this.getAttribute("data-content");
+					var hasRead=this.getAttribute("data-hasRead");
+					var headpic=this.getAttribute("data-headpic");
+					setTimeout(function(){
+					mui.openWindow({
+						url:'msgcontent.html',
+						id:'msgcontent',
+						show:{
+                        aniShow:'zoom-fade-out'	
+                       },
+                       extras:{
+                       	 msgPutId:msgPutId,
+                       	 ctime:ctime,
+                       	 puter:puter,
+                       	 content:content,
+                       	 hasRead:hasRead,
+                       	 headpic:headpic
+                       }
+					});
+					},0);
+				});
+				window.addEventListener('refresh',function(){
+					
+					pulldownRefresh();
+					console.log("刷新列表！");
+				});
+				
+				 
+		</script>
+	</body>
+</html>

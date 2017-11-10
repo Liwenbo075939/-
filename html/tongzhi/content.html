@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/ty.js"></script>
+		<script src="../../js/artTemplate.js"></script>
+		<style>
+		
+			.mui-bar {
+				background-color: #d62a2a;
+			}
+			.mui-table-view-cell:after {
+				left:0px;
+		    }
+				
+			
+			
+			.mui-table-view{
+				filter: alpha(Opacity=100);
+				-moz-opacity: 0.7;
+				opacity: 0.7;
+			}	
+			 .mui-content {
+				background: transparent;
+			}
+			
+			#contentdiv{
+				filter: alpha(Opacity=100);
+				-moz-opacity: 0.7;
+				opacity: 0.7;
+			}
+		</style>
+		<script id="qianS" type='text/html'>
+			{{each items as item}}
+			<li class="mui-table-view-cell" style="color:#B22222">{{item.deptName}}</li>
+			{{/each}}
+		</script>
+		<script id="weiqian" type='text/html'>
+			{{each items as item}}
+			<li class="mui-table-view-cell" style="font-size: 17px;">{{item.deptName}}</li>
+			{{/each}}
+		</script>
+		<script>
+		    mui.init({
+				beforeback: function() {
+					//获得列表界面的webview
+					var list = plus.webview.getWebviewById('tongzhi.html');
+					if(list != null) {
+						//触发列表界面的自定义事件（refresh）,从而进行数据刷新
+						mui.fire(list, 'refresh');
+						//返回true，继续页面关闭逻辑
+						return true;
+					} else {
+						//返回true，继续页面关闭逻辑
+						return true;
+					}
+
+				}
+			});
+			mui.plusReady(function() {
+				var self = plus.webview.currentWebview();
+				self.setStyle({scrollIndicator:'none'});
+				var taskId = self.taskId;
+				var content = self.content;
+				var creatime=self.creatime;
+				var creator=self.creator;
+				var isComplete = self.isComplete;
+				var title=self.title;
+                document.getElementById('title').innerHTML=title;
+				document.getElementById('content').innerHTML = content;
+				document.getElementById('creatime').innerHTML = creatime;
+				document.getElementById('creator').innerHTML = creator;
+                //==nomal==//
+               if(isComplete==""){
+                	document.getElementById('qian').innerHTML='<span></span>';
+                }
+                if(isComplete=='1'){
+                	document.getElementById('qian').innerHTML='<span>已签收</span>';
+                }
+                
+                
+                
+                
+                
+                var person=function(){
+                	
+                				mui.ajax(GetPostUrl.gUrl() + '/taskStatus.json', {
+					data: {
+						token: localStorage.getItem('token'),
+						taskid: taskId
+					},
+					type: 'post',
+					dataType: 'json',
+					async: 'false',
+					success: function(data) {
+						var j=0;
+						var qian=[];
+						var k=0;
+						var weiqian=[];
+						for(var i=0;i<data.rows.length;i++){
+							//==未签收
+							if(data.rows[i].status==1){
+								qian[k]=data.rows[i];
+								k++;
+							}
+							if(data.rows[i].status==0){
+								weiqian[j]=data.rows[i];
+								j++;
+							}
+						}
+						var json1={'items':qian};
+						var json2={'items':weiqian};
+						var html1=template('qianS',json1);
+						var html2=template('weiqian',json2);
+						document.getElementById('Q').innerHTML=html1;
+						document.getElementById('W').innerHTML=html2;
+					},
+					error: function(data) {
+
+					}
+				});
+                }
+	
+               
+                person();
+               
+               document.getElementById('qian').addEventListener('tap',function(){
+               	   	if(document.getElementById('qian').querySelector('span').innerHTML == '已签收') {
+						return mui.toast('已签收此通知!');
+					}
+					mui.ajax(GetPostUrl.gUrl() + '/replyTask.json', {
+						data: {
+							token: localStorage.getItem('token'),
+							taskid: taskId,
+							organId:localStorage.getItem('organId')
+						},
+						type: 'post',
+						dataType: 'json',
+						async: 'false',
+						success: function(data) {
+							if(data) {
+								
+								person();
+								document.getElementById('qian').innerHTML = '<span>已签收</span>';
+							} else if(data == -1) {
+								return mui.toast('请重新登录!');
+							} else {
+								return mui.toast('网络异常!');
+							}
+						}
+					});
+               });
+				
+			});
+		</script>
+	</head>
+
+	<body>
+		<div class="mui-content">
+			<header class="mui-bar mui-bar-nav">
+				<a id="back" style="color:#EFEFF4" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+				<h1 id="head" style="color:#EFEFF4" class="mui-title">通告详情</h1>
+				<a id="qian" style='float: right;margin-top:3.5% ;color:#EFEFF4' ><span>签收</span></a>
+			</header>
+		 <div id='contentdiv' style="margin:2%;margin-top:45px;background-color: #FFFFFF;">
+         <div style="margin:0 auto;">  
+		 <div style="margin:0 auto;width:95%;padding-top:2% ;"><h3 id="title"  ></h3></div>	
+		 <div style="width:60%;padding:2%;">
+		 	<p>发布人:<font size="2" id='creator'></font></p>
+		    <p>发布于:<font size="2" id='creatime'></font></p>
+		 </div>	
+		 <div id="content"style="width:95%;margin:0 auto;text-indent: 2em;"></div>
+         </div>
+		</div>
+			<div id='pingdiv' style="margin:2%;">
+             <div style='width: 100%;'>
+             	<ul class="mui-table-view" >
+             	 <img src="../../img/r.jpg" height="20px;"  style="float:right;margin: 4%;"/>
+				 <li class="mui-table-view-cell" style="color:#B22222" >已签收</li>
+		        
+			</ul>
+			<ul class="mui-table-view" id="Q">
+				 
+		        
+			</ul>
+             </div>
+             <div style='width: 100%;'>
+             	<ul class="mui-table-view" >
+				 <li class="mui-table-view-cell" >未签收</li>
+		         
+			    </ul>
+			    <ul class="mui-table-view" id="W">
+				
+		         
+			    </ul>
+             </div>
+			</div>
+		</div>
+	</body>
+
+</html>

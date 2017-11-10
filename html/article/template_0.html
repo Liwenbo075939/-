@@ -1,0 +1,592 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html >
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta name="viewport" content="width=device-width">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../../css/mui.min.css"/>
+		<link rel="stylesheet" href="../../css/app.css"/>
+		<script src="../../js/ty.js"></script>
+		<script src="../../js/artTemplate.js" ></script>
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/common.js"></script>
+		<script src="../../js/mui.zoom.js"></script>
+		<script src="../../js/mui.previewimage.js"></script>
+		<style>
+			.mui-content {
+            background-color: #FFF; }
+   
+           #ddd.mui-table-view:before {
+           	background-color: #FFF;
+           }
+           .delete{
+           	display: none;
+           }
+           
+           
+           
+           
+           .mui-preview-image.mui-fullscreen {
+				position: fixed;
+				z-index: 20;
+				background-color: #000;
+			}
+			.mui-preview-header,
+			.mui-preview-footer {
+				position: absolute;
+				width: 100%;
+				left: 0;
+				z-index: 10;
+			}
+			.mui-preview-header {
+				height: 44px;
+				top: 0;
+			}
+			.mui-preview-footer {
+				height: 50px;
+				bottom: 0px;
+			}
+			.mui-preview-header .mui-preview-indicator {
+				display: block;
+				line-height: 25px;
+				color: #fff;
+				text-align: center;
+				margin: 15px auto 4;
+				width: 70px;
+				background-color: rgba(0, 0, 0, 0.4);
+				border-radius: 12px;
+				font-size: 16px;
+			}
+			.mui-preview-image {
+				display: none;
+				-webkit-animation-duration: 0.5s;
+				animation-duration: 0.5s;
+				-webkit-animation-fill-mode: both;
+				animation-fill-mode: both;
+			}
+			.mui-preview-image.mui-preview-in {
+				-webkit-animation-name: fadeIn;
+				animation-name: fadeIn;
+			}
+			.mui-preview-image.mui-preview-out {
+				background: none;
+				-webkit-animation-name: fadeOut;
+				animation-name: fadeOut;
+			}
+			.mui-preview-image.mui-preview-out .mui-preview-header,
+			.mui-preview-image.mui-preview-out .mui-preview-footer {
+				display: none;
+			}
+			.mui-zoom-scroller {
+				position: absolute;
+				display: -webkit-box;
+				display: -webkit-flex;
+				display: flex;
+				-webkit-box-align: center;
+				-webkit-align-items: center;
+				align-items: center;
+				-webkit-box-pack: center;
+				-webkit-justify-content: center;
+				justify-content: center;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				top: 0;
+				width: 100%;
+				height: 100%;
+				margin: 0;
+				-webkit-backface-visibility: hidden;
+			}
+			.mui-zoom {
+				-webkit-transform-style: preserve-3d;
+				transform-style: preserve-3d;
+			}
+			.mui-slider .mui-slider-group .mui-slider-item img {
+				width: auto;
+				height: auto;
+				max-width: 100%;
+				max-height: 100%;
+			}
+			.mui-android-4-1 .mui-slider .mui-slider-group .mui-slider-item img {
+				width: 100%;
+			}
+			.mui-android-4-1 .mui-slider.mui-preview-image .mui-slider-group .mui-slider-item {
+				display: inline-table;
+			}
+			.mui-android-4-1 .mui-slider.mui-preview-image .mui-zoom-scroller img {
+				display: table-cell;
+				vertical-align: middle;
+			}
+			.mui-preview-loading {
+				position: absolute;
+				width: 100%;
+				height: 100%;
+				top: 0;
+				left: 0;
+				display: none;
+			}
+			.mui-preview-loading.mui-active {
+				display: block;
+			}
+			.mui-preview-loading .mui-spinner-white {
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				margin-left: -25px;
+				margin-top: -25px;
+				height: 50px;
+				width: 50px;
+			}
+			.mui-preview-image img.mui-transitioning {
+				-webkit-transition: -webkit-transform 0.5s ease, opacity 0.5s ease;
+				transition: transform 0.5s ease, opacity 0.5s ease;
+			}
+			@-webkit-keyframes fadeIn {
+				0% {
+					opacity: 0;
+				}
+				100% {
+					opacity: 1;
+				}
+			}
+			@keyframes fadeIn {
+				0% {
+					opacity: 0;
+				}
+				100% {
+					opacity: 1;
+				}
+			}
+			@-webkit-keyframes fadeOut {
+				0% {
+					opacity: 1;
+				}
+				100% {
+					opacity: 0;
+				}
+			}
+			@keyframes fadeOut {
+				0% {
+					opacity: 1;
+				}
+				100% {
+					opacity: 0;
+				}
+			}
+			p img {
+				max-width: 100%;
+				height: auto;
+			}
+			
+			
+			#content p{
+				
+				color: #000000;
+				text-indent:2em;
+				font-size: 1.2em;
+			}
+			#content span{
+				
+				color: #000000;
+				line-height: 30px;
+				font-size: 20px;
+			}
+			
+			*{
+				
+				
+			 -webkit-touch-callout:auto;  /*系统默认菜单被禁用*/   
+    -webkit-user-select:auto; /*webkit浏览器*/   
+    -khtml-user-select:auto; /*早期浏览器*/   
+    -moz-user-select:auto;/*火狐*/   
+    -ms-user-select:auto; /*IE10*/   
+    user-select:auto;   	
+				
+			}
+              
+              
+             #content img{
+             	width:70%;
+             } 
+           </style>
+		
+		
+		
+		
+		
+		
+		
+		
+		<script id="article" type="text/html">
+		 
+	     <div style="margin:0 auto;">  
+	    
+		 <div style="margin:0 auto;width:100%;padding-top:2% ;"><h3 style="text-align: center;" >{{item.title}}</h3></div>	
+		 <div style="width:80%;padding-top:2%;margin:0 auto ;text-align: center;"><p><font size="2">发布人:&nbsp;{{item.inputerName}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{item.createtime}}</font></p></div>	
+		 <div id="content"style="width:95%;margin:0 auto;">{{item.content}}</div>
+		 <div id="img" style="width:80%;margin:0 auto;"><img style="width:100%;" src="{{item.headpic}}" data-preview-src="" data-preview-group="1"/></div>			
+         </div>
+		</script>
+		
+		
+	    
+			
+	    </head>
+	    <body  style="width:100%;height:100%;">
+	    	  <div id="refreshContainer" class="mui-content "  >
+                <!-- <div class="mui-scroll"  >-->
+                                   
+                     
+                     <div id="c"  style="width:100%;" >	
+                     	
+                     </div>
+                     
+                     <div   style="width:100%;margin-left:2%;" >	
+                     	 <div style="margin:0 auto;"> 
+                     	 	  <div style="width:80%;margin:0 auto;" id="f">
+                     	 	  	
+                     	 	  </div>
+                     	 </div>
+                     </div> 
+                  
+               
+             
+                    
+          
+            
+            <!-- </div>-->
+                        <div class="mui-content" style="background-color: #DAE7F0;">
+           	            <ul class="mui-table-view " style="margin-top:2%;" id="ddd">
+					  	<li class="mui-table-view-cell mui-media" >
+					  		 <a href="javascript:;" style="padding-bottom: 0;"><font size="2em" id="zx"></font></a>
+					  	</li>
+					  	
+					  </ul>
+             <ul id="p" class="mui-table-view"> </ul>
+           
+             </div>
+          
+          <div id="__MUI_PREVIEWIMAGE" class="mui-slider mui-preview-image mui-fullscreen">
+          <div class="mui-preview-header">
+          	<span class="mui-preview-indicator"></span>
+          </div>
+          <div class="mui-slider-group"></div>
+          <div class="mui-preview-footer mui-hidden"></div>
+          <div class="mui-preview-loading">
+          	<span class="mui-spinner mui-spinner-white">
+          		
+          	</span>
+          </div>
+          </div>
+          
+           <input id="articleId" value="" data-hasseen=""  data-flag=""  type="hidden" />  
+		<script>
+		    mui.previewImage();
+			//加载文章页面
+			 mui.plusReady(function() {			 	
+				 var self = plus.webview.currentWebview(); 
+				 var cata=plus.webview.getWebviewById('setting.html');
+				 cata.evalJS('user();');
+				 self.setStyle({scrollIndicator:'none'});
+			     var articleId=self.articleId;
+			     document.getElementById("articleId").value=articleId;
+			     var hasseen=self.hasseen;
+			     document.getElementById("articleId").setAttribute("data-hasseen",hasseen);
+			     
+			     
+			     
+			     
+			     
+			     
+				//回复
+			mui("#p").on('tap','li',function(){
+				
+				var commentId=this.getAttribute("id");
+				var name=this.getAttribute("data-name");
+				//alert(name);
+				var cuser=this.getAttribute("data-cuser");
+				
+				
+				//打开回复页面
+		    	mui.openWindow({
+                url:'../article/comment.html',
+                id:'comment',
+                extras:{
+                articleId:articleId,  //扩展参数
+                commentId:commentId,
+                name:name,
+                cuser:cuser
+                },
+                show:{
+                aniShow:'zoom-fade-out'	
+                }
+                });
+			});
+			 ajax(articleId,hasseen);
+			 comment(articleId,'1','4');
+			 window.addEventListener('refresh',function(){
+				ajax(articleId,hasseen);
+			},false);
+			
+			
+			
+			
+			
+			window.addEventListener('refresh',function(){
+				comment(articleId,'1','4');
+			},false);
+			
+			/*document.getElementById('c').addEventListener('longtap',function(){
+				document.getElementById('content').stl
+				
+			});*/
+			 });
+			 
+		</script>
+		
+	
+		
+		<script>
+		    //文章内容
+			var ajax=function(articleId,hasseen){
+					 mui.ajax(GetPostUrl.gUrl()+'/getArtById.json', {
+			   data: {
+				
+				articleId:articleId,
+				hasseen:hasseen,
+				token:localStorage.getItem("token")
+			},
+			type: 'post',
+			dataType: 'json',
+			async:'true',
+			success: function(data) {
+					if(data.success) {
+						//显示文章内容
+						console.log(JSON.stringify(data.obj));
+						var datak={"item":data.obj};
+						localStorage.setItem('articleId',data.obj.id);
+				        var html=template("article",datak);
+					    document.getElementById("c").innerHTML=html;
+					    if(data.obj.headpic==""||data.obj.headpic==null){
+					       document.getElementById("img").innerHTML="";	
+					    }
+					    if(!data.obj.content.indexOf("http")>0){ 
+					    	 document.getElementById("content").innerHTML='<p style="text-indent: 2em;color:#000000;"><font size="3">'+data.obj.content+'</font></p>';
+					    }else{
+					    	 var a= data.obj.content
+					    	 .replace(/&lt;/g,'<')
+					    	 .replace(/p&gt;/g,'p>')
+					    	 .replace(/&quot;/g,'"').replace(/&gt;/g,">").replace(/&amp;/g,"&");
+					    	 console.log(a);
+					    	 document.getElementById("content").innerHTML=a;	
+					    	 
+					    }
+					    if(data.obj.allurl!=null&&data.obj.allurl!=""){
+					    	 var pics=data.obj.allurl.split(',');
+					    for(var i=0;i<pics.length;i++){
+					    	if(pics[i]==data.obj.headpic){
+					    		continue;
+					    	}
+					    	var html2='<img style="width:100%;" src="'+pics[i]+'" data-preview-src="" data-preview-group="1"/>';
+					    	document.getElementById("f").innerHTML=document.getElementById("f").innerHTML+html2;
+					    }
+					    }
+					   
+					    //显示评论以及评论的回复 
+					} else if(data=="-1"){
+						mui.toast("请重新登录! ");
+					}else{
+						mui.toast("网络异常 请重试!")
+					}
+			
+			}
+		    })
+		}
+			
+		
+			
+			
+			
+			
+			
+		    
+			 var comment=function(articleId,pageNum,pageSize){
+						//每次登陆都要去服务验证，不管是否选择自动登陆
+		    mui.ajax(GetPostUrl.gUrl()+'/getArtCom.json', {
+			data: {
+				articleId:articleId,
+				token:localStorage.getItem("token"),
+				pageNum:pageNum,
+				pageSize:pageSize
+			},
+			type: 'post',
+			dataType: 'json',
+			async: 'true',
+			success: function(data) {
+					 
+					if(data.success) {	
+						document.getElementById("p").innerHTML="";
+						showComment(articleId,data.obj);
+					} else if(data=="-1"){
+						mui.toast("请重新登录! ");
+					}else{
+						mui.toast("请求失败 请重试!");
+					}
+			
+			}
+		})
+			}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+			var showComment=function(articleId,data){
+			if(data==null||data==""){
+				return;
+			}
+			document.getElementById('zx').innerHTML='文章评论';
+			var l=data.length;
+			
+			for(var i=0;i<l;i++){
+				if(data[i].articleid==articleId){
+					//如果评论的articleId为本文章的id 
+					var html='<li class="mui-table-view-cell mui-media" id="'+data[i].id+'" data-cuser="'+data[i].cuser+'" data-name="'+data[i].cusername+'">'+
+					
+					'<a href="javascript:;">'+
+						//'<img class="mui-media-object mui-pull-left" data-id="'+data[i].id+'"  src="'+GetPostUrl.gUrl()+"/files/"+data[i].cuserpic+'">'+
+						'<div class="mui-media-body">'+
+							data[i].cusername+
+							'<span style="disply:block;float:right;font-size:12px">'+data[i].ctime+'</span>'+
+						'</div>'+
+					'</a>'+
+					'<div style="width:100%;word-break:break-all; word-wrap:break-word ;"><p>'+data[i].content+'</p></div>'+
+				'</li>';
+				    	
+				    	
+				   
+							
+					 document.getElementById("p").innerHTML=document.getElementById("p").innerHTML+html;
+					 
+					abc(data[i],data);
+					 
+				}
+				if(data[i].showable=='0'){-
+					document.getElementById(data[i].id).classList.add('delete');
+				}
+				
+			}
+			
+		}
+			
+			
+			
+			 var abc=function(da,data){
+					if(da.hascomment=="1"){
+						var l=data.length;
+						for(var j=0;j<l;j++){
+					 	if(data[j].articleid==da.id){
+					 		var html='<li class="mui-table-view-cell mui-media" id="'+data[j].id+'" data-name="'+data[j].cusername+'">'+
+					'<a href="javascript:;">'+
+						//'<img class="mui-media-object mui-pull-left" data-id="'+data[j].id+'"  src="'+GetPostUrl.gUrl()+"/files/"+data[j].cuserpic+'">'+
+						'<div class="mui-media-body">'+
+							data[j].cusername+
+							'<span style="disply:block;float:right;font-size:12px">'+data[j].ctime+'</span>';
+						  if(data[j].cuser==localStorage.getItem('userId')){
+						html=html+'<p class="mui-ellipsis cxla" data-delete="'+data[j].id+'"  >回复&nbsp;'+data[j].onusername+":"+data[j].content+'<span class="mui-icon mui-icon-trash" style="display:block;float:right;"></span></p>'+
+						'</div>'+
+					'</a>'+
+				'</li>';
+						  }else{
+						  	html=html+'<p class="mui-ellipsis "  >回复&nbsp;'+data[j].onusername+":"+data[j].content+'</p>'+
+						'</div>'+
+					'</a>'+
+				'</li>';
+						  }
+							
+					 		 document.getElementById("p").innerHTML= document.getElementById("p").innerHTML+html;	
+					 	if(data[j].showable=='0'&&data[j].id!=null){
+				}	 
+					 		 if(data[j].hascomment=="1"){
+					 		abc(data[j],data);
+					 	}else{
+					        continue;
+					    }
+					 		
+					 	}	
+					 	
+					 	
+					 }
+						
+					}
+				}
+			 
+			 
+			 
+			 //删除评论和回复
+			 mui("#p").on('tap','.cxla',function(){
+			 	
+			 	var id=this.getAttribute('data-delete');
+			 	var btnArray=['确认','取消'];
+			 	mui.confirm('','是否删除该条信息?',btnArray,function(e){
+			 		if(e.index==0){
+			 			mui.ajax(GetPostUrl.gUrl()+"/deletCom.json",{
+			 				data:{
+			 					commentId:id,
+			 					token:localStorage.getItem('token')
+			 				},
+			 				type:'post',
+			 				dataType:'json',
+			 				async:'false',
+			 				success:function(data){
+			 					if(data.success){
+			 						pulldownRefresh();
+			 					}else if(data=="-1"){
+			 					   return mui.toast('请重新登录!');
+			 					}else{
+			 						return mui.toast('删除失败请重试!');
+			 					}
+			 				},error:function(){
+			 				        return mui.toast('系统异常!')
+			 				}
+			 				
+			 			});
+			 		}
+			 	},'div');
+			 });
+		</script>
+		<script>
+		mui.init({
+	    beforeback: function(){
+		//获得列表界面的webview	
+		var list = plus.webview.getWebviewById('articleList.html');	
+		if(list==null){
+		  list=plus.webview.getWebviewById('cata.html');
+		  mui.fire(list,'fff');
+		  return true;
+		}else{
+		  //触发列表界面的自定义事件（refresh）,从而进行数据刷新
+		  mui.fire(list,'refresh');
+		 //返回true，继续页面关闭逻辑
+		return true;	
+		}
+	   }
+	   
+	   
+        });
+		</script>
+	</body>
+	
+</html>

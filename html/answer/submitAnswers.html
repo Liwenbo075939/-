@@ -1,0 +1,290 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<style>
+			html,body{
+				height: 96%;
+				width: 100%;
+				background:url(../../images/answer/dtcgbj.jpg);
+				background-size:100% 101%;
+			}
+			#a{
+				background: transparent;
+				margin-top: 45px;
+			}
+			#tcdt{
+				margin-left: 25%;
+				height: 45px;
+				width: 150px;
+				background: url(../../images/answer/tcdt.png);
+				background-size: 100% 100%;
+				border: none;
+				margin-top: 5 %;
+			}
+			
+			
+			#ckda{
+				
+				margin-left: 25%;
+				height: 45px;
+				width: 150px;
+				background: url(../../images/answer/ckda.png);
+				background-size: 100% 100%;
+				border: none;
+				margin-top: 5 %;
+			}
+			#card{
+				background: transparent;
+				margin-top: 30%;
+			}
+			span{
+				font-size:15px;
+			}
+			p{
+				margin-top: 30px;
+				margin-bottom:initial;
+			}
+			li{
+				background: url(../../images/answer/jxnl.png);
+				background-size: 100% 100%;
+				widows: 100%;
+				height: 100%;
+			}
+			#head1{
+				background: url(../../images/answer/sjk.png);
+				background-size: 100% 100%;
+				zoom:30%;
+				width: 36%;
+				margin-left: 30%;
+				border: none;
+				}
+			#content{
+				height: 90px;
+				margin-top: 7%;
+			}
+			.mui-table-view-cell:after{
+				height: 0;
+			}
+			ul{
+				width: 100%;
+			}
+			.mui-card-footer:before, .mui-card-header:after{
+			}
+		</style>
+	</head>
+	<body>
+		<script src="../../js/ty.js"></script>
+		<script src="../../js/mui.enterfocus.js"></script>
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/artTemplate.js"></script>
+		<script type="text/javascript">
+		
+		</script>
+		<script>
+				mui.plusReady(function(){
+					var seconds = localStorage.getItem('seconds');//答题用时
+					var userscore =localStorage.getItem('score');//用户得分
+					var scores = localStorage.getItem('scores');//积分
+					var scorestype = localStorage.getItem('scorestype'); //积分类型
+					var  total     = localStorage.getItem('total');//总分数
+					var answer_id = localStorage.getItem('answer_id');//问卷id
+					var qgp = localStorage.getItem('qgp'); //积分有效时间
+					var name = localStorage.getItem('name');//问卷的名称 
+					var hd_name = localStorage.getItem('hd_name');//得到活动名称
+					var isDa=localStorage.getItem('isDa');//判断是否答过这套题
+					if(scorestype =="1"){
+						scores=scores;
+					}
+					if(scorestype =="2"){
+						var ss = scores*(Math.round(userscore / total * 10000) / 10000.00);
+						scores = ss.toFixed(1);
+					}
+					document.getElementById("df").innerHTML=userscore;
+					if(localStorage.getItem('isDa')=="1"){
+						document.getElementById("jf").innerHTML='0';
+					}else{
+						document.getElementById("jf").innerHTML=scores;
+					}
+					
+					document.getElementById("sj").innerHTML="答题用时:    "+seconds+"    秒";
+					//监听按钮返回
+					document.getElementById('tcdt').addEventListener('tap', function() {
+						 //响应成功关闭页面,清空缓存
+								closeym();
+								closeCxl();
+					});
+						//把数据发送到后台
+							var userName = localStorage.getItem('userName');
+							var userId = localStorage.getItem('userId');
+							var questionName = localStorage.getItem('questionName');
+							var str = GetPostUrl.gUrl()+"/answer/submit.json";
+							mui.ajax(str,{
+								data:{
+									questionName:questionName, //问卷名称
+									answer_id:answer_id, //问卷id
+									userscore:userscore,//用户得分
+									scores:scores, //获得积分
+									userName:userName,
+									userId:userId,
+									scorestype:scorestype,
+									qgp:qgp,
+									name:name,
+									hd_name:hd_name,
+									isDa:isDa
+								},
+								type: 'post',
+								dataType: 'json',
+								async:'true',
+								timeout: 10000, //超时时间设置为10秒
+								crossDomain: true, //强制使用5+跨域
+							    success: function(data) {
+							  	if(data.msg=="1"){
+							  		mui.toast("提交成功.");
+							    }
+							  	if(data.msg=="0"){
+							  		mui.toast("退出失败,请检查网络连接..");
+							  	}
+							  	if(data.msg=="2"){
+							  		mui.toast("服务器未知异常");
+							  	}
+							  },	
+							    error:function(){
+							    	//响应失败
+							   		 mui.toast("请检查网络连接...");
+							    }
+							});
+							
+           			//监听手机返回 
+           			mui.back=function () {
+                    var btnArray = ['是', '否'];  
+                    mui.confirm('是否退出答题', '确认退出答题', btnArray, function(e) {  
+                              if (e.index == 0) {
+                              	 //响应成功关闭页面,清空缓存
+                             	 closeym();
+                                }  
+                        },'div')  
+             		}
+					
+				});
+		</script> 
+		<script>
+			function closeym(){
+				  //响应成功关闭页面,清空缓存	
+				var curr0 = plus.webview.getWebviewById('answerDetails.html');
+				var curr1 = plus.webview.getWebviewById('submitAnswers.html');
+				 if(curr0 !=null){
+					 curr0.close();
+				 }
+				if(curr1 != null){
+					curr1.close();
+			 	}
+			  localStorage.removeItem('name');//清空问卷名称	
+			  localStorage.removeItem('qgp'); //清空积分时效
+			  localStorage.removeItem('answer_id'); //清空问卷的id
+			  localStorage.removeItem('hd_id');       //清空hd_id
+	          localStorage.removeItem('score');     //清空缓存分数 
+	          localStorage.removeItem('scores');    //清空缓存积分
+	          localStorage.removeItem('scorestype');//清空缓存积分类型
+	          localStorage.removeItem('total');//清空缓存总分数St
+	          localStorage.removeItem('seconds');//清空缓存答题用时
+	          localStorage.removeItem('xxhm');//清空缓存选项号
+	          localStorage.removeItem('isDa');//清空是否答过这套题
+			  //打开首页
+				var curr = plus.webview.getWebviewById('pullrefresh_main.html');
+				var list = plus.webview.getWebviewById('answerList.html');
+			    mui.fire(list,'refresh');
+				plus.webview.show(curr);
+			}
+			function closeCxl(){
+				
+				 var num=localStorage.getItem("ti_num");
+				for(var i=0;i<num;i++){
+				//console.log("清楚题目缓存");
+				  localStorage.removeItem(i+1+"-ti_mu");
+				  localStorage.removeItem(i+1+"-xuan_xiang");
+				  localStorage.removeItem(i+1+"-da_an");
+				  localStorage.removeItem(i+1+"-zheng_que")
+				}
+			}
+		</script>
+		
+		
+		
+		
+		<script>
+			function ckda(){
+			  	
+				
+			/*console.log(localStorage.getItem("ti_num"));
+			
+			for(var i=0;i<localStorage.getItem("ti_num");i++){
+				
+				console.log(localStorage.getItem(i+1+"-ti_mu"));
+				console.log(localStorage.getItem(i+1+"-xuan_xiang"));
+				console.log(localStorage.getItem(i+1+'-zheng_que'));
+				console.log( localStorage.getItem(i+1+'-da_an'));
+				
+				
+				
+				
+			}*/
+				
+			//打开新的页面
+										mui.openWindow({
+											url: 'da_an.html', 
+											id:'da_an.html',
+											show:{
+												autoShow:true,//页面loaded事件发生后自动显示，默认为true
+											}
+										});	
+				
+			}
+			
+			
+			
+		</script>
+		<header class="mui-bar mui-bar-nav" style="background-color: #d62a2a;height: 8%;">
+			<h1 id="title" class="mui-title"style="color: white;">答题报告</h1>
+		</header>
+		<div id="a" class="mui-content">
+			<div class="mui-card" id="card">
+				<!--页眉，放置标题-->
+				<div class="" id="head1" >
+					<span id="sj" style="color: white;font-size: 40px;margin-left: 15%;"></span>
+				</div>
+				<!--内容区-->
+				<div id="content">
+					<ul class="mui-table-view" id="view"> 
+					    <li class="mui-table-view-cell" style="border-bottom:1px solid #D3D3D3;">
+					    	<span style="margin-left: 34%;">答题得分:</span>
+							<span id="df"></span>
+								<span>分</span>
+					    </li>
+					    <li class="mui-table-view-cell" >
+					    	<span style="margin-left: 34%;">获得积分:</span>
+							<span id="jf"></span>
+							<span>分</span>
+					    </li>
+					</ul>
+				</div>
+			</div>
+			
+				<table  >
+					<tr>
+						<td><button type="button" id="tcdt" ></button>	</td>
+						<td style="padding:5px;"><button type="button" id="ckda" onclick="ckda();" ></button>	</td>
+					</tr>
+					
+				</table>
+			    
+				
+			
+						
+		</div>	
+	</body>
+
+</html>

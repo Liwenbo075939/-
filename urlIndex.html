@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>普通的下拉刷新的外框公共模板</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" href="css/mui.css">
+		<script src="js/mui.min.js"></script>
+		<style>
+			.mui-bar {background-color: #d62a2a};
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav" >
+			<a id="back" style="color:#EFEFF4" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 id="head" style="color:#EFEFF4" class="mui-title"></h1>
+			
+		</header>
+		<div class="mui-content"></div>
+	</body>
+	
+	<script type="text/javascript">
+	
+	
+	   mui.plusReady(function() {
+			var self=plus.webview.currentWebview();     
+            var title=self.title;
+            var subpage=self.subpage;
+            var extras=self.extras;
+            var subpage_style = {top: '45px',bottom: '0px',scalable:true};
+            var extras={extras:extras}
+            document.getElementById("head").innerHTML=title;
+            var curr=plus.webview.currentWebview();
+            var chil=plus.webview.create(subpage,subpage,subpage_style,extras);
+            curr.append(chil);
+            chil.show();
+	   });
+	</script>
+
+</html>

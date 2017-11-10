@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<style>
+			.mui-bar {background-color: #d62a2a;}
+			
+			body{
+				background: transparent;
+			}
+			html {
+				height: 95%;
+				background: url(../../images/activities/bir5.jpg);
+				background-size:100% 100% ;
+				background-repeat:no-repeat ;
+				background-position:10% 30px;
+				border: none;
+			}
+			p{
+				font-size: 0.9em;
+				line-height: 2em;
+				text-indent:2em;
+				color: #A62700;
+			}
+			
+			
+		</style>
+		
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/ty.js"></script>
+		<script src="../../js/artTemplate.js"></script>
+		<script type="text/javascript">
+
+			mui.plusReady(function(){
+				plus.webview.currentWebview().setStyle({scrollIndicator:'none'});
+				 var self=plus.webview.currentWebview();
+				 
+				 if(self.msg=="cxl"){
+				  document.getElementById('list').style.display="block";	
+				 //查询本月生日人员	
+				 mui.ajax(GetPostUrl.gUrl()+"/borthUsers.json",{
+	             data:{
+		               token:localStorage.getItem('token')
+	                  },
+	                  type:'post',
+	                  dataType:'json',
+	                  async:'true',
+	                  success:function(data){
+	                  	
+	                  	 console.log(JSON.stringify(data));
+	                  	var data1 = {
+									"items": data.obj
+								};
+								var html = template('bir', data1);
+								document.querySelector("#birlist").innerHTML = html; 
+	                  }
+				 	
+				 });
+				 }else{
+				 	
+				 	     document.getElementById('msgdiv').style.display="block";
+				 	     document.getElementById('msg').innerHTML=self.msg;
+				 	     var date=new Date();
+	                  	 document.getElementById('msgdiv').innerHTML
+	                  	 =document.getElementById('msgdiv').innerHTML+'<p style="text-indent:0;" align="right">邢台市地方税务局机关党委</p>'+'<p align="right">'+date.getFullYear()+"年"+parseInt(date.getMonth() + 1)+"月"+date.getDate()+"日"+'</p>';
+				 }	
+			});
+			
+			
+		</script>
+		<script type="text/html" id="bir">
+			{{each items as item i}}
+			<li class="mui-table-view-cell">
+				<div class="mui-table">
+					<div class="mui-table-cell mui-col-xs-2 mui-text-center">
+						<span class="mui-h5 abc" style="color: #000000;">{{item.name}}</span>
+					</div>
+
+					<div class="mui-table-cell mui-col-xs-6 mui-text-center">
+						<p class=" mui-ellipsis" style="color: #000000;">{{item.ageNum}}</p>
+					</div>
+
+					<div class="mui-table-cell mui-col-xs-4 mui-text-center">
+						<span class="mui-h5" style="color: #000000;">{{item.intime}}</span>
+					</div>
+				</div>
+			</li>
+			{{/each}}
+		</script>
+	</head>
+	<body>
+		
+		
+		<header class="mui-bar mui-bar-nav" >
+			<a id="back" style="color:#EFEFF4" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 id="head" style="color:#EFEFF4" class="mui-title">生日快乐</h1>
+		</header>
+		
+		
+		
+		    <div class="mui-content" style="background:transparent">
+		   
+		  
+		   <div id="msgdiv"  style="padding-top: 60%;padding-left:7%;padding-right: 7%;display:none" >
+			<p id="msg" ></p>
+			
+			</div>
+			<div id="list"   style="display:none">
+				<ul class="mui-table-view mui-table-view-striped mui-table-view-condensed">
+						<li class="mui-table-view-cell">
+							<div class="mui-table">
+								<div class="mui-table-cell mui-col-xs-2 mui-text-center">
+									<h5 style="color: #000000;">姓名</h5>
+								</div>
+								<div class="mui-table-cell mui-col-xs-6 mui-text-center">
+									<h5 style="color: #000000;">党龄</h5>
+								</div>
+								<div class="mui-table-cell mui-col-xs-4 mui-text-center">
+									<h5 style="color: #000000;">入党时间</h5>
+								</div>
+							</div>
+						</li>
+					</ul>
+
+					<ul class="mui-table-view mui-table-view-striped mui-table-view-condensed" id="birlist">
+
+					</ul>
+				
+				
+			</div>
+			
+			
+			
+			</div>
+	</body>
+</html>

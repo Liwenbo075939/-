@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html >
+
+	<head>
+		<meta charset="utf-8">
+		<title>Hello MUI</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" href="../../css/icons-extra.css">
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/ty.js"></script>
+		<script src="../../js/artTemplate.js" ></script>
+		<script src="../../js/mui.lazyload.js"></script>
+		<script src="../../js/mui.lazyload.img.js"></script>
+		<style>
+		.flex-container {
+				display: -webkit-box;
+				display: -webkit-flex;
+				display: flex;
+				-webkit-flex-flow: row wrap;
+				justify-content: space-between;
+				text-align: center;
+			}
+			
+			.mui-content-padded {
+				padding: 10px;
+			}
+			
+			.mui-content-padded a {
+				margin: 3px;
+				width: 50px;
+				height: 50px;
+				display: inline-block;
+				text-align: center;
+				background-color: #fff;
+				border: 1px solid #ddd;
+				border-radius: 25px;
+				background-clip: padding-box;
+			}
+			
+			.mui-content-padded a .mui-icon-extra {
+				margin-top: 12px;
+			}
+			
+			.mui-spinner,
+			.mui-spinner-white {
+				margin-top: 12px
+			}
+			
+			.active .mui-spinner-indicator {
+				background: #007AFF;
+			}
+			
+			.mui-content a {
+				color: #8F8F94;
+			}
+			
+			.mui-content a.active {
+				color: #4169E1;
+			}
+			html,body {
+				
+				background:url(../../images/activities/bj3.jpg);
+				background-size:cover ;
+				border: none;
+			}
+			.mui-content{
+				background: transparent;
+			}
+			ul{
+				background: transparent;
+			}
+			
+			.mui-card-footer:before, .mui-card-header:after {
+				background-color: #FFFFFF;
+				}
+				
+		    .mui-card-header.mui-card-media .mui-media-body{
+		    	
+		    	margin-left: 0px;
+		    }
+		    
+		    #t4 {
+		    	padding-top:10px;
+		    }
+		</style>
+		
+		
+		
+		<title></title>
+		<script id="cata" type="text/html">
+			{{each items as item i}}
+		     <div id="{{item.id}}" class="mui-card" data-hasseen="{{item.hasseen}}"  
+		     data-hasGreat="{{item.hasGreat}}"	data-tmeplateId="{{item.templateId}}" style="height: 100%;">
+				<div class="mui-card-header mui-card-media" >
+					<!--<img src="{{item.inputerpic}}" />-->
+					<div class="mui-media-body">
+						{{item.inputerName}} <font style="display: block;float: right;"size="2">发表于 {{item.createtime}}</font>
+						<p>点击量:<span class="hits">{{item.hits}}</span><span style="display: block;float: right;" class="d">{{item.hasseen}}</span></p>
+					</div>					
+				</div>
+				<div data-id="{{item.id}}" class="mui-card-content" style="margin-left: 3%;">
+					 <h4 id="t4" class="mui-ellipsis" >{{item.title}}</h4>
+					  {{item.descn}}	
+					 <img src="{{item.headpic}}" alt="" style="max-height: 200px;max-width: 100%;line-height: 56px;" />			
+				</div>
+			<div class="mui-card-footer" style="height: 10%;">	
+					
+					
+			<a  class="zan" data-zan="{{item.id}}" style="width:20%;"><span  class="mui-icon-extra mui-icon-extra-like " style="font-size: 25px;color:{{item.color}}"></span>
+			<span class="span" style="color:#929292;">{{item.thumb}}</span></a>
+		    
+		   
+		 
+		    <a  style="width: 10%;position:absolute;left:85%;top:25%;"> 
+		    <span class="mui-icon-extra mui-icon-extra-comment ping  pp" data-id="{{item.id}}" style="font-size: 25px;"><font size="2em">{{item.comnum}}</font></span>
+			</a>	
+				</div>
+				 <span class="k"  style="display:block;margin-left: 10px;">{{item.thumber}}</span>
+			</div>
+			{{/each}}
+		</script>
+	</head>
+
+	<body>
+		<!--下拉刷新容器-->
+		<div id="pullrefresh" class="mui-content mui-scroll-wrapper" style="height:100%;background: transparent;">
+			<div class="mui-scroll" style="background: transparent;" >
+				<!--数据列表-->
+				<div class="mui-content" id="c" ></div>
+			</div>
+		</div>
+		
+		
+		<script>		
+		mui.plusReady(function() {
+			plus.webview.currentWebview().setStyle({scrollIndicator:'none'});
+			var articleList=plus.webview.getWebviewById("template_0.html");
+			var self=plus.webview.currentWebview();
+			var cataID=self.cataId;
+			var templateId=self.templateId;
+			var type=self.type;
+			var level=localStorage.getItem("level");
+			var organid=localStorage.getItem("organId");
+			mui.init({
+				pullRefresh: {
+					container: '#pullrefresh',
+					down: {
+						auto:true,
+						callback: pulldownRefresh
+					},
+					up: {
+						auto: false,
+						contentrefresh: '正在加载...',
+						callback: pullupRefresh
+					}
+				},
+				   beforeback: function(){
+		
+		var list = plus.webview.getWebviewById('cata.html');
+		if(list!=null){
+		    //触发列表界面的自定义事件（refresh）,从而进行数据刷新
+		    mui.fire(list,'fff');
+		    //返回true，继续页面关闭逻辑
+		    return true;
+		}else{
+			//返回true，继续页面关闭逻辑
+		    return true;
+		}
+		
+		
+		
+	    }
+				
+			});
+			
+			
+			
+			
+			
+				var data=function(pageNum,pageSize){
+				
+				 mui.ajax(GetPostUrl.gUrl()+'/articlelist.json', {
+					data: {
+						catalogId:cataID,				
+						pageSize:pageSize,
+						pageNum:pageNum,
+						token:localStorage.getItem("token"),
+						type:type,
+						level:level,
+						organid:organid
+					},
+					type: 'post',
+					dataType: 'json',
+					async:'true',
+					success: function(data) {
+					if(data.success) {	
+			         var datak={"items":data.obj};
+			           console.log(JSON.stringify(data));
+			           for(var x in data.obj){
+			           		if(data.obj[x].hasseen=="0"){
+				       		  data.obj[x].hasseen="未读";
+				       	    }else{
+				       	      data.obj[x].hasseen="已读";	
+				       	    }
+				       	    if(data.obj[x].hasGreat==1){
+				        	  data.obj[x].color="#4169E1";
+				            }
+				       	    if(data.obj[x].thumber.indexOf('觉得很赞！')==-1&&data.obj[x].thumber.length!=0){
+				       		   data.obj[x].thumber=data.obj[x].thumber+"觉得很赞！";
+				       	    }
+			           }
+				       var html=template("cata",datak);
+				       document.getElementById("c").innerHTML="";
+				       document.getElementById("c").innerHTML=html;	
+				       mui("#c").imageLazyload({placeholder: '../../img/default.gif'});
+					} else if(data=="-1"){
+						mui.toast("请重新登录! ");
+					}else{
+						mui.toast("请求失败请重试! ");
+					}
+			
+			}
+		    })
+			
+			} 
+			  
+			
+			
+			
+			/**
+			 * 下拉刷新具体业务实现--最简单直接砍掉
+			 */
+			
+			function pulldownRefresh() {
+				setTimeout(function() {
+					data(1,3);	
+					pageNum=1;
+					mui('#pullrefresh').pullRefresh().endPulldownToRefresh(); 
+					mui('#pullrefresh').pullRefresh().refresh(true);
+				}, 1500);
+			}
+			
+			/**
+			 * 上拉加载具体业务实现--核心问题在于数据传来后怎样处理
+			 */
+			var pageNum=1;
+			var pageSize=3;
+			function pullupRefresh() {
+					 setTimeout(function() {	
+					 pageNum++;
+					 mui.ajax(GetPostUrl.gUrl()+'/articlelist.json', {
+					data: {
+						
+						catalogId:cataID,				
+						pageSize:pageSize,
+						pageNum:pageNum,
+						token:localStorage.getItem("token"),
+						type:type,
+						level:level,
+						organid:organid
+					},
+					type: 'post',
+					dataType: 'json',
+					async:'true',
+					success: function(data) {
+					if(data.success) {						
+			            var datak={"items":data.obj};			         
+				        var html=template("cata",datak);				       
+				        document.getElementById("c").innerHTML= document.getElementById("c").innerHTML+html;
+
+				       for(var i=0;i<data.obj.length;i++){
+				       	var dom=document.getElementById(data.obj[i].id);
+				       	//根据文章id锁定html
+				       	if(data.obj[i].thumber.indexOf('觉得很赞！')==-1){
+				       		dom.querySelector('.k').innerHTML=
+				       		dom.querySelector('.k').innerHTML+"觉得很赞！";
+				       	}
+				       	if(data.obj[i].hasseen=="0"){
+				       		dom.querySelector('.d').innerHTML="未读";
+				       	}
+				       	if(data.obj[i].hasseen=="1"){
+				       		dom.querySelector('.d').innerHTML="已读";
+				       	}
+				        
+				        if(data.obj[i].hasGreat==1){
+				        	dom.querySelector('.mui-icon-extra-like').style.color="#4169E1";
+				        }
+				       }
+					   
+					   if(data.msg=="over"){						
+					      mui('#pullrefresh').pullRefresh().endPullupToRefresh(true); //参数为true代表没有更多数据了。
+					   }else{
+					     mui('#pullrefresh').pullRefresh().endPullupToRefresh(false);	
+					   }
+					   mui("#c").imageLazyload({placeholder: '../../img/default.gif'});
+					} else if(data=="-1"){
+						mui.toast("请重新登录! ");
+					}else{
+						mui.toast("请求失败请重试! ");
+					}
+			
+			}
+		   })								
+				}, 1500);
+			}
+			
+			
+			
+			
+			
+			
+			
+			window.addEventListener('refresh',function(){		
+		   //文章内容
+		   var articleId=localStorage.getItem('articleId');
+		   //这是在文章中点赞的标志
+		   var zan1=localStorage.getItem('zan');
+		   //这是文章列表中点过赞的标志
+		   var zan2=document.getElementById(articleId).getAttribute('data-hasGreat');
+		   localStorage.removeItem('zan');
+					 mui.ajax(GetPostUrl.gUrl()+'/getArtById.json', {
+			   data: {
+				
+				articleId:articleId,
+				hasseen:'1',
+				token:localStorage.getItem("token"),
+				refresh:'0'
+			},
+			type: 'post',
+			dataType: 'json',
+			async:'true',
+			success: function(data) {
+					if(data.success) {
+						//显示文章内容						
+						var datak={"item":data.obj};						
+				        var n=document.getElementById(articleId);
+				        n.querySelector(".span").innerText=data.obj.thumb;
+				        n.querySelector('.pp').innerHTML='<font size="2em">'+data.obj.comnum+'</font>';
+					    n.querySelector('.d').innerText='已读';
+					    n.querySelector('.hits').innerText=data.obj.hits;
+					    if(zan1==1||zan2==1){
+				        	n.querySelector('.mui-icon-extra-like').style.color='#4169E1';
+				        }else{
+				        	n.querySelector('.mui-icon-extra-like').style.color='#8F8F94';
+				        }
+				        if(zan1==1){
+				        	document.getElementById(articleId).setAttribute('data-hasGreat',1);
+				        }
+				        
+					    //点赞人
+					  
+					    if(data.obj.thumber!=null&&data.obj.thumber!=""){
+					    	 n.querySelector('.k').innerText=data.obj.thumber+"觉得很赞!";
+					    }
+					   
+					    
+					    
+					    
+					    //显示评论以及评论的回复 
+					} else if(data=="-1"){
+						mui.toast("请重新登录! ");
+					}else{
+						mui.toast("网络异常 请重试!")
+					}
+			
+			}
+		    })
+		
+			
+				
+			},false);
+			
+			//打开文章
+			mui("#c").on('tap','.mui-card-content',function(e){
+				var articleId=this.getAttribute("data-id");
+				
+				var art=document.getElementById(articleId);
+				var templateId=art.getAttribute("data-templateId");
+				var name=art.getAttribute("type");
+				var hasseen=art.getAttribute("data-hasseen");
+				var hasGreat=art.getAttribute('data-hasGreat');
+					//打开文章页面
+		    	mui.openWindow({
+                url:'../article/template_index.html',
+                id:'template_index',
+                extras:{
+                articleId:articleId,  //扩展参数
+                templateId:templateId,
+                hasseen:hasseen,
+                fatherName:name,
+                hasGreat:hasGreat
+                
+                },
+                show:{
+                aniShow:'zoom-fade-out'	
+                }
+                });
+				
+				
+			return false;	
+			});
+	        
+	         //点赞
+            
+             var id="";
+			mui("#c").on('tap','.zan',function(){
+			var articleId=this.getAttribute("data-zan");
+			var span=this.querySelector(".span");
+			var span1=this.querySelector(".mui-icon-extra-like");
+			var username=localStorage.getItem('userName');
+			var a=this;
+             	if(articleId==id){
+             		mui.toast("已经点过赞!")
+             		return false;
+             	}
+             	id=articleId;    		//每次登陆都要去服务验证，不管是否选择自动登陆
+             	console.log(articleId);
+		    mui.ajax(GetPostUrl.gUrl()+'/comment.json', {
+			data: {
+				articleId:articleId,
+				ctype:"1",
+				token:localStorage.getItem("token")
+			},
+			type: 'post',
+			dataType: 'json',
+			async: false,
+			success: function(data) {
+				   if(data.obj=="zg"){
+				   	   mui.toast('只能点一次赞');
+				   	  return false;
+				   }
+					console.log(JSON.stringify(data));
+				   if(data.success) {
+						flag="0";
+						var k=parseInt(span.innerText);
+						span.innerText=k+1;
+						mui.toast("点赞成功!");
+						span1.style.color="#4169E1";
+						//点赞后刷新setting中的积分值显示
+						var setting =plus.webview.getWebviewById('setting.html');
+						mui.fire(setting,'refresh');
+						document.getElementById(articleId).setAttribute('data-hasGreat','1');
+						var a=document.getElementById(articleId).querySelector('.k').innerHTML;
+						var b=document.getElementById(articleId).querySelector('.k').innerText;
+						if(a==""||a==null){
+						document.getElementById(articleId).querySelector('.k').innerHTML=username+"，觉得很赞";
+						}else{
+					    document.getElementById(articleId).querySelector('.k').innerHTML=b.substring(0,b.lastIndexOf("，")+1)+username+"，觉得很赞";
+						}
+					} else if(data=="-1") {
+						mui.toast("请重新登录!");
+					}else{
+						mui.toast("网络异常 请重试!")
+					}
+			
+			}
+		})
+
+            
+		return false;		
+				
+			});
+			
+			
+			
+			});
+		//评论
+		mui("#c").on('tap','.ping',function(){
+			var articleId=this.getAttribute("data-id");
+			 mui.openWindow({
+                         url:'pinglun.html',
+                         extras:{
+                         articleId:articleId  //扩展参数
+                         },
+                show:{
+                aniShow:'zoom-fade-out'	
+                }
+                         });
+			
+			return false;
+		});
+		</script>
+		
+		
+	</body>
+
+</html>

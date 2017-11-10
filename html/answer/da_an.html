@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" href="../../css/icons-extra.css">
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/ty.js"></script>
+		<script src="../../js/artTemplate.js" ></script>
+		<style>
+			.mui-bar {background-color: #d62a2a;}
+		</style>
+		
+		
+		
+		
+		<script id="da_an" type="text/html">
+			{{each items as item}}
+			
+			<div class="mui-card">
+				<div class="mui-card-header">页眉</div>
+				<div class="mui-card-content">
+					<div class="mui-card-content-inner">
+						包含页眉页脚的卡片，页眉常用来显示面板标题，页脚用来显示额外信息或支持的操作（比如点赞、评论等）
+					</div>
+				</div>
+				<div class="mui-card-footer">页脚</div>
+			</div>
+			
+			{{/each}}
+		</script>
+		<script>
+		
+		mui.plusReady(function(){
+			  var num=localStorage.getItem("ti_num");
+			  //console.log(parseInt(num));
+			 // //console.log(localStorage.getItem(3+"-ti_mu"));
+			for(var i=0;i<num;i++){
+			   var ti_mu=localStorage.getItem(i+1+"-ti_mu");
+			   ti_mu=JSON.parse(ti_mu).topic;
+			  var xuan_xiang=JSON.parse(localStorage.getItem(parseInt(i+1)+"-xuan_xiang"));
+			  var zheng_que=localStorage.getItem(i+1+'-zheng_que');
+			   var da_an=localStorage.getItem(i+1+'-da_an');
+			  var str="";
+			  
+			  //console.log(zheng_que);
+			  //console.log(xuan_xiang);
+			  if(zheng_que.indexOf(da_an)!=-1){
+			  	str='<span style="color:green">回答正确</span>';
+			  	
+			  }else{
+			  	
+			  	str='<span style="color:red">回答错误</span>';
+			  }
+			  
+			  
+			  var da_an=localStorage.getItem(i+1+'-da_an');
+				var xuan_xiang_html="";
+				for(var j=0;j<xuan_xiang.length;j++){
+					if(xuan_xiang[j].isanswer=="1"){
+					xuan_xiang_html+='<p style="color:green">'+xuan_xiang[j].num+'&nbsp;'+xuan_xiang[j].content+'</p>';	
+					}else{
+						xuan_xiang_html+='<p>'+xuan_xiang[j].num+'&nbsp;'+xuan_xiang[j].content+'</p>';
+					}
+	
+				}
+				
+				
+				
+				
+				 var html='<div class="mui-card">'+
+				'<div class="mui-card-header">第'+parseInt(i+1)+'题:'+str+'</div>'+
+				'<div class="mui-card-content">'+
+					'<div class="mui-card-content-inner">'+
+						'<p>'+ti_mu+'</p>'+
+						 xuan_xiang_html+
+					'</div>'+
+				'</div>'+
+				'<div class="mui-card-footer">你的选择:'+da_an+'</div>'+
+			'</div>';
+				
+				document.getElementById('an').innerHTML=document.getElementById('an').innerHTML+html;
+				
+				
+				
+				
+			    }
+			
+			
+			
+			
+			
+		});
+		
+			
+			
+			
+			
+			
+		</script>
+	</head>
+	<body>
+		<header class="mui-bar mui-bar-nav" >
+			<a id="back" style="color:#EFEFF4" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 id="head" style="color:#EFEFF4" class="mui-title">答案详情</h1>
+			
+		</header>
+		<div id="an" class="mui-card" style="margin-bottom: 35px;margin-top: 50px;text-align: center;">
+			
+			
+			
+			
+			
+			
+			
+	    </div>
+	</body>
+</html>

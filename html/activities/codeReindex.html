@@ -1,0 +1,189 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>扫描结果</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<style>
+		     .mui-bar {background-color: #d62a2a;}
+		    body{
+		    	padding-top: 44px;
+		    }
+			#content{
+				
+				height: 100%;
+				background:url(../../images/code/sanbj.jpg);
+				background-size:100% 100%;
+				border: none;
+				padding-top: 3px;
+			}
+			#title{
+				margin-top:57%;
+			}
+			#pullrefresh{
+				height: 260px;
+			}
+			#num{
+             font-size: 15px;  
+             letter-spacing: 5px;  
+             position: absolute;  
+             top:40%;  
+             left: 29%;
+            }
+            #infodiv{
+            	height:49px;
+            	margin-left: 14px;
+            	margin-right: 14px;
+            }
+            #infodiv p{
+            	line-height: 48px;
+            	width: 100%;
+            	color: red;
+            	font-size:15px;
+            	letter-spacing:3px;
+				height:47px;
+				text-align:center;
+			
+            }
+		</style>
+	</head>
+
+	<body>
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/mui.enterfocus.js"></script>
+		<script src="../../js/ty.js"></script>
+		<script src="../../js/artTemplate.js"></script>
+		<script type="text/javascript">
+			mui.init({
+			   pullRefresh:{
+			   	   container: '#pullrefresh',
+			   	    up: {//上拉加载
+				            auto:true,//自动上拉加载一次,可选,默认false.
+				            contentrefresh: '正在加载...',
+				            contentnomore:'没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+				            callback: pullupRefresh
+				       }
+			   }
+			   
+		     });
+		     var count=0;
+		     var pageSize=5;
+		     function pullupRefresh() {
+				    setTimeout(function() {
+				        count++;//翻下一页
+				        data={
+				            pageNum:count,
+				            pageSize:pageSize,
+				            qrcodeid:qrcodeid,
+				            token:localStorage.getItem("token")
+				        };
+				        toList(data);//具体取数据的方法
+				    }, 100);
+				}
+		     function  toList(data){
+		     	mui.ajax(GetPostUrl.gUrl()+'/codelist.json', {
+					    data:data,
+					    type:'post',
+						dataType:'json',
+						async: false,
+						success: function(data) {
+							if(data.success){
+						         var data1 = { "items": data.obj };
+	                             var html = template('codeUsers', data1);
+	                             if(count==1){
+	                               document.querySelector("#countNum").innerText=data.msg;
+	                             }
+	                             document.querySelector("#codelist").innerHTML =document.querySelector("#codelist").innerHTML+html;
+	                             if(data.obj.length>0){
+	                             	 mui('#pullrefresh').pullRefresh().endPullupToRefresh(false);
+	                             }else{
+	                             	 mui('#pullrefresh').pullRefresh().endPullupToRefresh(true);
+	                             }
+							     plus.nativeUI.closeWaiting();
+							}
+						}
+						}); 
+		     }
+		      mui.back=function(){
+		      	    var a=plus.webview.getWebviewById("code");
+			    	  plus.webview.close(a);
+				var layout = plus.webview.getWebviewById('layout.html');
+					  mui.fire(layout,'refresh');
+					  plus.webview.currentWebview().close();
+			    	  layout.show();
+			    }
+		      var qrcodeid;
+			mui.plusReady(function(){
+				
+				var self=plus.webview.currentWebview();
+				self.setStyle({scrollIndicator:'none'});
+				var type=self.type;
+				var info=self.info;
+				    qrcodeid=self.qrcodeid;
+				document.getElementById("info").innerText=info;
+			})
+		</script>
+		  <script type="text/html" id="codeUsers">		 	
+		 	{{each items as item i}}
+			   <li class="mui-table-view-cell">
+		            <div class="mui-table">
+		                <div class="mui-table-cell mui-col-xs-3 mui-text-center">
+		                    <h5 style="color: #000000;" >{{item.name}}</h5>
+		                </div>
+
+		                <div class="mui-table-cell mui-col-xs-5 mui-text-center">
+		                    <p class="mui-h6 mui-ellipsis" style="color: #000000;" >{{item.ctime}}</p>
+
+		               </div>
+		                <div class="mui-table-cell mui-col-xs-3 mui-text-center">
+		                    <span class="mui-h5" style="color: #000000;">已签到</span>
+		                </div>
+		            </div>
+		        </li>
+			{{/each}}		 	
+		 </script>
+		    <header class="mui-bar mui-bar-nav">  
+		      <a class="mui-action-back  mui-icon mui-icon-left-nav mui-pull-left" style="color: #FFF;"></a>  
+		      <h1 class="mui-title" style="color: #FFF;">扫描结果</h1>  
+		    </header> 
+		   <div class="mui-content" id="content"> 
+		   	     <div id="infodiv">
+		   	     	  <p id="info"></p>   	
+		   	     </div>
+		   	     <div id="num" style="color: #000000;">
+		   	     	您是第<span id="countNum"></span>位签到人		   	     	
+		   	     </div>
+		   	   
+		   	     <div id="title" class="mui-content mui-scroll-wrapper">
+		   	          <div class="mui-scroll">
+						      <ul class="mui-table-view mui-table-view-striped mui-table-view-condensed">
+						      	 <li class="mui-table-view-cell">
+						             <div class="mui-table">
+						                <div class="mui-table-cell mui-col-xs-3 mui-text-center">
+						                    <h5 style="color: #000000;">扫码人</h5>
+						                </div>
+						                <div class="mui-table-cell mui-col-xs-5 mui-text-center">
+						                    <h5 style="color: #000000;">时间</h5>
+						                </div>
+						                <div class="mui-table-cell mui-col-xs-3 mui-text-center">
+						                    <h5 style="color: #000000;">状态</h5>
+						                </div>
+						            </div>
+						       </li>	
+				      
+				             </ul>
+				      </div>
+		        </div>
+		   	   <div id="pullrefresh" class="mui-content mui-scroll-wrapper">
+						  <div class="mui-scroll">
+						      <ul class="mui-table-view mui-table-view-striped mui-table-view-condensed" id="codelist">
+				             </ul>
+						  </div>
+			  </div> 
+		   	  
+		   </div>
+	</body>
+
+</html>

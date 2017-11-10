@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html >
+
+	<head>
+		<meta charset="utf-8">
+		<title>Hello MUI</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" href="../../css/icons-extra.css">
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/ty.js"></script>
+		<script src="../../js/artTemplate.js" ></script>
+		<script src="../../js/mui.lazyload.js"></script>
+		<script src="../../js/mui.lazyload.img.js"></script>
+		<link href="../../css/mui.imageviewer.css" rel="stylesheet" />
+		<style>
+		.flex-container {
+				display: -webkit-box;
+				display: -webkit-flex;
+				display: flex;
+				-webkit-flex-flow: row wrap;
+				justify-content: space-between;
+				text-align: center;
+			}
+			
+			.mui-content-padded {
+				padding: 10px;
+			}
+			
+			.mui-content-padded a {
+				margin: 3px;
+				width: 50px;
+				height: 50px;
+				display: inline-block;
+				text-align: center;
+				background-color: #fff;
+				border: 1px solid #ddd;
+				border-radius: 25px;
+				background-clip: padding-box;
+			}
+			
+			.mui-content-padded a .mui-icon-extra {
+				margin-top: 12px;
+			}
+			
+			.mui-spinner,
+			.mui-spinner-white {
+				margin-top: 12px
+			}
+			
+			.active .mui-spinner-indicator {
+				background: #007AFF;
+			}
+			
+			.mui-content a {
+				color: #8F8F94;
+			}
+			
+			.mui-content a.active {
+				color: #4169E1;
+			}
+			html,body {
+				
+				background:url(../../images/activities/bj3.jpg);
+				background-size:cover ;
+				border: none;
+			}
+			.mui-content{
+				background: transparent;
+			}
+			ul{
+				background: transparent;
+			}
+			
+			.mui-card-footer:before, .mui-card-header:after {
+				background-color: #FFFFFF;
+				}
+				
+		    .mui-card-header.mui-card-media .mui-media-body{
+		    	
+		    	margin-left: 0px;
+		    }
+		    footer {
+				width: 100%;
+				height: 50px;
+				min-height: 50px;
+				border-top: solid 1px #bbb;
+				left: 0px;
+				bottom: 0px;
+				overflow: hidden;
+				padding: 0px 50px;
+				background-color: #fafafa;
+			}
+		</style>
+		
+		
+		
+		<title></title>
+		<script id="cata" type="text/html">
+			{{each items as item i}}
+		     <div id="{{item.id}}" class="mui-card" data-hasseen="{{item.hasseen}}"  
+		     data-hasGreat="{{item.hasGreat}}"	data-name="{{item.title}}" style="height: 100%;">
+			   <div data-id="{{item.id}}" class="mui-card-content" style="height: 70px;padding-top: 6%;padding-left: 2%;">
+					 <h4>《{{item.title}}》</h4>
+			  </div>
+			
+				 
+			</div>
+			{{/each}}
+		</script>
+	</head>
+
+	<body>
+		<!--下拉刷新容器-->
+		<div id="pullrefresh" class="mui-content mui-scroll-wrapper" style="height:100%;background: transparent;">
+			<div class="mui-scroll" style="background: transparent;" >
+				<!--数据列表-->
+				
+			   <div >
+			   	<input id="text" name="" type="text" style="width: 85%;margin-left:2% ;margin-top: 1%;height:34px;" />
+			   	<input id="btn" name="" type="button" style="background: url(../../img/search.png);width: 10%;background-size: 100%;margin-top: 1%;"/></div><!--搜索按钮-->
+			  <!-- <div ><input id="text" name="" type="text" style="width: 80%;margin-left:2% ;margin-top: 1%" /></div><!--搜索框-->
+				<div class="mui-content" id="c" ></div>
+			</div>
+		</div>
+		
+		
+		<script>		
+		mui.plusReady(function() {
+			var title=document.getElementById('text').innerText;
+			plus.webview.currentWebview().setStyle({scrollIndicator:'none'});
+			var articleList=plus.webview.getWebviewById("template_0.html");
+			var self=plus.webview.currentWebview();
+			var cataID=self.extras.cataId;
+			var type=self.type;
+			mui.init({
+				pullRefresh: {
+					container: '#pullrefresh',
+					down: {
+						auto:true,
+						callback: pulldownRefresh
+					},
+					up: {
+						auto: false,
+						contentrefresh: '正在加载...',
+						callback: pullupRefresh
+					}
+				},
+				   beforeback: function(){
+		
+		
+		
+		
+		
+	    }
+				
+			});
+			
+			
+			
+			
+			
+				var data=function(pageNum,pageSize){
+				
+				 mui.ajax(GetPostUrl.gUrl()+'/articlelist.json', {
+					data: {
+						catalogId:cataID,				
+						pageSize:pageSize,
+						pageNum:pageNum,
+						token:localStorage.getItem("token"),
+						type:type,
+						title:title
+					},
+					type: 'post',
+					dataType: 'json',
+					async:'true',
+					success: function(data) {
+					if(data.success) {	
+			         var datak={"items":data.obj};
+			           console.log(JSON.stringify(data));
+				       var html=template("cata",datak);
+				       document.getElementById("c").innerHTML="";
+				       document.getElementById("c").innerHTML=html;	
+					} else if(data=="-1"){
+						mui.toast("请重新登录! ");
+					}else{
+						mui.toast("请求失败请重试! ");
+					}
+			
+			}
+		    })
+			
+			} 
+			/**
+			 * 下拉刷新具体业务实现--最简单直接砍掉
+			 */
+			
+			function pulldownRefresh() {
+				setTimeout(function() {
+					data(1,8);	
+					pageNum=1;
+					mui('#pullrefresh').pullRefresh().endPulldownToRefresh(); 
+					mui('#pullrefresh').pullRefresh().refresh(true);
+				}, 1500);
+			}
+			
+			/**
+			 * 上拉加载具体业务实现--核心问题在于数据传来后怎样处理
+			 */
+			var pageNum=1;
+			var pageSize=8;
+			function pullupRefresh() {
+					 setTimeout(function() {	
+					 pageNum++;
+					 mui.ajax(GetPostUrl.gUrl()+'/articlelist.json', {
+					data: {
+						
+						catalogId:cataID,				
+						pageSize:pageSize,
+						pageNum:pageNum,
+						token:localStorage.getItem("token"),
+						title:title
+					},
+					type: 'post',
+					dataType: 'json',
+					async:'true',
+					success: function(data) {
+					if(data.success) {						
+			            var datak={"items":data.obj};			         
+				        var html=template("cata",datak);				       
+				        document.getElementById("c").innerHTML= document.getElementById("c").innerHTML+html;
+					   if(data.msg=="over"){						
+					      mui('#pullrefresh').pullRefresh().endPullupToRefresh(true); //参数为true代表没有更多数据了。
+					   }else{
+					     mui('#pullrefresh').pullRefresh().endPullupToRefresh(false);	
+					   }
+					   mui("#c").imageLazyload({placeholder: '../../img/default.gif'});
+					} else if(data=="-1"){
+						mui.toast("请重新登录! ");
+					}else{
+						mui.toast("请求失败请重试! ");
+					}
+			
+			}
+		   })								
+				}, 1500);
+			}
+			//打开文章
+			mui("#c").on('tap','.mui-card-content',function(e){
+				var articleId=this.getAttribute("data-id");
+				
+				var art=document.getElementById(articleId);
+				var templateId=art.getAttribute("data-templateId");
+				var name=art.getAttribute("data-name");
+				var hasseen=art.getAttribute("data-hasseen");
+				var hasGreat=art.getAttribute('data-hasGreat');
+				console.log(name);
+					//打开文章页面
+		    	mui.openWindow({
+                url:'template_index.html',
+                id:'template_index2',
+                extras:{
+                articleId:articleId,  //扩展参数
+                templateId:templateId,
+                hasseen:hasseen,
+                name:name,
+                hasGreat:hasGreat
+                
+                },
+                show:{
+                aniShow:'zoom-fade-out'	
+                }
+                });
+				
+				
+			return false;	
+			});
+	        
+	 
+			
+			document.getElementById('btn').addEventListener('tap',function(){
+				title=document.getElementById('text').value;
+				pulldownRefresh();
+			});
+			
+			});
+		
+		
+		
+		</script>
+		
+		
+	</body>
+
+</html>

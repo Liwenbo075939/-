@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<script src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/ty.js" ></script>
+		<script type="text/javascript" src="../../js/artTemplate.js" ></script>
+		<style>
+			.mui-col-xs-6{
+				width: 100%;
+				
+			}
+			
+			.c{
+				font-size:1em ;
+				margin-top: 2%;
+				
+			}
+			.mui-table-view{
+				
+			}
+			.b{
+				
+				color: #000000;
+			}
+        	.mui-bar {background-color: #d62a2a;}
+        
+		</style>
+		<title></title>
+		<script type="text/javascript">
+			mui.plusReady(function(){
+				var self=plus.webview.currentWebview();
+				document.getElementById('name').innerHTML=self.name;
+				document.getElementById('postName').innerHTML=self.postName;
+				document.getElementById('intime').innerHTML=self.intime;
+				document.getElementById('motto').innerHTML=self.motto;
+				 document.getElementById('home').addEventListener('tap',function(){
+	        	var home=plus.webview.getWebviewById('layout.html');
+	        	home.show();
+	        });
+			});
+			
+			
+		</script>
+	</head>
+	<body>
+		<div class="mui-content" style="background-color:#fff">
+			<header class="mui-bar mui-bar-nav">
+			<a id="home"><span style="color:#EFEFF4" class="mui-icon mui-icon-home mui-pull-right"></span></a>	
+		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color:#EFEFF4"></a>
+		    <h1 class="mui-title" style="color:#EFEFF4" id="h1">党员信息</h1>
+		   </header>
+		   
+		    <div style="background: url(../../images/loginy/logo1.png);width: 100%;height: 270px;background-size:80%;background-repeat: no-repeat;background-position: center 10%;"></div>
+		    <ul class="mui-table-view mui-grid-view"   id='userul'>
+		        <li class="mui-table-view-cell mui-media mui-col-xs-6" style="margin: 5px;border: 1px solid #c8c7cc;border-radius: 0 0 2px 2px;">
+			 	       
+			 	        <div class="mui-media-body" style="width: 100%;height: 100%;margin-bottom: 2%;">
+			 	        	<p style="text-align: left;" class="c"><span class="b">党员姓名:&nbsp;&nbsp;</span><span id="name" class="b"></span></p>
+			 	            <p style="text-align: left;" class="c"><span class="b">职&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;务:&nbsp;&nbsp;</span ><span id="postName" class="b"></span></p>
+			 	            <p style="text-align: left;" class="c"><span class="b">入党时间:&nbsp;&nbsp;</span ><span id="intime" class="b"></span></p>
+			 	            <p style="text-align: left;line-height: 1.5em;" class="c"><span class="b" >党员承诺:&nbsp;&nbsp;</span ><span id="motto" class="b"></span></p>
+			 	        </div>
+		              <!--  <img class="mui-media-object" src="{{item.headpic}}" style=" border-radius:50%;height: 25vw;width: 27%;float: left;">-->
+		               </li>  
+		    </ul>    
+		</div>
+	</body>
+</html>

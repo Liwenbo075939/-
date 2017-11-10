@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html style="width:100%;height:100%;">
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" type="text/css" href="../../css/app.css" />
+		<link href=".../css/mui.imageviewer.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/main.css" />
+		<link rel="stylesheet" href="../../css/style2.css" />
+		<style>
+			.mui-bar {background-color: #d62a2a;};
+		
+			.footer-left {
+				position: absolute;
+				width: 50px;
+				height: 50px;
+				left: 0px;
+				bottom: 0px;
+				text-align: center;
+				vertical-align: middle;
+				line-height: 100%;
+				padding: 12px 4px;
+			}
+			.footer-right {
+				position: absolute;
+				width: 50px;
+				height: 50px;
+				right: 0px;
+				bottom: 0px;
+				text-align: center;
+				vertical-align: middle;
+				line-height: 100%;
+				padding: 12px 5px;
+				display: inline-block;
+			}
+			.footer-center {
+				height: 100%;
+				padding: 5px 0px;
+			}
+			.footer-center [class*=input] {
+				width: 100%;
+				height: 100%;
+				border-radius: 5px;
+			}
+			.footer-center .input-text {
+				background: #fff;
+				border: solid 1px #ddd;
+				padding: 10px !important;
+				font-size: 16px !important;
+				line-height: 18px !important;
+				font-family: verdana !important;
+				overflow: hidden;
+			}
+			.footer-center .input-sound {
+				background-color: #eee;
+			}
+			.mui-content {
+				height: 100%;
+				padding: 44px 0px 50px 0px;
+				overflow: auto;
+				background-color: #eaeaea;
+			}
+			#msg-list {
+				height: 100%;
+				overflow: auto;
+				-webkit-overflow-scrolling: touch;
+				border:1px solid #0062CC;
+			}
+			body,html{
+				width:100%;
+				height:95%;
+				background: url(../../images/activities/bjtt.jpg);background-size:100% 100%;border: none;
+			}
+			#cd-timeline::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 18px;
+    height: 100%;
+    width: 0px;
+    background: #FFF;
+}
+        img{
+        	width: 18%;
+        	position: absolute;
+        	left: 0px;
+        }
+
+		</style>
+	</head>
+	<body >
+	   <div class="mui-navbar-inner mui-bar mui-bar-nav">
+	   	<span style="display: none;float: right;margin-top: 4%;margin-left:6%;width: 5%;"><img src="../../img/sc.png" /></span>
+	   	<span style="display: none;float: right;margin-top: 4%;width: 5%;"><img src="../../img/dh.png" /></span>
+			<a id="back" style="color:#EFEFF4" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+				</span><h1 style="color:#EFEFF4;margin-top: 4%;" class="mui-action-back">返回</h1>
+	   </div>
+       <section id="cd-timeline" class="cd-container ">
+	<div class="cd-timeline-block " >
+		<div style="float: left;width: 8%;margin-right: 8%;">
+			<img src="../../img/msg.jpg"  alt="Location"  style=" border-radius:100%;"  id="headpic">
+			
+		</div>
+		<div class="cd-timeline-content" >
+			<font id="puter" style="font-size: larger;color: #000000;"></font>
+			<p id="content" style="font-size: large;color: #000000;"></p>
+			<span class="cd-date" id="ctime" style="color: #000000;"></span>
+		</div>
+		
+	</div>
+</section>
+	</body>
+	<script src="../../js/mui.min.js"></script>
+	<script type="text/javascript" src="../../js/ty.js" ></script>
+	<script>
+		mui.plusReady(function(){
+			plus.webview.currentWebview().setStyle({scrollIndicator:'none'});
+			var self=plus.webview.currentWebview();
+			var ctime=self.ctime;
+			var content=self.content;
+			var puter=self.puter;
+			var msgPutId=self.msgPutId;
+			var hasRead=self.hasRead;
+			var headpic=self.headpic;
+			document.getElementById("ctime").innerText=ctime;
+			document.getElementById("content").innerText=content;
+			document.getElementById("puter").innerText=puter+"：";
+			//document.getElementById("headpic").src=headpic;
+			//更新阅读情况
+			if(hasRead=="0"){
+					mui.ajax(GetPostUrl.gUrl()+'/replyMsg.json',{
+				data:{
+					token:localStorage.getItem('token'),
+					msgPutId:msgPutId
+				},
+				 type:'post',
+				 dataType:'json',
+				 async: false,
+				 success:function(data){
+				 	if(data.success){
+				 		
+				 	}
+				 }
+				
+			})
+			}	
+		})
+		
+		
+		
+	</script>
+	<script>
+		mui.init({
+		    beforeback: function(){
+		    	console.log("回退事件！")
+				var list = plus.webview.getWebviewById('html/msg/msg.html');	
+					if(list==null){
+					  return true;
+					}else{
+					  mui.fire(list,'refresh');
+					return true;	
+					}
+		    }
+        });
+		</script>
+	
+	
+</html>

@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>		
+		<script src="../../js/com.js"></script>
+		<!--标准mui.css-->
+		<style>
+			
+			.mui-preview-image.mui-fullscreen {
+				position: fixed;
+				z-index: 20;
+				background-color: #000;
+			}
+			.mui-preview-header,
+			.mui-preview-footer {
+				position: absolute;
+				width: 100%;
+				left: 0;
+				z-index: 10;
+			}
+			.mui-preview-header {
+				height: 44px;
+				top: 0;
+			}
+			.mui-preview-footer {
+				height: 50px;
+				bottom: 0px;
+			}
+			.mui-preview-header .mui-preview-indicator {
+				display: block;
+				line-height: 25px;
+				color: #fff;
+				text-align: center;
+				margin: 15px auto 4;
+				width: 70px;
+				background-color: rgba(0, 0, 0, 0.4);
+				border-radius: 12px;
+				font-size: 16px;
+			}
+			.mui-preview-image {
+				display: none;
+				-webkit-animation-duration: 0.5s;
+				animation-duration: 0.5s;
+				-webkit-animation-fill-mode: both;
+				animation-fill-mode: both;
+			}
+			.mui-preview-image.mui-preview-in {
+				-webkit-animation-name: fadeIn;
+				animation-name: fadeIn;
+			}
+			.mui-preview-image.mui-preview-out {
+				background: none;
+				-webkit-animation-name: fadeOut;
+				animation-name: fadeOut;
+			}
+			.mui-preview-image.mui-preview-out .mui-preview-header,
+			.mui-preview-image.mui-preview-out .mui-preview-footer {
+				display: none;
+			}
+			.mui-zoom-scroller {
+				position: absolute;
+				display: -webkit-box;
+				display: -webkit-flex;
+				display: flex;
+				-webkit-box-align: center;
+				-webkit-align-items: center;
+				align-items: center;
+				-webkit-box-pack: center;
+				-webkit-justify-content: center;
+				justify-content: center;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				top: 0;
+				width: 100%;
+				height: 100%;
+				margin: 0;
+				-webkit-backface-visibility: hidden;
+			}
+			.mui-zoom {
+				-webkit-transform-style: preserve-3d;
+				transform-style: preserve-3d;
+			}
+			.mui-slider .mui-slider-group .mui-slider-item img {
+				width: auto;
+				height: auto;
+				max-width: 100%;
+				max-height: 100%;
+			}
+			.mui-android-4-1 .mui-slider .mui-slider-group .mui-slider-item img {
+				width: 100%;
+			}
+			.mui-android-4-1 .mui-slider.mui-preview-image .mui-slider-group .mui-slider-item {
+				display: inline-table;
+			}
+			.mui-android-4-1 .mui-slider.mui-preview-image .mui-zoom-scroller img {
+				display: table-cell;
+				vertical-align: middle;
+			}
+			.mui-preview-loading {
+				position: absolute;
+				width: 100%;
+				height: 100%;
+				top: 0;
+				left: 0;
+				display: none;
+			}
+			.mui-preview-loading.mui-active {
+				display: block;
+			}
+			.mui-preview-loading .mui-spinner-white {
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				margin-left: -25px;
+				margin-top: -25px;
+				height: 50px;
+				width: 50px;
+			}
+			.mui-preview-image img.mui-transitioning {
+				-webkit-transition: -webkit-transform 0.5s ease, opacity 0.5s ease;
+				transition: transform 0.5s ease, opacity 0.5s ease;
+			}
+			@-webkit-keyframes fadeIn {
+				0% {
+					opacity: 0;
+				}
+				100% {
+					opacity: 1;
+				}
+			}
+			@keyframes fadeIn {
+				0% {
+					opacity: 0;
+				}
+				100% {
+					opacity: 1;
+				}
+			}
+			@-webkit-keyframes fadeOut {
+				0% {
+					opacity: 1;
+				}
+				100% {
+					opacity: 0;
+				}
+			}
+			@keyframes fadeOut {
+				0% {
+					opacity: 1;
+				}
+				100% {
+					opacity: 0;
+				}
+			}
+			p img {
+				max-width: 100%;
+				height: auto;
+				
+			}
+			
+			.mui-bar {background-color: #d62a2a};
+		</style>
+		<script type="text/javascript" charset="utf-8">
+		
+		      
+		      mui.plusReady(function() {
+		      	var crru=plus.webview.currentWebview();
+		      	crru.setStyle({scrollIndicator:'none'});
+			   
+			    var str="";
+			    console.log(crru.userName);
+			    if(crru.userName=='邢台市地税局'){
+			    	
+			    	str=crru.userName+",于"+crru.gettime+"获得"+crru.honorname+"荣誉称号。";
+			    }else{
+			    	
+			    	if(crru.organName!=crru.userName){
+			    	 str=crru.organName+","+crru.userName+"同志，于"+crru.gettime+"获得"+crru.honorname+"荣誉称号。";
+			         }else{
+			    	str=crru.organName+",于"+crru.gettime+"获得"+crru.honorname+"荣誉称号。";
+			         }
+			    	
+			    } 
+			        var images="";
+			        var htmlforphoto="";
+			        console.log(crru.imgurl);
+			    	if(crru.imgurl!=""){
+                           	if(crru.imgurl.indexOf(",")!=-1){
+                           		 images=crru.imgurl.split(",");
+                           		 for(var x in images){
+                           		 htmlforphoto+='<p><img src="'+images[x] +'"   data-preview-src="" data-preview-group="1"></p>';
+                           	}
+                           	}else{
+                           		 images=crru.imgurl;
+                           		 htmlforphoto+='<p><img src="'+images+'"   data-preview-src="" data-preview-group="1"></p>';
+                           	}
+                           	}else{
+                           		htmlforphoto='<p><img src="../../images/loginy/logo4.png"   data-preview-src="" data-preview-group="1"></p>';
+                           	}
+                           	console.log(htmlforphoto);
+                           	mui("#photo")[0].innerHTML=htmlforphoto;
+			                document.getElementById('content').innerHTML=str;
+			   
+		
+			});
+			  
+		</script>
+	</head>
+
+	<body style="background-color: #FFFFFF;">
+		<div class="mui-bar mui-bar-nav"  >
+			<a id="back" style="color:#EFEFF4" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 id="head" style="color:#EFEFF4" class="mui-title">获奖详情</h1>
+		</div>
+		<div class="mui-content" style="background-color: #FFFFFF;margin-top: 13%;">
+			
+			<div class="mui-content-padded" id="photo" style="height: 250px;overflow: auto;">
+				<p>
+					<img src="" data-preview-src="" data-preview-group="1">
+				</p>			
+			</div>
+			<div id="content"  style="height: 120px;margin-left: 2%;margin-right: 2%;text-indent: 2em;font-size:1.2em;line-height: 2em;">
+				
+		    </div>
+		    
+			
+		</div>
+	   <div id="__MUI_PREVIEWIMAGE" class="mui-slider mui-preview-image mui-fullscreen">
+	   <div class="mui-preview-header">
+	   <span class="mui-preview-indicator"></span>
+	   </div>
+	   <div class="mui-slider-group"></div>
+	   <div class="mui-preview-footer mui-hidden"></div>
+	   <div class="mui-preview-loading">
+	   <span class="mui-spinner mui-spinner-white"></span>
+	   </div>
+	   </div>
+	   <script>mui.previewImage();</script>
+	</body>
+	
+
+</html>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<script src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/ty.js" ></script>
+		<style>
+			.mui-bar {background-color: #d62a2a;};
+		</style>
+		<script type="text/javascript" src="../../js/artTemplate.js" ></script>
+		
+		<script id='cata' type="text/html">
+		{{each items as item i}}
+			<li class="mui-table-view-cell mui-media"  id="{{item.id}}" 
+				data-showNextClumn="{{item.showNextColumn}}"  
+				data-templateId="{{item.templateId}}"
+				data-name="{{item.name}}"
+				data-organId="{{item.organ}}">
+						<a href="javascript:;">
+							<img class="mui-media-object mui-pull-left" src="{{item.pic}}">
+							<div class="mui-media-body">
+								{{item.name}}	
+							<p class="mui-ellipsis">文章数量：{{item.artNum}}</p>
+							</div>
+						</a>
+					</li>
+		{{/each}}	
+		</script>
+		<script>
+				
+			mui.plusReady(function(){
+				var cu=plus.webview.currentWebview();
+				var cataId=cu.cataId;
+			    document.getElementById('title').innerHTML=cu.fatherName;
+				var pageSize="-1";
+				var pageNum="-1";
+		    mui.ajax(GetPostUrl.gUrl()+'/cata.json', {
+			data: {
+				
+				catalogId:cataId,				
+				pageSize:pageSize,
+				pageNum:pageNum,
+				token:localStorage.getItem("token")
+			},
+			type: 'post',
+			dataType: 'json',
+			async: false,
+			success: function(data) {
+					if(data.success) {
+						var datak={"items":data.obj};
+				        var html=template("cata",datak);
+					    document.getElementById("c").innerHTML=html;
+					} else {
+						mui.toast("很抱歉，获取失败 ");
+					}
+			
+			}
+		    })
+		    
+		    
+		    
+		    mui("#c").on("tap",".mui-table-view-cell",function(){
+		    	var cataId=this.getAttribute("id");
+		    	var name=this.getAttribute("data-name");
+		    	var organId=this.getAttribute("data-organId");
+		    	//打开学习心声的文章
+		    	mui.openWindow({
+                url:'../article/index.html',
+                id:'articleList',
+                extras:{
+                cataId:cataId,  //扩展参数
+                organId:organId,
+                fatherName:name
+                }
+                });
+		    });
+			});
+				
+		
+				
+			
+		</script>
+	</head>
+	<body>
+		 <header class="mui-bar mui-bar-nav">
+			<a id="back" style="color:#EFEFF4" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 id="title" style="color:#EFEFF4" class="mui-title"></h1>
+		</header>
+		 <div class="mui-content">
+		 	<ul class="mui-table-view "  id="c" >
+					  </ul>
+		 </div>
+		 
+	</body>
+</html>

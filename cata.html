@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>Hello MUI</title>
+
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="css/mui.min.css">
+		<link rel="stylesheet" type="text/css" href="css/app.css" />
+
+		<style>
+		    html,body{
+		    	height:100%;
+		    } 
+			.object {
+				max-height: 60px;
+				width: 80px;
+			}
+			
+			#gongao {
+				width: 100%;
+				height: 30px;
+				overflow: hidden;
+				line-height: 30px;
+				font-size: 13px;
+				font-family: '宋体';
+				background:#F9F9F9;
+				color: #D62A2A;
+				font-weight: bold;
+				filter:alpha(Opacity=0);-moz-opacity:0.6;opacity: 0.6;
+			}
+			
+			#gongao #scroll_begin,
+			#gongao #scroll_end {
+				display: inline
+			}
+			
+			.mui-col-sm-3 {
+				width: 25%;
+			}
+			
+			.hasSee {
+				float: right;
+				width: 20px;
+			}
+			
+			/*.mui-slider-item {
+				width: 100%;
+				height: 100px;
+			}*/
+			
+			.cxl {
+				width: 100%;
+				height: 195px;
+			}
+			#catalist.mui-table-view:after {
+				background-color: #FFF;
+			}
+			
+			#catalist.mui-table-view:before {
+				background-color: #FFF;
+			}
+			
+			#ddd.mui-table-view:before {
+				background-color: #FFF;
+			}
+			
+			.mui-table-view-cell:after {
+				background-color: #FFF;
+			}
+			.cata{
+				
+				height: 90px;
+			}
+			.mui-icon{
+				color:#E9F0F5;
+			}
+			main { position: relative; background: hsla(0,100%,100%,.5); overflow: hidden; } main::before { content: ''; position: absolute; top: 0; right: 0; bottom: 0; left: 0; filter: blur(20px); margin: -30px; }
+		</style>
+		<script src="js/mui.min.js"></script>
+		<script src="js/ty.js"></script>
+		<script src="js/artTemplate.js"></script>
+		<script src="js/mui.lazyload.js"></script>
+		<script src="js/mui.lazyload.img.js"></script>
+		<script type="text/javascript" src="js/jquery-1.11.1.js" ></script>
+		<!--
+        	作者：offline
+        	时间：2017-07-27
+        	描述：栏目加载的模板
+        -->
+		<script id="cata" type="text/html">
+			{{each items as item i}}
+			<li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 cata " style="background-color:#FFFFFF;margin-top: 1%;padding-bottom: 0px;" id="{{item.id}}" data-name="{{item.name}}" data-templateId="{{item.templateId}}" data-showNextColumn="{{item.showNextColumn}}">
+				<a href="#">
+					<img src="{{item.pic}}"  width="60%"   >
+				</a>
+                    <div class="mui-media-body" style="position:absolute;top: 60px;left:0px;">{{item.name}}</div>
+			</li>
+			{{/each}}
+		</script>
+		<!--
+        	作者：offline
+        	时间：2017-07-27
+        	描述：加载文章的模板
+        -->
+		<script type="text/html" id="article">
+			{{each items as item i}}
+			<li class="mui-table-view-cell mui-media" id="{{item.id}}" data-templateId="{{item.templateId}}" data-hasGreat="{{item.hasGreat}}" data-hasSeen="{{item.hasseen}}" style="border-bottom: 4px solid 	#efeff4;">
+				<a href="javascript:;">
+					<div class="img">
+						<img class="headpic object mui-pull-left" src="{{item.headpic}}" style="margin-right: 5%;">
+					</div>
+					<div class="mui-media-body">
+						<!--<span style="display:block;float: right;font-size:15px;">来自:{{item.catalogName}}</span>-->
+						<p class='mui-ellipsis'>
+							<font color="#000000">{{item.title}}</font>
+						</p>
+						<p class='mui-ellipsis'>作者:{{item.inputerName}}</p>
+						<p class='mui-ellipsis'>来自:{{item.catalogName}}</p>
+						<img class="hasSee" src="img/wd.png" />
+						<p>{{item.createtime}}</p>
+					</div>
+				</a>
+			</li>
+			{{/each}}
+		</script>
+	</head>
+	<body style="background:url(img/cxl.gif);background-size:100%;background-repeat: no-repeat;background-position: center;">
+		<!--下拉刷新容器-->
+		<div id="pullrefresh" class="mui-content mui-scroll-wrapper" style="background-color: #F5F5F5;display: none;">
+			<div class="mui-scroll">
+				<!--数据列表-->
+				<div id="gongao" style="position: absolute;z-index:99;top:0;left:0;">
+					<div style="width:300px;height:30px;margin:0 auto;white-space: nowrap;overflow:hidden;" id="scroll_div" class="scroll_div">
+						<div id="scroll_begin">
+						</div>
+						<div id="scroll_end"></div>
+					</div>
+				</div>
+				<!--
+           	作者：offline
+           	时间：2017-07-27
+           	描述：顶部图片轮播
+           -->
+				<div id="slider" class="mui-slider" style="position: relative;">
+					<div class="mui-slider-group mui-slider-loop" id="102" data-name="新闻" data-templateId="0" data-showNextColumn="0">
+						<!-- 额外增加的一个节点(循环轮播：第一个节点是最后一张轮播) -->
+						<div class="mui-slider-item mui-slider-item-duplicate">
+							<a href="#">
+								<img id="a" src="" class="cxl">
+							</a>
+						</div>
+						<!-- 第一张 -->
+						<div class="mui-slider-item">
+							<a href="#">
+								<img id="b" src="" class="cxl">
+							</a>
+						</div>
+						<!-- 第二张 -->
+						<div class="mui-slider-item">
+							<a href="#">
+								<img id="c" src="" class="cxl">
+							</a>
+						</div>
+						<!-- 第三张 -->
+						<div class="mui-slider-item">
+							<a href="#">
+								<img id="d" src="" class="cxl">
+							</a>
+						</div>
+						<!-- 第四张 -->
+						<div class="mui-slider-item">
+							<a href="#">
+								<img id="e" src="" class="cxl">
+							</a>
+						</div>
+						<!-- 额外增加的一个节点(循环轮播：最后一个节点是第一张轮播) -->
+						<div class="mui-slider-item mui-slider-item-duplicate">
+							<a href="#">
+								<img id="f" src="" class="cxl">
+							</a>
+						</div>
+					</div>
+					<div class="mui-slider-indicator">
+						<div class="mui-indicator mui-active"></div>
+						<div class="mui-indicator"></div>
+						<div class="mui-indicator"></div>
+						<div class="mui-indicator"></div>
+					</div>
+				</div>
+				<!--
+                	作者：offline
+                	时间：2017-07-27
+                	描述：栏目区
+                -->
+				<ul class="mui-table-view mui-grid-view mui-grid-9" style="margin:0 auto;" id="catalist">
+				</ul>
+				<!--
+                	作者：offline
+                	时间：2017-07-27
+                	描述：底部文章区
+                -->
+				<ul class="mui-table-view " id="ar">
+
+				</ul>
+
+			</div>
+
+		</div>
+		<script>
+			window.setTimeout(hello, 5000);
+			/**
+			 * 上拉加载 下拉刷新
+			 */
+			mui.init({
+				pullRefresh: {
+					container: '#pullrefresh',
+					down: {
+						callback: pulldownRefresh
+					}
+				}
+				
+			});
+			/**
+			 * 下拉刷新具体业务实现
+			 */
+
+			function pulldownRefresh() {
+				setTimeout(function() {
+					//新闻
+					news(102);
+					//首页文章
+					//article(1, 2);
+					//理念
+					linian();
+					//在线人数
+					//zx();
+					pageNum = 1
+					localStorage.removeItem('cxl');
+					mui('#pullrefresh').pullRefresh().endPulldownToRefresh(); //refresh completed
+					mui('#pullrefresh').pullRefresh().refresh(true);
+				}, 1500);
+			}
+
+			/**
+			 * 加载动画
+			 */
+			function hello() {
+				document.getElementById('pullrefresh').style.display = "block";
+			    document.body.style.backgroundImage="";
+			    document.body.style.backgroundColor="#efeff4";
+				birthday();
+			}
+			/**
+			 * 加载新闻的方法
+			 * @param {Object} witch
+			 */
+			var news = function(witch) {
+				////(witch);
+				mui.ajax(GetPostUrl.gUrl() + '/headpics.json', {
+					data: {
+						cataId: witch,
+						token: localStorage.getItem("token")
+					},
+					type: 'post',
+					dataType: 'json',
+					async: 'true',
+					success: function(data) {
+						document.getElementById('a').src = data[3];
+						document.getElementById('b').src = data[0];
+						document.getElementById('c').src = data[1];
+						document.getElementById('d').src = data[2];
+						document.getElementById('e').src = data[3];
+						document.getElementById('f').src = data[0];
+						var a = mui("#slider");
+						a.slider({
+							interval: 5000
+						});
+						if(data == "-1") {
+							mui.toast('请重新登录!');
+						}
+					}
+				});
+			}
+			/**
+			 * 加载栏目的方法
+			 * @param {Object} pageNum
+			 * @param {Object} pageSize
+			 * @param {Object} witch
+			 */
+			var data = function(pageNum, pageSize, witch) {
+				mui.ajax(GetPostUrl.gUrl() + '/cata.json', {
+					data: {
+						catalogId: witch,
+						pageSize: pageSize,
+						pageNum: pageNum,
+						token: localStorage.getItem("token"),
+						level:localStorage.getItem('level')
+					},
+					type: 'post',
+					dataType: 'json',
+					async: 'true',
+					success: function(data) {
+						var datak = {
+							"items": data.obj
+						};
+						console.log(JSON.stringify(data));
+						//首页的7个栏目
+						var html = template("cata", datak);
+						document.getElementById("catalist").innerHTML = html;
+						sign();
+						linian();
+						if(data == "-1") {
+							mui.toast('请重新登录!');
+						}
+					}
+				});
+			}
+			/**
+			 *通知公告显示未签收数量的方法 
+			 */
+			var sign = function() {
+
+				mui.ajax(GetPostUrl.gUrl() + '/tasknum.json', {
+					data: {
+						token: localStorage.getItem('token'),
+						organId: localStorage.getItem('organId')
+					},
+					dataType: 'json',
+					type: 'post',
+					success: function(data) {
+						if(data.success) {
+							document.getElementById("120").innerHTML = document.getElementById("120").innerHTML +
+								'<span id="num" style="top:10px;background: red;" class="mui-badge mui-badge-warning">' +
+								data.obj + '</span>';
+						}
+					}
+
+				})
+			}
+
+			/**
+			 *显示理念字幕的方法 
+			 */
+			var linian = function() {
+
+				mui.ajax(GetPostUrl.gUrl() + '/getconcept.json', {
+					data: {
+						token: localStorage.getItem("token")
+					},
+					type: 'post',
+					dataType: 'json',
+					async: 'true',
+					success: function(data) {
+						if(data.success) {
+							document.getElementById('scroll_begin').innerHTML = data.obj;
+							ScrollImgLeft();
+						} else if(data == "-1") {
+							mui.toast("请重新登录! ");
+						}
+					}
+				})
+			}
+
+			/**
+			 *具体滚动字幕的方法 
+			 */
+			function ScrollImgLeft() {
+				var speed = 50;
+				var scroll_begin = document.getElementById("scroll_begin");
+				var scroll_end = document.getElementById("scroll_end");
+				var scroll_div = document.getElementById("scroll_div");
+				scroll_end.innerHTML = scroll_begin.innerHTML;
+
+				function Marquee() {
+					if(scroll_end.offsetWidth - scroll_div.scrollLeft <= 0)
+						scroll_div.scrollLeft -= scroll_begin.offsetWidth;
+					else
+						scroll_div.scrollLeft++;
+				}
+
+				setInterval(Marquee, speed);
+			}
+			/**
+			 *事件\界面操作 \方法执行
+			 */
+			mui.plusReady(function() {
+				var self = plus.webview.currentWebview();
+				self.setStyle({
+					scrollIndicator: 'none'
+				});
+				//首页新闻栏目
+				news(102);
+				//栏目
+				
+				data(1, 12, 100);
+				//首页文章
+				//article(1, 2);
+				//================================================================================================			
+				//打开新闻	 
+				document.getElementById("102").addEventListener('tap', function() {
+
+					var id = this.getAttribute("id");
+					//(id);
+					var showNextColumn = this.getAttribute("data-showNextColumn");
+					//(showNextColumn);
+					var name = this.getAttribute("data-name");
+					//(name);
+					var templateId = this.getAttribute("data-templateId");
+					//(templateId);
+					mui.openWindow({
+						url: 'html/article/index.html',
+						id: 'index',
+						extras: {
+							cataId: id, //扩展参数
+							fatherName: name,
+							templateId: templateId
+						},
+						show: {
+							aniShow: 'zoom-fade-out'
+						}
+					});
+				});
+				//===================================================================================================
+				//打开文章或栏目或活动
+				mui("#catalist").on('tap', '.cata', function() {
+					
+					var id = this.getAttribute("id");
+					var showNextColumn = this.getAttribute("data-showNextColumn");
+					var name = this.getAttribute("data-name");
+					if(id == "101") {
+						//组织架构
+						mui.openWindow({
+							url: 'html/dangzu/jianjie.html',
+							id: 'jianjie.html',
+							show: {
+								aniShow: 'zoom-fade-out'
+							},
+							extras: {
+
+								fatherName: name
+                               
+							}
+
+						});
+					} else if(id == '110') {
+						//积分排名
+						mui.openWindow({
+							url: 'html/scoreNum/testindex.html',
+							id: 'testindex.html',
+							show: {
+								aniShow: 'zoom-fade-out'
+							}
+						});
+					} else if(id == '119') {
+						//答题界面
+						mui.openWindow({
+							url: 'html/answer/pullrefresh_main.html',
+							id: 'pullrefresh_main',
+							show: {
+								aniShow: 'zoom-fade-out'
+							}
+						});
+
+					} else if(id == '120') {
+						//通知公告
+						mui.openWindow({
+							url: 'html/tongzhi/index3.html',
+							id: 'index3.html',
+							show: {
+								aniShow: 'zoom-fade-out'
+							},
+							extras: {
+
+								fatherName: name
+							}
+						});
+					} else if(id == '122') {
+						//党校在线
+						var extras = {
+							subpage: "html/kong/kzdx-contact.html",
+							title: '空中党校'
+						};
+						var dangxiao = plus.webview.create("urlIndex.html", "urlIndex.html", {}, extras);
+						dangxiao.show();
+					}else if(id == "125") {
+						
+						//党务活动
+						var extras = {
+							//subpage: "html/activities/activities_natrul.html",
+							subpage: "activity.html",
+							title: "专题活动"
+						}
+						var b = plus.webview.create("coreIndex.html", "coreIndex.html", {}, extras);
+						b.show();
+					} else if(id == "133") {
+						//党建文化
+						var liu = plus.webview.create("html/wenhua/wenhua.html", "html/wenhua/wenhua.html", {}, extras);
+						liu.show();
+					}else if(id=='131'){
+						var extras={subpage:'html/dangzuxt/jianjie.html',title:'基层党建',extras:{jc:"jc"}};
+						var liu = plus.webview.create("coreIndex.html", "coreIndex.html", {}, extras);
+						liu.show();
+					}else if(id == "127") {
+
+						//党费管理
+						var extras = {
+							subpage: "html/pay/pay.html",
+							title: "党费管理"
+						};
+						var df = plus.webview.create("coreIndex.html", "coreIndex.html", {}, extras);
+						df.show();
+					} else if(id == "124") {
+						//时代先锋
+						var extras={subpage:"html/mofan/mofan.html",title:"时代先锋"};
+			     	    var w=plus.webview.create('coreIndex.html','coreIndex.html',{},extras);
+			     	     w.show();
+
+					} else if(id == '129') {
+						//党信发布
+						var extras = {
+							subpage: "html/msg/msg.html",
+							title: "党信发布"
+						};
+						var df = plus.webview.create("coreIndex.html", "coreIndex.html", {}, extras);
+						df.show();
+					} else if(id=='128'){
+						//党纪党规
+						var extras = {
+							subpage: "html/danggui/dangguiList.html",
+							title: "党纪党规",
+							extras:{cataId: id}
+						};
+						var df = plus.webview.create("coreIndex.html", "coreIndex.html", {}, extras);
+						df.show();
+						
+					}else if(showNextColumn == '1') {
+						//打开子栏目  包括  学习心声
+						mui.openWindow({
+							url: 'html/cata/index.html',
+							id: 'cataIndex',
+							extras: {
+								cataId: id, //扩展参数
+								fatherName: name,
+								num: "0"
+							},
+							show: {
+								autoShow: true, //页面loaded事件发生后自动显示，默认为true
+								aniShow: 'zoom-fade-out', //页面显示动画，默认为”slide-in-right“；
+								extras: {} //窗口动画是否使用图片加速
+							}
+						});
+					} else if(showNextColumn == '0') {
+						var templateId = this.getAttribute("data-templateId");
+                        console.log(id);
+						//打开文章列表页面
+						mui.openWindow({
+							url: 'html/article/index.html',
+							id: 'articleIndex',
+							extras: {
+								cataId: id, //扩展参数
+								fatherName: name,
+								templateId: templateId
+							},
+							show: {
+								aniShow: 'zoom-fade-out'
+							}
+						});
+
+					}
+
+				});
+
+				/**
+				 * 监听通知公告后退数量更新
+				 */
+				window.addEventListener('refresh', function() {
+					if(document.getElementById("120") != null) {
+						sign();
+					}
+				}, false);
+			});
+            function birthday(){
+			    if(new Date().getDate() + new Date().getDate() != localStorage.getItem('birtime')) {
+				mui.ajax(GetPostUrl.gUrl() + "/borth.json", {
+					data: {
+						token: localStorage.getItem('token'),
+						level:localStorage.getItem('level'),
+						oid:localStorage.getItem('organId')
+					},
+					type: 'post',
+					dataType: 'json',
+					async: 'true',
+					success: function(data) {
+							var msg = data.success==true?data .obj:"cxl";
+						    if(msg!='cxl'){
+							$('#dd').fadeIn(1000);
+							var i=8;
+							var a="";
+							var ids=setInterval(function(){
+									a=i--;
+									document.getElementById('m').innerText="剩余"+a+"秒关闭";
+									if(a==0){
+										clearInterval(ids);
+									}
+							},1000);
+							setTimeout(function(e){
+								document.getElementById('dd').style.display='none';
+							},9000);
+							document.getElementById('close').addEventListener('tap', function(event) {
+						    console.log("dddddddddd=======>");
+							localStorage.setItem('birtime', new Date().getDate() + new Date().getDate());
+							document.getElementById('dd').style.display='none';
+                            event.stopPropagation();
+							});
+							document.getElementById('bir').addEventListener('tap', function() {
+								document.getElementById('dd').style.display = 'none';
+								localStorage.setItem('birtime', new Date().getDate() + new Date().getDate());
+								mui.openWindow({
+									url: 'html/bir/bir.html',
+									id: 'bir.html',
+									show: {
+										autoShow: true, //页面loaded事件发生后自动显示，默认为true
+										aniShow: 'zoom-fade-out', //页面显示动画，默认为”slide-in-right“；
+									},
+									extras: {
+
+										msg: msg
+
+									}
+								});
+							});
+						
+						}
+					}
+				});
+			};
+			};
+		</script>
+        <div id='dd' style='position:absolute;z-index:1;top:0px;display: none;width:100%;height:100%;'>
+			<div id="bir" style="width:100%;height:100%;">
+				 <main style="height:500px;padding-top: 20%;"> 
+                                     <blockquote>
+                                       <footer>
+                                       	<div  style="width:100%,height:30px;">
+                                        <span  style="display: block;float: left;"><font id="m" color="#D62A2A" weight="600"></font></span>  
+                                        <span id="close" class="mui-icon mui-icon-close" style="display: block;color:#D62A2A;font-weight: 600;margin-left: 90%;"></span>
+			                           </div>
+                                     	<img id="img" src="images/activities/bir3.png" style="width:100%"/>
+                                      </footer> 
+                                     </blockquote> 
+                 </main>
+			   <p id="msg" style="text-indent: 2em;color:#000000;margin-top: 30%;font-size: 0.8xem;"></p>
+			</div>
+			
+		</div>
+		
+	</body>
+
+</html>

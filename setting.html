@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>Hello MUI</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" href="css/mui.min.css">
+		<link rel="stylesheet" href="css/icons-extra.css">
+		<link rel="stylesheet" href="css/cxl.css" />
+		<script src="js/mui.min.js"></script>
+		<script src="js/mui.enterfocus.js"></script>
+		<script src="js/ty.js"></script>
+		<script src="js/artTemplate.js"></script>
+		<script src="js/base64.js"></script>
+		<script src="js/DesUtil.js"></script>
+		<style>
+			html,
+			body {
+				background-color: #efeff4;
+			}
+			
+			.title {
+				margin: 20px 15px 10px;
+				color: #6d6d72;
+				font-size: 15px;
+			}
+			
+			#ss.mui-table-view:after {
+				background-color: #FFF;
+			}
+			
+			#ss.mui-table-view:before {
+				background-color: #FFF;
+			}
+			#ss{
+				background: url(images/wode/wotitle.jpg);
+				background-size: 100%;
+				background-repeat:no-repeat ;
+			}
+			#ddd.mui-table-view:before {
+				background-color: #FFF;
+			}
+			
+			#ddd.mui-table-view:after {
+				background-color: #FFF;
+			}
+			
+			#mmm {
+				background: transparent;
+			}
+			
+			#mmm.mui-table-view:after {
+				height: 0;
+			}
+			
+			#mmm.mui-table-view:before {
+				height: 0;
+			}
+			
+			html,
+			body {
+				background: url(images/activities/bjtt.jpg);
+				background-size: cover;
+			}
+			
+			.mui-content {
+				background: transparent;
+			}
+			
+			.gradient1 {
+				background: linear-gradient(-45deg, #e86a43, #fff);
+			}
+			.mui-indicator {
+			background: #e21515;
+			}
+			
+			
+		</style>
+	</head>
+	<body>
+		<div class="mui-content ">
+			<!--
+            	作者：offline
+            	时间：2017-07-29
+            	描述：标题头
+            -->
+			<ul class="mui-table-view  ym" id="ss" style="height: 140px;margin-top: 0.5%;padding-top: 25%;padding-left: 20%;">
+                 <div  style="padding-top: 3%;width: 50%;"><h5 ><font color="black"><strong id="name"></strong></font></h5><p><font size="0.5" id="organName"></font></p></div>
+			</ul>
+			<ul class="mui-table-view mui-table-view-striped mui-table-view-condensed" style="margin-bottom: 2%;">
+						<li class="mui-table-view-cell"style="padding-bottom: 0px;padding-top: 0px;">
+							<div class="mui-table" >
+								<div class="mui-table-cell mui-col-xs-4 mui-text-center">
+									
+									<h5 style="color: #000000;" id="fw"></h5>
+									<p style="color: #000000;"><font  size="0.5">评论数</font></p>
+								</div>
+								<div class="mui-table-cell mui-col-xs-4 mui-text-center">
+									<h5 style="color: #000000;" id="dz"></h5>
+									<p style="color: #000000;"><font  size="0.5">点赞数</font></p>
+								</div>
+								<div class="mui-table-cell mui-col-xs-4 mui-text-center">
+									<h5 style="color: #000000;" id="zj"></h5>
+									<p style="color: #000000;"><font  size="0.5">足迹数</font></p>
+								</div>
+							</div>
+						</li>
+			</ul>
+			<!--
+            	作者：offline
+            	时间：2017-07-29
+            	描述：党建与我
+            -->
+	
+           
+            <ul class="mui-table-view ym" style="margin-top: 2%;" id="ddd">
+                <li id="zhibuhuodong" class="mui-table-view-cell " id="scored">
+					<a class="mui-navigate-right">
+
+						<span style="display: block;width: 20%;">
+						<img src="img/an.png" style="width:30%; float: left;"/>&nbsp;支部活动</span>
+					</a>
+				</li>
+				<li class="mui-table-view-cell " id="scored">
+					<a class="mui-navigate-right">
+
+						<span style="display: block;width: 20%;">
+						<img src="img/zhibuhuodong.png" style="width:30%; float: left;"/>&nbsp;个人积分</span>
+						<span id="score" class="mui-badge" style="background: #FF3B30;color: #FFFFFF;"></span>
+					</a>
+				</li>
+				<li class="mui-table-view-cell ">
+					<a id="cz" class="mui-navigate-right">
+						<span style="display: block;width: 40%;margin-left:1% ;">
+					<img src="img/chengzhangguiji.png" style="width:9%; float: left;"/> &nbsp;&nbsp;成长轨迹</span>
+
+					</a>
+
+				</li>
+				<li class="mui-table-view-cell ">
+					<a id="about" class="mui-navigate-right">
+						<span style="display: block;width: 40%;">
+					<img src="img/xinxiweihu.png" style="width:13.5%; float: left;"/> &nbsp;信息维护</span>
+
+					</a>
+
+				</li>
+				
+				
+				
+				<li class="mui-table-view-cell">
+					<a id="super" class="mui-navigate-right" data-version="" data-is="">
+					<span style="display: block;width: 40%;">
+					<img src="img/banbenshengji.png" style="width:8%; float: left;max-height: 20px;"/>&nbsp;&nbsp;&nbsp;版本升级</span>
+					<span id="v"  class="mui-badge " style="background: red;font-size: 0.8em;padding-bottom: 2px ;color: #FFFFFF;">已是最新版本</span>
+					
+					</a>
+				</li>
+			</ul>
+
+			     <ul class="mui-table-view"  id="mmm">
+				<li class="mui-table-view-cell">
+					<a style="text-align: center;">
+						<img id="logout" src="img/tcdl.png" style="width: 60%;" />
+					</a>
+				</li>
+			</ul>
+		</div>
+		</style>
+	</body>
+    <script>
+    /**
+     * 界面初始化
+     */
+
+    mui.plusReady(function(){
+           /**
+            * 需要执行的方法
+            */
+           //检查更新
+           checkUpdate();
+           
+           /**
+            * 需要预加载的界面
+            */
+           	//预加载成长轨迹列表页面
+			 mui.preload({
+			 	 url: 'html/weizhi/dangwei.html', 
+			   id:'wz'
+			 });
+			
+			mui.preload({
+				url:'coreIndex.html'
+			});
+			
+		
+    });
+
+    /**
+     * 检查是否有新版本的方法
+     */
+   	function checkUpdate(){
+   		
+	  plus.runtime.getProperty(plus.runtime.appid,function(inf){
+        var  wgtVer=inf.version;
+	    mui.ajax(GetPostUrl.gUrl()+"/version.json",{
+    	data:{
+    		token:localStorage.getItem('token'),
+    		wgtVer:wgtVer
+    	},
+    	type:'post',
+    	dataType:'json',
+    	async:'true',
+    	success:function(data){
+    		if(data.success){
+    			if(wgtVer!=null&&wgtVer!=data.obj){
+    			 document.getElementById('super').setAttribute('data-version',data.msg);
+    			 document.getElementById('super').setAttribute('data-is',1);
+    		     document.getElementById('v').innerText=data.obj;
+    			}else{
+    			   document.getElementById('v').innerHTML='aaa';
+    			}
+    		}
+    		
+    	}
+    	
+    	
+     }); 
+	  
+	 });
+   
+     }
+   
+   
+  /**
+   * 下载wgt文件的方法
+   */
+function downWgt(wgtUrl){
+    plus.nativeUI.showWaiting("软件更新中...");
+    plus.downloader.createDownload( wgtUrl, {}, function(d,status){
+        if ( status == 200 ) { 
+            installWgt(d.filename); // 安装wgt包
+        } else {
+           mui.toast("下载wgt失败！");
+        }
+        plus.nativeUI.closeWaiting();
+    }).start();
+}
+
+
+
+
+/**
+ * 安装应用的方法
+ */
+function installWgt(path){
+    plus.runtime.install(path,{},function(){
+        plus.nativeUI.closeWaiting();
+      
+            mui.toast('更新完成!');
+            plus.runtime.restart();
+       
+    },function(e){
+        plus.nativeUI.closeWaiting();
+       
+        plus.nativeUI.alert("安装wgt文件失败["+e.code+"]："+e.message);
+    });
+}
+   
+		mui.init({
+			swipeBack: true //启用右滑关闭功能
+		});
+	</script>
+	<script>
+        /**
+         * 加载用户信息的方法
+         */
+
+		var user = function() {
+			//初始化
+			var userId = localStorage.getItem('userId');
+			var data = new Object();
+			data.userId = userId;
+			var json = JSON.stringify(data);
+			json = strEnc(json);
+			mui.ajax(GetPostUrl.gUrl() + '/app/getUserInfo', {
+				data: {
+					token: localStorage.getItem('token'),
+					param: json
+				},
+				type: 'post',
+				dataTye: 'json',
+				async: true,
+				success: function(data) {
+					
+					var json = strDec(data);
+					if(json) {
+						json = JSON.parse(json);
+						var data1 = {
+							"items": json
+						};
+						console.log(JSON.stringify(json));
+						//储存区县的标识
+						localStorage.setItem('ecode',json.ecode);
+						localStorage.setItem('organName',json.organName);
+						localStorage.setItem('organId',json.organizationId);
+						localStorage.setItem('grade',json.phone2);
+						document.getElementById('name').innerText=json.name;
+						document.getElementById('organName').innerText=json.organName;
+						document.querySelector("#score").innerHTML = json.liveness;
+						document.getElementById('fw').innerText=json.commentNum.commentNum;
+						document.getElementById('dz').innerText=json.commentNum.greatNum;
+						document.getElementById('zj').innerText=json.commentNum.seeNum;
+					} else if(json == "-1") {
+						mui.toast("请重新登录!");
+					} else {
+						mui.toast("网络错误,请重试!");
+					}
+				}
+				});
+			}
+		
+		/**
+		 * 退出登录方法
+		 */
+		var quit = document.getElementById('logout');
+		quit.addEventListener('tap', function(event) {
+			var str = GetPostUrl.gUrl() + '/loginjm/quitlogin.json';
+			var tk = localStorage.getItem('token');
+			mui.ajax(str, {
+				data: {
+					token: tk
+				},
+				contentType: "application/x-www-form-urlencoded; charset=utf-8",
+				async: false, //异步请求
+				dataType:'json', //返回的类型
+				type: 'post', //HTTP请求类Setsjhm型
+				crossDomain: true, //强制使用5+跨域
+				success: function(data) {
+
+					//退出成功清空token,用户名,用户id
+					if(data.msg=="0"){
+						mui.toast("服务器异常");
+					}
+					if(data.msg=="1"){
+						mui.toast("退出成功");
+					localStorage.removeItem('token');
+					localStorage.removeItem('username');
+					localStorage.removeItem('userId');
+					localStorage.removeItem('birtime');
+					localStorage.removeItem("ip");
+					clearWebview();
+					}
+					if(data.msg=="2"){
+						mui.toast("退出失败,请重启软件!");
+					}
+				}
+			});
+
+		});
+	
+		 /**
+         * 退出登录删除界面的方法
+        */
+		function clearWebview() {
+			var wvs, self, launch;
+			wvs = plus.webview.all();
+			self = plus.webview.currentWebview();
+			launch = plus.webview.getLaunchWebview();
+			console.log(wvs);
+			for(var i = 0, len = wvs.length; i < len; i++) {
+				wvs[i].close();
+			}
+			plus.storage.clear();
+			self.close(); 
+		};
+			/**
+			 * 监听用户修改信息的后退
+			 */
+			window.addEventListener('refresh', function() {
+			              user();
+		    }, false);	
+			
+           /**
+            * 打开成长列表
+            */
+			document.getElementById("cz").addEventListener('tap', function() {
+				setTimeout(function() {
+					var extras={subpage:"html/user/cz.html",title:"成长轨迹"};
+					var wb=plus.webview.create('coreIndex.html','coreIndex.html',{},extras);
+					wb.show();
+				}, 0);
+			});
+			user();
+		
+		
+       /**
+        * 打开支部活动列表
+        */
+       document.getElementById("zhibuhuodong").addEventListener('tap',function(){
+       	
+       	  setTimeout(function(){
+       	  	
+       	  	var extras={subpage:"html/activities/zhibuhuodong.html",title:"支部活动"};
+       	  	var we=plus.webview.create("coreIndex.html","coreIndex.html",{},extras);
+       	  	we.show();
+       	    });
+       });
+      /**
+       * 打开积分页面
+       */
+		document.getElementById('scored').addEventListener('tap', function() {
+			    setTimeout(function(){
+			        var extras={subpage:"html/score/score.html",title:"积分信息"};
+					var wb=plus.webview.create('coreIndex.html','coreIndex.html',{},extras);
+					 wb.show();
+                });
+		});
+		
+		
+     /**
+      * 打开版本升级
+      */
+     document.getElementById('super').addEventListener('tap',function(){
+     	 //location.href = "http://180.76.235.249:8090/shiro/files/hsds.apk";
+     	var dat = this.getAttribute('data-is');
+     	var version=this.getAttribute('data-version');
+     	 if(dat!=1){
+     	 	return mui.toast('已是最新版本');
+     	 }
+         var btnArray=['否','是'];
+         mui.confirm('','确认更新',btnArray,function(e){
+         	if(e.index==1){
+         		
+    			   downWgt(version);
+    			   
+    		
+         	}
+         },'div');
+	
+     });
+     /**
+      * 打开用户信息
+      */
+      document.getElementById('about').addEventListener('tap', function() {
+				
+				//打开关于页面
+				mui.openWindow({
+					url: 'html/user/user_message.html',
+					id: 'user_message',
+					show: {
+						aniShow: 'zoom-fade-out'
+					}
+
+				});
+			});
+	</script>
+	<script>
+       
+	</script>
+
+</html>

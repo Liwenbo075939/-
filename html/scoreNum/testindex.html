@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<script src="../../js/com.js"></script>
+		
+		<style>
+			.mui-bar {background-color: #d62a2a};
+		</style>
+	
+		<!--
+        	作者：offline
+        	时间：2017-07-27
+        	描述：个人积分排名模板
+        -->
+		<script type="text/html" id="scores">
+			{{each items as item i}}
+			<li data-time={{item.ctime}} class="mui-table-view-cell">
+				<div class="mui-table">
+					<div class="mui-table-cell mui-col-xs-2 mui-text-center">
+						<span class="mui-h5 abc" style="color: #000000;">第{{item.num}}名</span>
+					</div>
+					<div class="mui-table-cell mui-col-xs-4 mui-text-center">
+						<span class="mui-h5 abc" style="color: #000000;">{{item.ctime}}</span>
+					</div>
+
+					<div class="mui-table-cell mui-col-xs-3 mui-text-center">
+						<p class=" mui-ellipsis" style="color: #000000;">{{item.name}}</p>
+					</div>
+
+					<div class="mui-table-cell mui-col-xs-2 mui-text-center">
+						<span class="mui-h5" style="color: #000000;">{{item.liveness}}</span>
+					</div>
+					<div class="mui-table-cell mui-col-xs-3 mui-text-center">
+						<img style="width:25%;" src="../../img/189.png"/>
+					</div>
+				</div>
+			</li>
+			{{/each}}
+		</script>
+		<!--
+        	作者：offline
+        	时间：2017-07-27
+        	描述：支部排名模板
+        -->
+		<script type="text/html" id="zhibuscores">
+			{{each items as item i}}
+			<li class="mui-table-view-cell">
+			<div class="mui-table">
+		                <div class="mui-table-cell mui-col-xs-10">
+		                    <h4 class="mui-ellipsis-2">{{item.name}}</h4>
+		                    <h5>积分分值:{{item.scores}}</h5>
+		                    <h5>时间：{{item.ctime}}</h5>
+		                </div>
+		                <div class="mui-table-cell mui-col-xs-2" style="position: absolute;top:60%;">
+						<span>第{{item.num}}名</span>
+					    </div>
+		                <div class="mui-table-cell mui-col-xs-2 mui-text-center">
+						<img style="width:30%;" src="../../img/189.png"/>
+					    </div>
+		            </div>
+		           </li>
+			{{/each}}
+		</script> 
+	<script type="text/javascript">
+		 mui.plusReady(function() {
+		 	
+		 	var time=plus.webview.currentWebview().time;
+		 	var sw=plus.webview.currentWebview().sw;
+		 	var level=plus.webview.currentWebview().level;
+		 	var dataL={time:time,level:level,token: localStorage.getItem("token"),oid:localStorage.getItem('organId')};
+		 	var data="";
+		 	if(sw=='0'){
+		 		//个人
+		 		data=ajaxL(GetPostUrl.gUrl() + '/grldhq.json',dataL);
+		 		con(data);
+		 		for(var x in data.obj){
+		 		 data.obj[x]["num"]=parseInt(x)+1;
+			     data.obj[x].ctime=data.obj[x].ctime.substring(0,4)+"年"+data.obj[x].ctime.substring(5,7)+"月";
+			     data.obj[x].scores=parseFloat(data.obj[x].scores).toFixed(2);
+			    }
+		 		templateL('scores',data.obj,'scorelist',null);
+		 	}else{
+		 		//支部
+		 		data=ajaxL(GetPostUrl.gUrl() + "/dwldhq.json",dataL);
+		 		for(var x in data.obj){
+		 		 data.obj[x]["num"]=parseInt(x)+1;
+			     data.obj[x].ctime=data.obj[x].ctime.substring(0,4)+"年"+data.obj[x].ctime.substring(5,7)+"月";
+			     data.obj[x].scores=parseFloat(data.obj[x].scores).toFixed(2);
+			    }
+		 		templateL('zhibuscores',data.obj,'scorelist',null);
+		 		document.getElementById("title").style.display="none";
+		 		
+		 	}
+		 	
+		 	
+		 	
+		 });
+	
+	
+	</script>
+	
+	</head>
+         <body>
+         	
+         	<div class=" mui-bar mui-bar-nav"  >
+				<a id="back" style="color:#EFEFF4" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			    <h1 id="head" style="color:#EFEFF4;padding-left: 6%;" class="mui-title">详情</h1>
+		    </div>
+		    
+		  
+         	<div class="mui-content" style="background-color: #FFFFFF;margin-top:15%;">
+					<ul id="title" class="mui-table-view mui-table-view-striped mui-table-view-condensed">
+						<li id="li1" class="mui-table-view-cell">
+							<div class="mui-table">
+								<div class="mui-table-cell mui-col-xs-2 mui-text-center">
+									<h5>排名</h5>
+								</div>
+								<div class="mui-table-cell mui-col-xs-4 mui-text-center">
+									<h5>时间</h5>
+								</div>
+								<div class="mui-table-cell mui-col-xs-3 mui-text-center">
+									<h5 >党员姓名</h5>
+								</div>
+								<div class="mui-table-cell mui-col-xs-2 mui-text-center">
+									<h5 >分值</h5>
+								</div>
+								<div class="mui-table-cell mui-col-xs-3 mui-text-center">
+									<img style="width:25%;" src="../../img/189.png"/>
+								</div>
+							</div>
+						</li>
+					</ul>
+					<ul class="mui-table-view mui-table-view-striped mui-table-view-condensed" id="scorelist">
+
+					</ul>
+         	</div>
+         </body>
+</html>

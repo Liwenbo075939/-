@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html style="width:100%;height:100%;">
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=100,maximum-scale=1">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<style>
+			html,
+			body {
+				
+				height: 100%;
+				background:url(../../images/kzdx/kzdxbj.jpg);
+				background-size:100% 100%;
+			}
+			#a button{
+				border: none;
+				height: 60px;
+				width: 100%;
+				margin-top: 2%;
+				
+			}
+			#button1{
+				background: url(../../images/kzdx/xdgdz.png);
+				background-size: 100%;
+				background-repeat:no-repeat;
+			}
+			#button2{
+				background: url(../../images/kzdx/xzsjjh.png);
+				background-size: 100%;
+				background-repeat:no-repeat;
+			}
+			#button3{
+				
+				background: url(../../images/kzdx/sw.png);
+				background-size: 100%;
+				background-repeat:no-repeat;
+				
+			}
+			#button4{
+				
+				background: url(../../images/kzdx/djw.png);
+				background-size: 100%;
+				background-repeat:no-repeat;
+			}
+			#button5{
+				background: url(../../images/kzdx/zgg.png);
+				background-size: 100%;
+				background-repeat:no-repeat;
+			}
+			#button6{
+				background: url(../../images/kzdx/hbgb.png);
+				background-size: 100%;
+				background-repeat:no-repeat;
+			}
+			#button7{
+				background: url(../../images/kzdx/xtdj.png);
+				background-size: 100%;
+				background-repeat:no-repeat;
+			}
+			.mui-btn{
+				border:1px solid none;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="a">
+			<button type="button" id="button1" data-url="http://dangjian.com/djw2016sy/djw2016wkztl/wkztl2016dzdg/" data-title="党章党规" class="mui-btn " ></button>		
+		
+		
+			<button type="button" id="button2" data-url="http://dangjian.com/djw2016sy/djw2016dtztc/sydtxjpxljh/" data-title="学系列讲话" class="mui-btn " ></button>			
+		
+		    <button type="button" id="button5" data-url="http://www.zgg.org.cn/" data-title="紫光阁" class="mui-btn " ></button>
+		    
+			<button type="button" id="button3" data-url="http://www.hebdx.com/" data-title="干部学习网" class="mui-btn " ></button>			
+		
+		
+			<!--<button type="button" id="button4" data-url="http://www.dangjian.cn/" data-title="党建网" class="mui-btn " ></button>		-->	
+		
+		
+						
+		
+		
+		
+		<button type="button" id="button6" data-url="http://www.hebgb.gov.cn/portal/index!index.action;jsessionid=abc1TsUUe5XF6-sqNst4v" data-title="河北干部网络学院" class="mui-btn "></button>			
+		
+		<button type="button" id="button7" data-url="http://www.xtjgdj.gov.cn/" data-title="邢台机关党建网" class="mui-btn " ></button>			
+		</div>
+	</body>
+	<script src="../../js/mui.min.js"></script>
+	<script src="../../js/ty.js" ></script>
+	<script>
+		mui.plusReady(function() {
+			var deceleration = mui.os.ios ? 0.003 : 0.0009;
+			mui('.mui-scroll-wrapper').scroll({
+				bounce: false,
+				indicators: true, //是否显示滚动条
+				deceleration: deceleration,
+			});
+			});
+			
+		
+		var header = document.getElementById("button");
+		mui("#a").on('tap', '.mui-btn', function(e) {
+			            if(unsafe_tap()) return;
+			            var id=this.getAttribute('id');
+			            if(id=="button6"){
+			            plus.runtime.launchApplication( {pname:"com.hongyin.cloudclassroom_hbwy"},function(e){
+						console.log("dddddd");
+						var url=document.getElementById('button6').getAttribute("data-url");
+				    	var title=document.getElementById('button6').getAttribute("data-title");
+				    	var extras={subpage:url,title:title};
+				    	var w=plus.webview.create("../../urlIndex.html","urlIndex.html",{},extras);	
+				    	w.show();
+					      });
+			            }else{
+			            	alert("cxl");
+			            mui(this).button('loading');
+				    	mui(this).button('reset');
+				    	var url=this.getAttribute("data-url");
+				    	var title=this.getAttribute("data-title");
+				    	var extras={subpage:url,title:title};
+				    	var w=plus.webview.create("../../urlIndex.html","urlIndex.html",{},extras);	
+				    	w.show();
+			            }
+			            
+			});
+			
+			/**
+				* 防止连续点击导致webview打开出错
+				* 注：主要用于打开新窗口时候
+				*/
+				var tap_first = null;
+				function unsafe_tap(){
+						if(!tap_first){
+							tap_first = new Date().getTime();
+							setTimeout(function() {
+								tap_first = null;
+							}, 1500);
+						}else{
+							return true;
+						}
+				}
+							
+	</script>
+
+</html>

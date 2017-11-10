@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=100,maximum-scale=1">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" type="text/css" href="../../css/mui.min.css"/>		
+		<link rel="stylesheet" type="text/css" href="../../css/app.css"/>	
+		<link rel="stylesheet" type="text/css" href="../../css/icons-extra.css"/>
+		
+		
+		<title></title>
+		<style>
+			.mui-bar {
+				background-color: #d62a2a;
+				}
+			
+			
+			.mui-title{
+				color:#eee;
+				
+			}
+			.mui-bar-tab .mui-tab-item {
+                display: table-cell;
+                overflow: hidden;
+                width: 1%;
+                height: 50px;
+                text-align: center;
+                vertical-align: middle;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+                color:#FFFFFF;
+                }
+			.mui-bar-tab .mui-tab-item.mui-active {
+             color: #FFFFFF;
+                          }
+
+              .mui-bar-tab .mui-tab-item .mui-icon~.mui-tab-label {
+              font-size: 15px;
+              }
+			
+		</style>
+	    </head>
+	     <body>
+		   <div class="mui-content">
+		     <div class=" mui-bar mui-bar-nav"  >
+				<a id="back" style="color:#EFEFF4" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			    <h1 id="head" style="color:#EFEFF4;padding-left: 6%;" class="mui-title"></h1>
+		    </div>
+	      	</div>
+	      	
+	</body>
+	    <script src="../../js/mui.min.js"></script>
+	    <script src="../../js/ty.js"></script>
+		<script tyle="text/javascript">
+			
+			
+            mui.plusReady(function() {
+              var self = plus.webview.currentWebview();    
+			  var articleID=self.articleId;
+			  var templateId=self.templateId;
+			  var hasseen=self.hasseen;
+			  var hasGreat=self.hasGreat;
+			  var nwaiting=self.nwaiting;
+			  var fatherName=self.name;
+			  document.getElementById('head').innerText=fatherName;
+			  if(hasGreat=='1'){
+			  	
+			  	document.getElementById("zan").style.color="#F0D64E";
+			  } 
+			
+			 mui.init({
+			
+			subpages:[{
+				url:'dangguidatil.html',
+				id:'dangguidatil.html',
+				styles:{
+					top: '45px',
+					scalable:true
+				},
+                extras:{articleId:articleID,hasseen:hasseen,nwaiting:nwaiting}//额外扩展参数
+			}]
+		});		
+             
+			});
+			
+			
+		</script>
+		
+	   
+</html>

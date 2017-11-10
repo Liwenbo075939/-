@@ -1,0 +1,335 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<style>
+			body{
+				height: 100%;
+				background-image:url(../../images/activities/bj02.jpg);
+				background-attachment:fixed;
+				background-size:100% 100%;
+				background-position:0px 0px;
+			}
+			html{
+					height: 100%;
+			}	
+			#list{
+				background: transparent;
+				background: url(../../images/activities/bjk.png);
+				background-size:100% 100%;
+				height: 100%;
+			}
+			#dt_total{
+				height:60px;
+			}
+			#listshowwz.mui-table-view:after{
+				height: 0;
+			}
+			#listshowwz.mui-table-view:before{
+				height: 0;
+			}
+			#listshow:after{
+				height: 0;
+			}		
+			.mui-popup{
+				top:40%;
+				width: 77%;
+				background-color: #E8E8E8;
+			}
+			.mui-card-footer:before, .mui-card-header:after{
+				height: 0;
+			}
+		</style>
+	</head>
+
+	<body>
+		<script src="../../js/ty.js"></script>
+		<script src="../../js/mui.enterfocus.js"></script>
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/artTemplate.js"></script>
+		<script id="listshow"type="text/html"> 
+		{{each items as item i}}
+					<li class="mui-card" id="list"data-etime="{{item.etime}}" data-name="{{item.name}}" data-qgp="{{item.qgp}}" data-num="{{item.amount}}" data-id="{{item.id}}" data-scores="{{item.scores}}" data-scorestype="{{item.scorestype}}" data-total="{{item.total}}">
+						<div id="dt_total" class="mui-card-header">
+							<span style="color:#000000;font-size: 20px;">{{item.name}}</span>
+							<span style="margin-top: 10%;">
+								<p id="sfdt" class="sfdts" style="margin-left:40%;font-size: 14px;">{{item.etime}}</p>
+								<p>{{item.ctime}}</p>
+							</sapn>
+						</div>
+						<div id="nr_total"class="mui-card-footer">
+							<span style="margin-top:5%;color:#CCCCCC;">答题人数:{{item.nums}}</span>
+							<span style="margin-top:5%;color:#CCCCCC;">发布人:{{item.pubshlisher}}</span>
+						</div>
+					</li>
+		{{/each}}
+		</script>
+		<script>
+		  var hd_id = null;
+		mui.plusReady(function() {
+			hd_id = localStorage.getItem('hd_id');
+			var token = localStorage.getItem('token');
+		  	var userId = localStorage.getItem('userId');
+			var str = GetPostUrl.gUrl()+'/question/listShow.json';
+			mui.ajax(str,{
+					data:{
+						answerId:hd_id,
+						token:token,
+						pageNum:"1",
+					    pageSize:"6",
+					    userId:userId
+					},
+					type: 'post',
+					dataType: 'json',
+					async:'true',
+					timeout: 10000, //超时时间设置为10秒
+					crossDomain: true, //强制使用5+跨域
+				    success: function(data) {
+				    	var datak={"items":data.obj};
+				    	 var html=template("listshow",datak);
+					    document.getElementById("listshowwz").innerHTML=html;
+				 		//修改已答未答的样式
+				 		var eles=document.getElementsByClassName("sfdts");
+						for(var i=0;i<eles.length;i++){
+							if(eles[i].innerHTML=="已答"){
+								eles[i].style.color="#f60";
+							}else{
+								eles[i].style.color="#99CC00";								
+							}
+						}
+				    },
+				    error:function(){
+				   	 return mui.toast('网络连接失败,请检查网络...');
+				    }
+				});
+			var detailPage = null;
+			//添加列表项的点击事件
+			var btnArray = ['返回', '确认'];
+			var total1 = "是否开始答题?";
+			var userId = localStorage.getItem('userId');
+			mui('#listshowwz').on('tap', 'li', function() {
+				if(unsafe_tap()) return;
+				//获取题目的数量
+				var num = this.getAttribute('data-num');
+				var cx_id = this.getAttribute('data-id');
+				//获取积分,积分类型,总分数
+				var scores = this.getAttribute('data-scores');
+				var scorestype = this.getAttribute('data-scorestype');
+				var total = this.getAttribute('data-total');
+				var  qgp = this.getAttribute('data-qgp');
+				var name = this.getAttribute('data-name');
+				
+				//开始验证该用户是否答过该题
+				mui.ajax(GetPostUrl.gUrl()+'/answer/yadt.json',{
+					data:{
+						userId:userId,
+						questionId:cx_id
+					},
+					type: 'post',
+					dataType: 'json',
+					async:'true',
+					timeout: 10000, //超时时间设置为10秒
+					crossDomain: true, //强制使用5+跨域
+				    success: function(data) {
+				    	if(data.msg=="0"){ //可以答题
+							mui.confirm('该问卷共'+num+'题, 点击确认开始答题', total1, btnArray, function(e) {
+				             if (e.index == 1) {
+				               localStorage.setItem('questionName',name);	
+				               localStorage.setItem('qgp',qgp);//缓存积分时效
+				               localStorage.setItem('answer_id',cx_id);
+				               localStorage.setItem('scores',scores); //缓存积分
+				               localStorage.setItem('scorestype',scorestype);//缓存积分类型
+				               localStorage.setItem('total',total);//缓存总分数
+				               localStorage.setItem('xxhm',num);//缓存题目数量
+								//打开详情页面          
+								  mui.openWindow({
+								    id:'answerDetails.html',
+								    url:'answerDetails.html',
+								    extras:{
+										cx_id:cx_id 
+								    },
+					                show:{
+					                aniShow:'zoom-fade-out'	
+					                }
+								  });
+				             } 
+				           },'div');
+				    	}else{
+				    			/*mui.alert("上次答题得分:"+data.obj[0].score+"分,"+"获得积分:"+data.obj[0].scores+"分", '您已经答过该问卷了!', function() {
+								},'div');*/
+								
+								mui.confirm("上次答题得分:"+data.obj[0].score+"分,"+"获得积分:"+data.obj[0].scores+"分", total1, btnArray, function(e) {
+				             if (e.index == 1) {
+				               localStorage.setItem('questionName',name);	
+				               localStorage.setItem('qgp',qgp);//缓存积分时效
+				               localStorage.setItem('answer_id',cx_id);
+				               localStorage.setItem('scores',scores); //缓存积分
+				               localStorage.setItem('scorestype',scorestype);//缓存积分类型
+				               localStorage.setItem('total',total);//缓存总分数
+				               localStorage.setItem('xxhm',num);//缓存题目数量
+				               localStorage.setItem('isDa',1);
+								//打开详情页面          
+								  mui.openWindow({
+								    id:'answerDetails.html',
+								    url:'answerDetails.html',
+								    extras:{
+										cx_id:cx_id
+										
+								    },
+					                show:{
+					                aniShow:'zoom-fade-out'	
+					                }
+								  });
+				             } 
+				           },'div');
+				    	}
+				    },
+				    error:function(){
+				    	return mui.toast('网络连接失败,请检查网络...');
+				    }
+				});
+		});  	
+	});
+		</script>
+		<script>
+			mui.init({
+				pullRefresh: {
+					container: '#pullrefresh',
+					down: {
+						
+						callback: pulldownRefresh
+					},
+					up: {
+						contentrefresh: '正在加载...',
+               			contentnomore:'没有更多数据了',
+						callback: pullupRefresh
+					}
+				},
+				//初始化预加载的详情界面
+				preloadPages:[{
+				    id:'answerDetails.html',
+				    url:'answerDetails.html'           
+				 }]
+				
+			});
+			
+			/**
+			 * 上拉加载具体业务实现
+			 */
+			var pageNum=0;
+			var pageSize=6;
+			//在此先默认得到问卷活动的id为:1 
+			var token = localStorage.getItem('token');
+			var userId = localStorage.getItem('userId');
+			function pullupRefresh() {
+				mui.ajax(GetPostUrl.gUrl()+'/question/listShow.json',{
+					data:{
+						answerId:hd_id,
+						token:token,
+						pageNum:pageNum++,
+					    pageSize:pageSize,
+					    userId:userId
+					},
+					type: 'post',
+					dataType: 'json',
+					async:'true',
+					timeout: 10000, //超时时间设置为10秒
+					crossDomain: true, //强制使用5+跨域
+				    success: function(data) {
+				       var datak={"items":data.obj};
+				       var html=template("listshow",datak);
+					   document.getElementById("listshowwz").innerHTML=html;
+					   var eles=document.getElementsByClassName("sfdts");
+						for(var i=0;i<eles.length;i++){
+							if(eles[i].innerHTML=="已答"){
+								eles[i].style.color="#f60";
+							}else{
+								eles[i].style.color="#99CC00";								
+							}
+						}
+					   //document.getElementById("sfdt").style.color="#f60";
+					    if(data.msg!="0"){
+						 	 mui('#pullrefresh').pullRefresh().endPullupToRefresh(true); 
+						 }else{
+						 	 mui('#pullrefresh').pullRefresh().endPullupToRefresh(false); 
+						 	
+						 }
+				    },
+				    error:function(){
+				    	return mui.toast('网络连接失败,请检查网络...');
+				    }
+				});
+			}
+			/**
+			 * 下拉刷新具体业务实现
+			 */
+			function pulldownRefresh() {
+					mui.ajax(GetPostUrl.gUrl()+'/question/listShow.json',{
+						data:{
+						answerId:hd_id,
+						token:token,
+						pageNum:'1',
+					    pageSize:'6',
+					    userId:userId
+					},
+					type: 'post',
+					dataType: 'json',
+					async:'true',
+					timeout: 10000, //超时时间设置为10秒
+					crossDomain: true, //强制使用5+跨域
+				    success: function(data) {
+				    	var datak={"items":data.obj};
+				    	 var html=template("listshow",datak);
+					    document.getElementById("listshowwz").innerHTML=html;
+					    	//修改已答未答的样式
+				 		var eles=document.getElementsByClassName("sfdts");
+						for(var i=0;i<eles.length;i++){
+							if(eles[i].innerHTML=="已答"){
+								eles[i].style.color="#f60";
+							}else{
+								eles[i].style.color="#99CC00";								
+							}
+						}
+				    	setTimeout(function() {
+						mui('#pullrefresh').pullRefresh().endPulldownToRefresh(); //refresh completed
+						mui('#pullrefresh').pullRefresh().refresh(true);
+				    	}, 1500);
+				    	 //刷新后,重置查询的页数
+				    	 pageNum=0;
+						 pageSize=6;
+				    },
+				    error:function(){
+				    	return mui.toast('网络连接失败,请检查网络...');
+				    }
+					});
+				
+			}
+			window.addEventListener('refresh',function(){
+				pulldownRefresh();
+			},false);
+			//防止用户多次点击按钮
+			var tap_first = null;
+				function unsafe_tap(){
+					if(!tap_first){
+						tap_first = new Date().getTime();
+						setTimeout(function() {
+						tap_first = null;
+						}, 1500);
+					}else{
+						return true;
+				}
+				}
+		</script>
+		<!--下拉刷新容器-->
+		<div id="pullrefresh" class="mui-content mui-scroll-wrapper"style="background: transparent;">
+					<ul class="mui-table-view" id="listshowwz" style="background: transparent;">
+					</ul>
+		</div>
+	</body>
+
+</html>

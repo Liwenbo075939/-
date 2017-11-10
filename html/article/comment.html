@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html style="width:100%;height:100%;">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" type="text/css" href="../../css/pull.css" />
+		<!--App自定义的css-->
+		<link rel="stylesheet" type="text/css" href="../../css/app.css"/>		
+		<link rel="stylesheet" type="text/css" href="../../css/mui.min.css"/>
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/mui.pullToRefresh.js"></script>
+		<script src="../../js/mui.pullToRefresh.material.js"></script>
+		<script src="../../js/ty.js"></script>
+		<script src="../../js/artTemplate.js" ></script>
+		<title></title>
+		
+		<script>
+			
+			
+			
+			mui.plusReady(function() {
+			 var self = plus.webview.currentWebview();    
+			 var articleID=self.articleId;
+			 var commentId=self.commentId;
+			 var cuser=self.cuser;
+			 var name=self.name;
+			 self.setStyle({scrollIndicator:'none'});
+			document.getElementById("q").addEventListener('tap',function(){
+				
+			});
+			
+			
+			var flag="0";
+			document.getElementById("ok").addEventListener('tap',function(){
+				//确认发布
+				//判断信息
+				if(flag=="1"){
+					mui.toast("消息发送中,请稍后!")
+					return;
+				}
+				
+				var content=document.getElementById("textarea").value;
+				if(content==""){
+					mui.toast("请输入回复信息!");
+					return;
+				}else if(/[a-zA-Z]/.test(content)){
+					return mui.toast("回复信息不得含有字母!");
+				
+				}else{
+			flag="1";
+					//每次登陆都要去服务验证，不管是否选择自动登陆
+		    mui.ajax(GetPostUrl.gUrl()+'/comment.json', {
+			data: {
+				replyartid: articleID,
+				content:content,
+				articleId:commentId,
+				ctype:"3",
+				token:localStorage.getItem("token"),
+				onuser:cuser,
+				onusername:name
+			},
+			type: 'post',
+			dataType: 'json',
+			async: true,
+			success: function(data) {
+					if(data.success) {
+						mui.toast("回复成功!");
+						flag="1";
+						mui.back();
+					} else if(data=="-1") {
+						mui.toast("请重新登录!");
+					}else{
+						mui.toast("发布失败 请重试!");
+					}
+			
+			}
+		})
+					
+				}
+			})
+			
+			
+			
+			
+			
+			});
+			
+			
+		
+			
+			
+		</script>
+		
+		 <script>
+			        mui.init({
+	    beforeback: function(){
+		//获得列表界面的webview
+		var list = plus.webview.getWebviewById('template_0.html');
+		if(list!=null){
+		    //触发列表界面的自定义事件（refresh）,从而进行数据刷新
+		    mui.fire(list,'refresh');
+		    //返回true，继续页面关闭逻辑
+		    return true;
+		}else{
+			//返回true，继续页面关闭逻辑
+		    return true;
+		}
+		
+		
+		
+	    }
+        });
+			
+			
+			
+			document.onkeydown=function(){
+            var s=document.getElementById("textarea").value.length+1;
+  
+            document.getElementById("a").innerHTML="已输入："+s+"字符"
+            }
+		</script>
+		
+		
+		
+		
+		
+		<style>
+		textarea 
+{ 
+width:100%; 
+height:100%; 
+} 
+		.mui-bar {background-color: #d62a2a};
+		</style>
+		
+	</head>
+	<body >
+		
+			<div class="mui-navbar-inner mui-bar mui-bar-nav">
+				<a id="q" style="color:#EFEFF4" class="mui-icon mui-icon-left-nav "></a>
+				<h1 id="head" style="color:#EFEFF4" class="mui-center mui-title">回复</h1>  
+			    <a id="ok" style="color:#EFEFF4" class="mui-btn mui-btn-blue mui-btn-link mui-pull-right">发送</a> 
+            </div>
+            
+		
+		    <div class="mui-content" style="width:100%;height:90%;">
+			<div class="mui-content-padded" style="margin: 5px;margin-top: 50px;height:100%">
+		    <div class="mui-content-padded" >
+		    <div class="row mui-input-row" style="margin: 5px;margin-top:50px;">
+					<textarea id="textarea" rows="9" class="mui-input-clear question"  placeholder="写回复....."></textarea>
+					<span id="a">已输入字符: </span>
+			</div>
+			</div>
+			</div>
+			
+		</div>
+	</body>
+</html>

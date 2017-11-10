@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	    <meta charset="utf-8">
+		<title>Hello MUI</title>
+		
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="css/mui.min.css">
+        <link rel="stylesheet" type="text/css" href="css/app.css"/>
+        <style>
+        	.mui-bar {
+				background-color: #d62a2a;
+				}
+        </style>
+         <script src="js/mui.min.js"></script>
+         <script src="js/ty.js"></script>
+		<script src="js/artTemplate.js" ></script>
+        <script id="cataM" type="text/html">
+			{{each items as item i}}
+				<li class="mui-table-view-cell mui-media" id="{{item.id}}" data-name="{{item.name}}" 
+					data-showNextColumn="{{item.showNextColumn}}"
+					data-templateId="{{item.templateId}}"  >
+					<a href="javascript:;">
+						<img class="mui-media-object mui-pull-left" src="{{item.pic}}">
+						<div class="mui-media-body" style="margin-top: 2%;">
+							{{item.name}}
+						</div>
+					</a>
+				</li>
+			{{/each}}
+			
+		</script>
+	</head>
+	<body>
+			
+				
+				<div class="mui-content" style="height: 100%;">
+			    <div class=" mui-bar mui-bar-nav"  >
+				<a id="back" style="color:#EFEFF4" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			    <h1 id="head" style="color:#EFEFF4;padding-left: 6%;" class="mui-title">栏目列表</h1>
+		        </div>
+				<ul class="mui-table-view" id="catalistM" style="margin-top:45px ;">
+					
+					
+				</ul>
+				</div>
+			
+		<script>
+			 //加载更多栏目//栏目列表
+	    mui.plusReady(function() {
+		plus.webview.currentWebview().setStyle({scrollIndicator:'none'});
+		});
+				mui.ajax(GetPostUrl.gUrl()+'/cata.json',{
+				data:{
+					catalogId:100,
+					pageSize:-1,
+					pageNum:-1,
+					token:localStorage.getItem("token")
+				},
+				type:'post',
+				dataType:'json',
+				async:'true',
+				success:function(data){
+					var datak={"items":data.obj};
+					(JSON.stringify(data));
+				    var html=template("cataM",datak);
+					document.getElementById("catalistM").innerHTML=html;	
+					if(data=="-1"){
+						mui.toast('请重新登录!');
+					}
+				}
+			});
+			
+       	     
+			
+			
+			
+		//打开文章或栏目或活动
+				mui("#catalistM").on('tap', 'li', function() {
+
+					var id = this.getAttribute("id");
+
+					var showNextColumn = this.getAttribute("data-showNextColumn");
+
+					var name = this.getAttribute("data-name");
+					if(id=="101"){
+						
+						mui.openWindow({
+							url:'html/dangzu/zhibu.html',
+							id:'zhibu.html',
+							show: {
+								aniShow: 'zoom-fade-out'
+							}
+							
+						});
+					}else if(id=='110'){
+						//积分排名
+						console.log(id);
+						mui.openWindow({
+							url: 'html/scoreNum/index2.html',
+							id: 'index2.html',
+							show: {
+								aniShow: 'zoom-fade-out'
+							}
+						});
+					}else if(id == '119') {
+						//console.log(id);
+						//答题界面
+						mui.openWindow({
+							url: 'html/answer/pullrefresh_main.html',
+							id: 'pullrefresh_main',
+							show: {
+								aniShow: 'zoom-fade-out'
+							}
+						});
+
+					} else if(id=='120'){
+						mui.openWindow({
+							url:'html/tongzhi/index.html',
+							id:'index.html',
+							show:{
+								aniShow: 'zoom-fade-out'
+							},
+							extras: {
+								
+								fatherName: name
+								
+							},
+						});
+					}
+					
+					
+					
+					else
+					if(showNextColumn == '1') {
+                        console.log(id);
+						mui.openWindow({
+							url: 'html/cata/index.html',
+							id: 'cataIndex',
+							extras: {
+								cataId: id, //扩展参数
+								fatherName: name,
+								num: "0"
+							},
+							show: {
+								autoShow: true, //页面loaded事件发生后自动显示，默认为true
+								aniShow: 'zoom-fade-out', //页面显示动画，默认为”slide-in-right“；
+								extras: {} //窗口动画是否使用图片加速
+							}
+						});
+					}  else if(showNextColumn=='0'){
+
+						var templateId = this.getAttribute("data-templateId");
+
+						//打开文章列表页面
+						mui.openWindow({
+							url: 'html/article/index.html',
+							id: 'articleIndex',
+							extras: {
+								cataId: id, //扩展参数
+								fatherName: name,
+								templateId: templateId
+							},
+							show: {
+								aniShow: 'zoom-fade-out'
+							}
+						});
+
+					} 
+
+				});
+		</script>
+		
+		
+		
+		
+		
+		
+	</body>
+</html>

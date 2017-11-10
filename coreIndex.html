@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>普通的下拉刷新的外框公共模板</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" href="css/mui.css">
+		<script src="js/mui.min.js"></script>
+		<style>
+			.mui-bar {background-color: #d62a2a};
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav" >
+			<a id="back" style="color:#EFEFF4" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 id="head" style="color:#EFEFF4" class="mui-title"></h1>
+		</header>
+		<div class="mui-content"></div>
+	</body>
+	
+	<script type="text/javascript">
+		/*//
+		*使用这个方法创建下拉刷新界面有一个要求就是他所创建的子界面必须是他的下级页面不能和他在同一级
+		*/
+	
+	   mui.plusReady(function() {
+	   	    //当前界面
+			var self=plus.webview.currentWebview();
+			//标题
+            var title=self.title;
+            //子界面
+            var subpage=self.subpage;
+            //参数 json形式
+            var extras=self.extras;
+            var subpage_style = {top: '45px',bottom: '0px'};
+            var extras={extras:extras}
+            document.getElementById("head").innerHTML=title;
+            var curr=plus.webview.currentWebview();
+            var chil=plus.webview.create(subpage,subpage,subpage_style,extras);
+            curr.append(chil);
+            chil.show();
+	   });
+	</script>
+
+</html>

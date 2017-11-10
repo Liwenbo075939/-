@@ -1,0 +1,201 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<style>
+
+			.mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3{
+				border:1px solid #000;
+			}
+			li{
+				margin: 2px;
+				background: url(images/activities/bjt.png);
+			}
+			#listshowwz{
+				background: transparent;
+			}
+			html,body {
+				height: 100%;
+				background:url(images/activities/bj3.jpg);
+				background-size:cover ;
+			}
+			.mui-content{
+				background: transparent;
+			}
+			#ym{
+				  width: 100%;height: 100%; 
+				  filter:alpha(Opacity=60);-moz-opacity:0.7;opacity: 0.7;
+			}
+			#zi{
+				color: #6641E2;
+			}
+			.mui-table-view-cell:after{
+				height: 0;
+			}
+			.mui-table-view:after{
+				height: 0;
+			}
+		</style>
+	</head>
+	<body>
+		<script src="js/ty.js"></script>
+		<script src="js/mui.enterfocus.js"></script>
+		<script src="js/mui.min.js"></script>
+		<script src="js/artTemplate.js"></script>
+		<script id="listshow" type="text/html">
+		 {{each items as item i}} 
+		   <div class="mui-card" data-id="{{item.id}}" data-name="{{item.name}}" data-picture = "{{item.picture}}">
+				<div class="mui-card-content" >
+						<img style="width:100%;max-height: 200px;" src="{{item.picture}}" />
+				</div>
+				
+			</div>
+		   			
+		 {{/each}}  			 
+		</script>
+		<!-- 刷新容器 -->
+		<div id="pullrefresh" class="mui-content mui-scroll-wrapper">
+			<div id="ym">
+				<ul class="mui-table-view"style="background: url(images/activities/bjt.png);background: transparent;" id="listshowwz">
+				   
+				</ul>
+			</div>
+		</div>
+		<script type="text/javascript">
+					mui.init({
+						pullRefresh: {
+							container: '#pullrefresh',
+							down: {
+								callback: pulldownRefresh
+							},
+							up: {
+								contentrefresh: '正在加载...',
+		               			contentnomore:'没有更多数据了',
+								callback: pullupRefresh
+							}
+						},
+							//初始化预加载的详情界面
+							preloadPages:[{
+							    id:'activities.html',
+							    url:'activities.html'           
+							 }]
+									
+					});
+			/**
+			 * 上拉加载具体业务实现
+			 */
+			var pageNum=0;
+			var pageSize=6;
+	
+		function pullupRefresh() {
+			mui.ajax(GetPostUrl.gUrl()+"/activities/activitiesList.json",{
+					data:{
+						pageNum:pageNum++,
+					    pageSize:pageSize
+					},
+					type: 'post',
+					dataType: 'json',
+					async:'true',
+					timeout: 10000, //超时时间设置为10秒
+					crossDomain: true, //强制使用5+跨域
+				    success: function(data) {
+				    	var datak={"items":data.obj};
+				    	var html=template("listshow",datak);
+				    	document.getElementById("listshowwz").innerHTML=html;
+				    	if(data.msg!="0"){
+					 		 mui('#pullrefresh').pullRefresh().endPullupToRefresh(true); 
+						 }else{
+					 	 	mui('#pullrefresh').pullRefresh().endPullupToRefresh(false); 
+					 }
+				    },
+				    error:function(){
+				    	
+				    }
+				});
+				
+			}
+						/**
+			 * 下拉刷新具体业务实现
+			 */
+			function pulldownRefresh() {
+				mui.ajax(GetPostUrl.gUrl()+"/activities/activitiesList.json",{
+					data:{
+						pageNum:'1',
+					    pageSize:'6'
+					},
+					type: 'post',
+					dataType: 'json',
+					async:'true',
+					timeout: 10000, //超时时间设置为10秒
+					crossDomain: true, //强制使用5+跨域
+				    success: function(data) {
+				    	console.log(JSON.stringify(data));
+				    	var datak={"items":data.obj};
+				    	var html=template("listshow",datak);
+				    	document.getElementById("listshowwz").innerHTML=html;
+				    	setTimeout(function() {
+							mui('#pullrefresh').pullRefresh().endPulldownToRefresh(); //refresh completed
+							mui('#pullrefresh').pullRefresh().refresh(true);
+				    	}, 1000);
+				    	 //刷新后,重置查询的页数
+				    	 pageNum=0;
+						 pageSize=6;
+				    },
+				    error:function(){
+				    	
+				    }
+				});
+				
+			}
+					
+		</script>
+		<script>
+			mui.plusReady(function() {
+				//加载专题活动界面
+				var str = GetPostUrl.gUrl()+"/activities/activitiesList.json";
+				mui.ajax(str,{
+						data:{
+							pageNum:"1",
+					    	pageSize:"6"							
+						},
+						type: 'post',
+						dataType: 'json',
+						async:'true',
+						timeout: 10000, //超时时间设置为10秒
+						crossDomain: true, //强制使用5+跨域
+				    	success: function(data) {
+                            console.log(JSON.stringify(data.obj));
+				    		var datak={"items":data.obj};
+				    	 	var html=template("listshow",datak);
+				    	 	document.getElementById("listshowwz").innerHTML=html;
+				    	},
+				    	error:function(){
+				    		//响应失败
+				    		mui.toast("请检查网络连接...")
+				    	}
+				});
+				
+			});
+			
+			//监听用户点击事件
+			mui('#listshowwz').on('tap', '.mui-card', function() {
+				var id = this.getAttribute('data-id');
+					//打开新的界面
+				 	 mui.openWindow({
+		            	url: 'html/activities/towdo.html', 
+		            	id:'towdo.html',
+		            	//url:'html/answer/answerList.html',
+		            	extras:{
+		            		cataId:id        
+					    },
+                       show:{
+                       aniShow:'zoom-fade-out'	
+                       }
+					  });
+			});
+		</script>
+	</body>
+</html>

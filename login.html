@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html class="ui-page-login">
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<title></title>
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<script src="js/mui.min.js"></script>
+		<script src="js/ty.js"></script>
+		<script src="js/mui.enterfocus.js"></script>
+		<script src="js/app.js"></script>
+		<script src="js/DesUtil.js"></script>
+		<script src="js/base64.js"></script>
+		<style>
+			html,
+			body {
+				background:url(images/loginy/login.png);
+			  	background-size:100%;
+			  	background-repeat: no-repeat;
+			  	overflow: hidden;
+			}
+			*::-webkit-input-placeholder { 
+				color: #a62700; 
+				font-size: 16px;
+			} 
+			#account{	
+				background: transparent;		
+				border-radius:25px;
+				BACKGROUND-IMAGE: url(images/loginy/zhanghu.png); BACKGROUND-REPEAT: no-repeat;
+				background-size:9% 72%;
+				background-position: 25px 4px;
+				padding-left: 70px;
+			}
+			#password{
+				border-radius:25px;
+				background: transparent;
+				BACKGROUND-IMAGE: url(images/loginy/suo.png); BACKGROUND-REPEAT: no-repeat;
+				background-size:9% 72%;
+				background-position: 25px 4px;
+				padding-left: 70px;
+				
+			}
+			#login{
+				background: url(images/loginy/dl.png);
+				background-size:100% 100%;
+				width: 100%;
+				height: 40px;
+				border: none;
+			}
+			#zi{
+			 color: #a62700;
+			 font-size: 13px;
+			 margin-top: 20%;
+			 
+			}
+			#xiaozi{
+				color: #A62700;
+				font-size: 11px;
+				font-family: "楷体";
+			}
+			.mui-input-row .mui-input-clear~.mui-icon-clear, 
+			.mui-input-row .mui-input-password~.mui-icon-eye, 
+			.mui-input-row .mui-input-speech~.mui-icon-speech{
+				right: 25px;
+			}
+			/*#logo{
+				height: 140px;
+				width: 50%;
+				margin: 0 auto;
+				margin-top: 5%;
+				background:url(images/loginy/logo4.png);
+				background-size: 100%;
+				background-repeat:no-repeat ;
+			}*/
+			div{
+				margin: 0 auto;
+				width: 80%;
+			}
+			#xiao{
+				margin-top: 40%;
+			}
+		</style>
+	</head>
+	<body>
+		        
+			    <div id="logo"></div>
+				<div class="mui-input-row" style="width: 70%;margin-top: 70%">
+					<input id='account' type="text"  placeholder="账号" onkeyup="this.value=this.value.replace(/\s+/g,'')">
+				</div>
+				<div class="mui-input-row" style="margin-top: 8px;width: 70%;">
+					<input id='password' type="password" class="mui-input-clear mui-input" placeholder="密码" onkeyup="this.value=this.value.replace(/\s+/g,'')">
+					<button id='login' ></button>
+				</div>
+			    <div id="autoLogin" ></div>
+			    
+			    <div style="width: 29%;">
+			        <p id="zi">邢台市地方税务局</p>
+			    </div>
+			    <div id="xiao" style="width: 100%;text-align: center;">
+			    <p id="xiaozi">powered by 河北万方中天科技有限公司</p>
+			   </div>
+			   
+		
+	<script>	
+			(function($, doc) {
+				$.init({
+					statusBarBackground: '#f7f7f7'
+				});
+				$.plusReady(function() {
+					plus.screen.lockOrientation("portrait-primary");
+					var settings = app.getSettings();
+					var state = app.getState();
+					
+					//自动登录
+					if(autoLogin){
+					var str =GetPostUrl.gUrl()+'/loginjm/zdlogin.json';
+					//读取本地的token
+					var tk = localStorage.getItem('token');
+					if(tk!=null){
+						mui.ajax(str,{
+								data:{
+									token:tk
+								},
+								contentType:"application/x-www-form-urlencoded; charset=utf-8",  
+								async: true, //异步请求
+								dataType:'json', //返回的类型
+								type: 'post', //HTTP请求类Setsjhm型
+								timeout: 10000, //超时时间设置为10秒
+								crossDomain: true, //强制使用5+跨域
+								success:function(data){
+									if(data=="4"){
+									   mui.toast('正在登录中...请稍后');
+									   //跳转到首页	
+										mui.openWindow({
+											url: 'layout.html', 
+											id:'layout.html'
+										});
+									}else if(data=="5"){
+										return mui.toast('自动登录过期,请重新登录');
+									}
+								}, 
+								error:function(){
+									mui.toast("请检查网络连接...")
+									
+								}
+					});
+						
+					}
+					
+					}
+					//检查 "登录状态/锁屏状态" 开始
+					if (settings.autoLogin && state.token && settings.gestures) {
+						$.openWindow({
+							url: 'unlock.html',
+							id: 'unlock',
+							show: {
+								aniShow: 'pop-in'
+							},
+							waiting: {
+								autoShow: false
+							}
+						});
+					} else if (settings.autoLogin && state.token) {
+						var users = JSON.parse(localStorage.getItem('$users') || '[]');
+							var loginInfo = {
+							account: users.account,
+							password: users.password
+						};
+						app.login(loginInfo, function(err) {
+							if (err) {
+								plus.nativeUI.toast(err);
+								return;
+							}
+							localStorage.setItem('$users',JSON.stringify(loginInfo));
+							toMain();
+						
+						});
+						
+					}
+					// close splash
+					setTimeout(function() {
+						//关闭 splash
+						plus.navigator.closeSplashscreen();
+					}, 600);
+					//检查 "登录状态/锁屏状态" 结束
+					
+					//登录界面验证开始
+					var loginButton = doc.getElementById('login');
+					var accountBox = doc.getElementById('account');
+					var passwordBox = doc.getElementById('password');
+					var autoLoginButton = doc.getElementById("autoLogin");
+					var regButton = doc.getElementById('reg');
+					var forgetButton = doc.getElementById('forgetPassword');
+					loginButton.addEventListener('tap', function(event) {
+               
+
+						// 显示一个等待的对话框  
+  						var wd = plus.nativeUI.showWaiting();  
+						username = accountBox.value;
+						username = username.replace(/ /g, '');
+						upassword = passwordBox.value;
+						upassword = upassword.replace(/ /g, '');
+						if(!isDefine(username)){
+							wd.close();
+							return mui.toast('请输入用户名');
+						}else if(!isDefine(upassword)){
+							wd.close();
+							return mui.toast('请输入密码');							
+						}else{
+							//去掉输入的空格
+								username = accountBox.value;
+								username = username.replace(/(^\s+)|(\s+$)/g, "");
+								upassword = passwordBox.value;
+								upassword = upassword.replace(/(^\s+)|(\s+$)/g, "");
+							//strEnc根据时间改成加密字符串
+							var jmpassworf = strEnc(upassword);	
+							var strurl =GetPostUrl.gUrl()+'/loginjm/postlogin.json';
+							mui.ajax(strurl,{
+								data:{
+									userName:username,
+									passWord:jmpassworf
+								},
+								contentType:"application/x-www-form-urlencoded; charset=utf-8",  
+								async: true, //异步请求
+								dataType:'json', //返回的类型
+								type: 'post', //HTTP请求类Setsjhm型
+								crossDomain: true, //强制使用5+跨域
+								success: function(data) {
+									    if(data=="2"){
+										wd.close();
+										return mui.toast('用户名或密码不正确');
+									    }else if(data=="3"){
+										wd.close();
+										return mui.toast('该用户未注册');
+									    }else if(data=="4"){//草
+										         //服务器异常
+										          wd.close();
+										         return mui.toast("服务器出现异常,请重试");
+;									    }else if(data!=null){
+											//每次用户手动登陆清空token的值
+										if(!isDefine(localStorage.getItem('token'))){
+										    localStorage.removeItem('token');
+										}
+										
+										localStorage.setItem('token',data.token);
+										localStorage.setItem('userId',data.userId);
+										localStorage.setItem('userName',data.userName);
+										localStorage.setItem('level',data.ecode);
+										wd.close();
+										//跳转到首页	
+										if(localStorage.getItem('token') !=null && localStorage.getItem('token')!='undefined'){
+											mui.openWindow({
+											url: 'layout.html',  
+										});
+										return mui.toast('登录成功');
+										}else if(data=="6"){
+											return mui.toast('用户暂时停用');
+										}else{
+											return mui.toast('服务器出现未知异常');
+										}
+									}else{
+										return mui.toast('登录出错,请重新登录!');
+									}
+								},
+								error:function(){
+									wd.close();
+									return mui.toast('网络连接失败,请检查网络...');
+								}
+							})
+						}
+					});
+				
+					//回车事件
+					$.enterfocus('#login-form input', function() {
+						$.trigger(loginButton, 'tap');
+					});
+					autoLoginButton.classList[settings.autoLogin ? 'add' : 'remove']('mui-active')
+					autoLoginButton.addEventListener('toggle', function(event) {
+						setTimeout(function() {
+							var isActive = event.detail.isActive;
+							settings.autoLogin = isActive;
+							app.setSettings(settings);
+						}, 50);
+					}, false);
+					//1秒内两次点击回退按钮退出
+					var backButtonPress = 0;
+					$.back = function(event) {
+						backButtonPress++;
+						if (backButtonPress > 1) {
+							plus.runtime.quit();
+						} else {
+							plus.nativeUI.toast('再按一次退出应用');
+						}
+						setTimeout(function() {
+							backButtonPress = 0;
+						}, 1000);
+						return false;
+					};
+				});
+			}(mui, document));
+				
+					//检查用户状态方法
+					function showUnreadNews(){
+						var strurl1 = GetPostUrl.gUrl()+'/loginjm/lxlogin.json';
+						var userId1 = localStorage.getItem('userId');
+						var token1 = localStorage.getItem('token');
+						 mui.ready(function(){
+						 		mui.ajax(strurl1,{
+									data:{
+										userId:userId1,
+										token:token1
+										},
+									contentType:"application/x-www-form-urlencoded; charset=utf-8",  
+									async: true, //异步请求
+									dataType:'json', //返回的类型
+									type: 'post', //HTTP请求类Setsjhm型
+									timeout: 10000, //超时时间设置为10秒
+									crossDomain: true, //强制使用5+跨域
+									success: function(data) {
+										//状态正常
+										if(data.msg=="1"){
+										}
+										if(data.msg == "0"){
+											//mui.toast('账号在其他设备登录,如是本人操作,请忽略该条消息。');
+											  mui.alert('如是本人操作,请忽略该条消息。', '账号在其他设备登录', function() {
+									          },'div');
+										
+										}
+									},
+									error:function(){
+									}
+							});
+						 });
+					
+					}
+		</script>
+	</body>
+</html>

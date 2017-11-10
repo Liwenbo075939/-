@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>党委列表</title>
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" href="../../css/icons-extra.css">
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/ty.js"></script>
+		<script src="../../js/artTemplate.js" ></script>
+		<style>
+			.mui-title{
+				color:#eee;				
+			}
+			.mui-bar {
+				background-color: #d62a2a;
+			}
+		</style>
+		<!--
+        	作者：offline
+        	时间：2017-07-27
+        	描述：党委列表模板
+        -->
+		<script id="dangweilist" type="text/html">
+			{{each items as item i}}
+			<li class="mui-table-view-cell">
+				<div class="mui-table">
+					<div class="mui-table-cell mui-col-xs-4 mui-text-center">
+						<p class=" mui-ellipsis" style="color: #000000;">{{item.payType}}</p>
+					</div>
+				</div>
+			</li>
+			{{/each}}
+		</script>
+		</script>
+		<script>
+			/**
+			 * 加载所有党委列表
+			 */
+			mui.ajax(GetPostUrl.gUrl() + '', {
+					data: {
+						
+						token: localStorage.getItem("token")
+					},
+					type: 'post',
+					dataType: 'json',
+					async: 'true',
+					success: function(data) {
+
+					
+					}
+				});
+			/**
+			 * 绑定点击事件
+			 */
+			mui.plusReady(function() {
+			   mui("#list").on('tap', '.dangwei', function() {
+			   	    //党委id
+				    var id = this.getAttribute("id");
+				    
+				    //切换党委 1.储存党委id 2.刷新首页
+				    localStorage.setItem("dangweid",id);
+				    var cata=plus.webview.getWebviewById('cata.html');
+				    var crru=plus.webview.currentWebview();
+				    var layout=plus.webview.getWebviewById('layout.html');
+				    layout.show();
+				    
+				    layout.evalJS('document.querySelector(".mui-bar-tab>.mui-tab-item.mui-active").classList.remove("mui-active");');
+				    layout.evalJS("document.getElementById('defaultTab').classList.add('mui-active');");
+				    layout.evalJS('var activeTab = subpages[0];');
+				    
+				    cata.show();
+				    
+				    cata.reload(true);
+				});  
+
+			});
+		</script>
+	</head>
+	<body>
+		 <div class="mui-content">
+		     <div class=" mui-bar mui-bar-nav"  >
+				<a id="back" style="color:#EFEFF4" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			    <h1 id="head" style="color:#EFEFF4;padding-left: 6%;" class="mui-title">切换到</h1>
+		    </div>
+		    
+		    <div class="mui-card" style="margin-bottom: 35px;margin-top:15%">
+				<ul class="mui-table-view" id="list">
+					<li class="mui-table-view-cell dangwei" id="123456">
+						<a class="mui-navigate-right">
+							Item 1
+						</a>
+					</li>
+				</ul>
+			</div>
+		 </div>
+	</body>
+</html>

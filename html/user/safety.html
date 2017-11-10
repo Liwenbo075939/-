@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>衡水党务</title>
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<style>
+			.mui-bar {background-color: #d62a2a;};
+		</style>
+	</head>
+	<body>
+		<header class="mui-bar mui-bar-nav" >
+			<a id="back" style="color:#EFEFF4" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 id="head" style="color:#EFEFF4" class="mui-title">修改密码</h1>
+			<a id='login' style="color:#EFEFF4" class="mui-btn mui-btn-blue mui-btn-link mui-pull-right">确定</a> 
+		</header>
+		<div class="mui-content" >
+			<form id='login-form' class="mui-input-group">
+				<div class="mui-input-row">
+					<label>旧密码</label>
+					<input id='old' type="password" class="mui-input-clear mui-input" placeholder="请输入密码" onkeyup="this.value=this.value.replace(/\s+/g,'')">
+				</div>
+				<div class="mui-input-row">
+					<label>新密码</label>
+					<input id='new1' type="password" class="mui-input-clear mui-input" placeholder="请输入密码" onkeyup="this.value=this.value.replace(/\s+/g,'')">
+				</div>
+				<div class="mui-input-row">
+					<label>新密码</label>
+					<input id='new2' type="password" class="mui-input-clear mui-input" placeholder="请再输一次" onkeyup="this.value=this.value.replace(/\s+/g,'')">
+				</div>
+			</form>
+			
+			
+			</div>
+			<script src="../../js/mui.min.js"></script>
+			<script src="../../js/ty.js"></script>
+		    <script src="../../js/base64.js"></script>
+		    <script src="../../js/DesUtil.js"></script>
+		    <script>
+		    	//显示登录账号
+		    	(function($,doc){
+		    		doc.getElementById("login").addEventListener('tap',function(){
+		    		var old=doc.getElementById("old").value;
+		    		var new1=doc.getElementById("new1").value;
+		    		var new2=doc.getElementById("new2").value;
+		    		if(old==""||new1==""||new2==""){
+		    			mui.toast("新旧密码不得为空!");
+		    			return;
+		    		}
+		    		if(new1!=new2){
+		    			mui.toast("两次输入密码不一样!");
+		    			return;
+		    		}
+		    		var json=new Object();
+		    		json.oldPwd=old;
+		    		json.newPwd=new2;
+		    		json=JSON.stringify(json);
+		    		json=strEnc(json);
+		    		$.ajax({
+		    			type:"post",
+		    			url:GetPostUrl.gUrl()+"/app/changePwd",
+		    			async:true,
+		    			data:{
+		    				param:json,
+		    				token:localStorage.getItem("token")
+		    			},
+		    			success:function(data){
+		    			   var json=strDec(data);
+		    			    json=JSON.parse(json);
+		    			   if(json.success){
+		    			   	  mui.toast("修改成功!");
+		    	    doc.getElementById("old").value="";
+		    		doc.getElementById("new1").value="";
+		    		doc.getElementById("new2").value="";
+		    			   	  mui.back();
+		    			   }else if(data=="-1"){
+		    			   	  mui.toast("请重新登录!")
+		    			   }else{
+		    			   	  mui.toast("旧密码不正确!");
+		    			   }
+		    			   
+		    			}
+		    		});
+		    		});
+		    	}(mui, document));
+		    	
+		    </script>
+	</body>
+</html>

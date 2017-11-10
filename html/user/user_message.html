@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<title></title>
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" type="text/css" href="../../css/app.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/cxl.css" />
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/ty.js"></script>
+		<script src="../../js/mui.enterfocus.js"></script>
+		<script src="../../js/mui.pullToRefresh.js"></script>
+		<script src="../../js/mui.pullToRefresh.material.js"></script>
+		<script src="../../js/artTemplate.js"></script>
+		<script src="../../js/binaryajax.js"></script>
+		<script src="../../js/exif.js"></script>
+		<script src="../../js/canvasResize.js"></script>
+		<script src="../../js/base64.js"></script>
+		<script src="../../js/DesUtil.js"></script>
+		<script src="../../js/mui.picker.js"></script>
+		<script src="../../js/mui.poppicker.js"></script>
+		<script src="../../js/city.data-3.js" type="text/javascript" charset="utf-8"></script>
+
+		<style>
+			.mui-bar {
+				background-color: #d62a2a;
+				   
+			}
+			
+			
+			.mui-content {
+				background: transparent;
+			}
+			
+			html,
+			body {
+				height: 96.4%;
+				background: url(../../images/activities/bjtt.jpg);
+				background-size: 100% 100%;
+				border: none;
+			}
+			.ym {
+				width: 100%;
+				height: 100%;
+				filter: alpha(Opacity=60);
+				-moz-opacity: 0.7;
+				opacity: 0.7;
+			}
+		</style>
+
+	</head>
+
+	<body>
+        <div class="mui-content">
+		<div class=" mui-bar mui-bar-nav">
+			<a id="back" style="color:#EFEFF4" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 id="head" style="color:#EFEFF4;padding-left: 10%;" class="mui-title">用户信息</h1>
+		</div>
+
+		<div id="picture" class="mui-popover mui-popover-action mui-popover-bottom" style="padding: 10px 10px 0;">
+			<ul class="mui-table-view" style="border-radius: 12px;">
+				<li class="mui-table-view-cell">
+					<a id="pz1" href="#">从相册中选择图片</a>
+				</li>
+				<li class="mui-table-view-cell">
+					<a id="pz2" href="#">拍照</a>
+				</li>
+			</ul>
+			<ul class="mui-table-view" style="border-radius: 12px;">
+				<li class="mui-table-view-cell">
+					<a id="gb" href="#picture"><b>取消</b></a>
+				</li>
+			</ul>
+		</div>
+
+		<div class="mui-pages">
+			<div class="mui-page mui-page-left">
+				<!--<ul class="mui-table-view ym" style="margin-top:12%;">
+					<li id="about" class="mui-table-view-cell ">
+						<a href="#account">
+							<span style="display:block;margin-top:4%;float: left;"> 头像:</span><span class="mui-pull-right head">
+									<img class="head-img mui-action-preview" style=" border-radius:50%;width: 40px;
+    height: 40px;" src="../../img/an.png" id="headpic">
+								</span>
+
+						</a>
+
+					</li>
+				</ul>-->
+				<ul class="mui-table-view ym" style="margin-top:15%;" id="mm">
+
+				</ul>
+				<!------------------------------更换头像------------------------------------>
+			</div>
+		</div>
+        </div>
+		<script type="text/html" id="msg">
+
+			<li class="mui-table-view-cell">
+				<a>
+					组织:<span style="float: right;">{{items.organName}}</span>
+				</a>
+			</li>
+
+			<li class="mui-table-view-cell">
+				<a>
+					姓名:<span style="float: right;">{{items.name}}</span>
+				</a>
+			</li>
+			<li id="qrcode" class="mui-table-view-cell" data-qrcode="{{items.qrcode}}">
+				<a>
+					二维码:<span class="iconfont icon-qrcode" style="float: right;"></span>
+				</a>
+			</li>
+            <li id="safety" class="mui-table-view-cell">
+					<a  class="mui-navigate-right">
+					账号安全
+					</a>
+		   </li>
+			<!--<li class="mui-table-view-cell" data-id="phone">
+				<a>
+					手机:<span id="phone" style="float: right;">{{items.phone}}</span>
+				</a>
+			</li>
+			<li class="mui-table-view-cell" data-id="phone1">
+				<a>
+					电话:<span id="phone1" style="float: right;">{{items.phone1}}</span>
+				</a>
+			</li>
+			<li class="mui-table-view-cell" data-id="email">
+				<a>
+					email:<span id="email" style="float: right;">{{items.email}}</span>
+				</a>
+			</li>-->
+			<!--<li class="mui-table-view-cell" data-id="idcard">
+					<a class="mui-navigate-right" >
+						身份证:&nbsp;&nbsp;<span id="idcard">{{items.idcard}}</span>
+					</a>
+				</li>	-->
+		</script>
+		<script>
+			mui.plusReady(function() {
+               
+			
+			
+			plus.webview.currentWebview().setStyle({scrollIndicator:'none'});
+				//修改手机号码
+				mui("ul").on('tap', 'li', function() {
+					var id = this.getAttribute("data-id");
+					var btnArray = ['取消', '确定'];
+					if(id == "phone") {
+						mui.prompt('', '请输入手机号', '修改手机号：', btnArray, function(e) {
+							if(e.index == 1) {
+								var value = e.value;
+								var id = 'phone';
+								if(!(/^1[34578]\d{9}$/.test(value))) {
+									mui.alert('手机号码不标准', '注意');
+									return;
+
+								}
+								commonAjax(value, id);
+							} else {
+
+							}
+						}, 'div')
+						return;
+					}
+
+					if(id == "email") {
+						mui.prompt('', '请输入邮箱地址', '修改邮箱:', btnArray, function(e) {
+							if(e.index == 1) {
+								var value = e.value;
+								var id = 'email';
+
+								if(!/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/.test(value)) {
+									mui.alert('邮箱不标准', '注意');
+									return;
+								}
+								commonAjax(value, id);
+							} else {
+
+							}
+						}, 'div')
+						return;
+					}
+
+					if(id == "phone1") {
+						mui.prompt('', '请输入电话', '修改固定电话:', btnArray, function(e) {
+							if(e.index == 1) {
+								var value = e.value;
+								var id = 'phone1';
+								if(!/^(\(\d{3,4}\)|\d{3,4}-|\s)?\d{7,14}$/.test(value)) {
+									mui.alert('电话号码不标准', '注意');
+									return;
+								}
+								commonAjax(value, id);
+							} else {
+
+							}
+						}, 'div')
+						return;
+					}
+
+				});
+                /**
+			 * 打开账号与安全界面
+			 */
+		    document.getElementById('safety').addEventListener('tap', function() {
+			//打开关于页面
+			console.log("fdsfd");
+			mui.openWindow({
+					url: 'safety.html',
+					id: 'safety.html',
+					show: {
+						aniShow: 'zoom-fade-out'
+					}
+
+				});
+		   });
+				/*//修改图标
+				document.getElementById("about").addEventListener('tap', function(e) {
+					mui('#picture').popover('toggle');
+				});*/
+
+				var pz1 = document.getElementById('pz1');
+				pz1.addEventListener('tap', function(event) {
+					var userId = localStorage.getItem('userId');
+					galleryImgs(userId);
+
+				});
+				var pz2 = document.getElementById('pz2');
+				pz2.addEventListener('tap', function(event) {
+					cameraimages();
+
+				});
+
+				document.getElementById("qrcode").addEventListener('tap', function() {
+					var qrcode = this.getAttribute("data-qrcode");
+					mui.openWindow({
+						url: 'qrcode.html',
+						id: 'qrcode.html',
+						extras: {
+							qrcode: qrcode //扩展参数
+
+						},
+						show: {
+							aniShow: 'zoom-fade-out'
+						}
+					});
+
+				});
+
+			});
+
+			//从相册选择图片
+			function galleryImgs(userId) {
+				plus.gallery.pick(function(p) {
+					plus.io.resolveLocalFileSystemURL(p, function(entry) {
+						compressImage(entry.toLocalURL(), entry.name, userId);
+						showImg(entry.toLocalURL(), "headpic");
+						mui('#picture').popover('toggle');
+					}, function(e) {
+						plus.nativeUI.toast("读取拍照文件错误：" + e.message);
+					});
+				}, function(e) {}, {
+					filename: "_doc/camera/",
+					filter: "image"
+
+				});
+			}
+
+			//压缩图片  
+			function compressImage(url, filename, userId) {
+				var name = "_doc/upload/" + userId + "_" + filename; //_doc/upload/F_ZDDZZ-1467602809090.jpg  
+				plus.zip.compressImage({
+						src: url, //src: (String 类型 )压缩转换原始图片的路径  
+						dst: name, //压缩转换目标图片的路径  
+						quality: 20, //quality: (Number 类型 )压缩图片的质量.取值范围为1-100  
+						overwrite: true //overwrite: (Boolean 类型 )覆盖生成新文件  
+					},
+					function(event) {
+						imgupgrade(event.target, "headpic");
+						//uploadf(event.target,divid);  
+						var path = name; //压缩转换目标图片的路径  
+						//event.target获取压缩转换后的图片url路  
+						//filename图片名称  
+
+					},
+					function(error) {
+						plus.nativeUI.toast("压缩图片失败，请稍候再试");
+					});
+			}
+			<!----------------------------------------------------------------------------------------------------------------->
+			//显示照片
+			var showImg = function(url, imgid) {
+				// 兼容以“file:”开头的情况
+				if(0 != url.toString().indexOf("file://")) {
+					url = "file://" + url;
+
+				}
+				var _div_ = document.getElementById(imgid);
+				_div_.src = url;
+				_div_.onclick = function() {
+					plus.runtime.openFile(url);
+				};
+				plus.nativeUI.closeWaiting();
+			};
+			<!----------------------------------------------------------------------------------------------------------------->
+			//从相机上传
+			var cameraimages = function() {
+				//每次拍摄或选择图片前清空数组对象
+				//f1.splice(0, f1.length);
+
+				var cmr = plus.camera.getCamera();
+				cmr.captureImage(function(p) {
+					plus.io.resolveLocalFileSystemURL(p, function(entry) {
+						var localurl = entry.toLocalURL(); //把拍照的目录路径，变成本地url路径，例如file:///........之类的。
+						showImg(localurl, "headpic");
+
+						compressImage(entry.toLocalURL(), entry.name, localStorage.getItem('userId'));
+						mui('#picture').popover('toggle');
+					});
+				}, function(e) {
+					mui.toast("很抱歉，获取失败 ");
+				});
+
+			}
+
+			//上传图片
+			var imgupgrade = function(w, id) {
+				mui('body').progressbar().show();
+				mui.toast("上传中请稍后");
+				var task = plus.uploader.createUpload(GetPostUrl.gUrl() + '/com/load.json', {
+						method: "post", //网络请求类型，必须是http协议的“POST”
+						timeout: 120, //上传任务超时时间
+						retry: 3 //上传任务重试次数，默认为3次
+					},
+					function(t, status) { //上传回调函数
+
+						//mui.trigger(btn, 'tap');
+						if(status == 200) {
+							mui('body').progressbar().hide();
+							var json = JSON.parse(t.responseText);
+							commonAjax(json.pic, id);
+							document.getElementById(id).setAttribute("src", GetPostUrl.gUrl() +"/files/"+json.pic);
+						} else {
+							mui('body').progressbar().hide();
+							mui.toast("上传失败,请检查网络设置");
+						}
+					}
+				);
+
+				task.addFile(w, {
+					key: "upload"
+				});
+				task.addData("src", w);
+				//开始任务，上传
+				task.start();
+
+			}
+		</script>
+
+		<script>
+			function commonAjax(value, id) {
+
+				var data = new Object();
+				data.id = id;
+
+				data.value = value;
+				var json = JSON.stringify(data);
+				json = strEnc(json);
+				mui.ajax(GetPostUrl.gUrl() + '/app/editUserInfo', {
+					data: {
+						token: localStorage.getItem('token'),
+						param: json
+					},
+					type: 'post',
+					async: false,
+					success: function(data) {
+						var json = strDec(data);
+						json = JSON.parse(json);
+						if(json.success) {
+							if(id == "headpic") {
+								document.getElementById(id).src = value;
+							} else {
+								document.getElementById(id).innerHTML = value;
+							}
+							mui.toast("修改成功!")
+						} else {
+							mui.alert('网络错误请重试', '注意');
+						}
+					}
+				});
+			}
+		</script>
+
+		<script>
+			//初始化
+			var userId = localStorage.getItem('userId');
+			var data = new Object();
+			data.userId = userId;
+			var json = JSON.stringify(data);
+			json = strEnc(json);
+			mui.ajax(GetPostUrl.gUrl() + '/app/getUserInfo', {
+				data: {
+					token: localStorage.getItem('token'),
+					param: json
+				},
+				type: 'post',
+				dataTye: 'json',
+				async: false,
+				success: function(data) {
+					var json = strDec(data);
+					if(json) {
+						json = JSON.parse(json);
+						var data1 = {
+							"items": json
+						};
+						var html = template('msg', data1);
+						document.querySelector("#mm").innerHTML = html;
+						if(json.headpic) {
+							var headpic = GetPostUrl.gUrl() + "/files/"+json.headpic;
+						}
+
+					} else if(json == "-1") {
+						mui.toast("请重新登录!");
+					} else {
+						mui.toast("网络错误,请重试!");
+					}
+				}
+			});
+		</script>
+
+		<script>
+			mui.init({
+				swipeBack: true //启用右滑关闭功能
+			});
+		</script>
+		<script>
+			mui.init({
+				beforeback: function() {
+					//获得列表界面的webview
+					var list = plus.webview.getWebviewById('setting.html');
+					if(list != null) {
+						mui.fire(list, 'refresh');
+						//返回true，继续页面关闭逻辑
+						return true;
+					} else {
+						//返回true，继续页面关闭逻辑
+						return true;
+					}
+
+				}
+			});
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<title></title>
+		<script src="../../js/com.js"></script>
+		<style>
+			
+			html,body{
+				background: url(../../images/background/login.jpg);
+				background-size: 100%,100%;
+				background-repeat:no-repeat ;
+				
+			}
+			
+				
+			
+			li{
+				
+				font-size: 1.2em;
+				line-height: 2em;
+				
+			}
+			.mui-bar {background-color: #d62a2a;}
+			
+		</style>
+		<script>
+		mui.plusReady(function(){
+			mui("ul").on('tap','.mui-table-view-cell',function(){
+				var id=this.id;
+				if(id=="logo"){
+					mui.openWindow({
+							url: 'logo.html',
+							id: 'logo.html',
+							show: {
+								aniShow: 'zoom-fade-out'
+							},
+							extras: {
+
+								fatherName: name
+                               
+							}
+
+						});
+				}else if(id=='mingming'){
+					mui.openWindow({
+							url: 'mingming.html',
+							id: 'mingming.html',
+							show: {
+								aniShow: 'zoom-fade-out'
+							},
+							extras: {
+
+								fatherName: name
+                               
+							}
+
+						});
+				}else if(id=="kouhao"){
+					mui.openWindow({
+							url: 'kouhao.html',
+							id: 'kouhao.html',
+							show: {
+								aniShow: 'zoom-fade-out'
+							},
+							extras: {
+
+								fatherName: name
+                               
+							}
+
+						});
+				}else if(id="shipin"){
+					mui.openWindow({
+							url: 'index.html',
+							id: 'index.html',
+							show: {
+								aniShow: 'zoom-fade-out'
+							},
+							extras: {
+
+								fatherName: name
+                               
+							}
+
+						});
+				}
+			});
+		});
+			
+		</script>
+	</head>
+	<body>
+		<div class="mui-bar mui-bar-nav"  >
+			<a id="back" style="color:#EFEFF4" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 id="head" style="color:#EFEFF4" class="mui-title">党建文化</h1>
+		</div>
+		<div class="mui-content" style="margin-top: 50px;background: transparent;">
+			<ul class="mui-table-view" style="filter:alpha(Opacity=60);-moz-opacity:0.7;opacity: 0.7;">
+				<li class="mui-table-view-cell" id="logo">
+					<a class="mui-navigate-right">
+						邢台地税党建文化-logo
+					</a>
+				</li>
+				<li class="mui-table-view-cell" id="mingming">
+					<a class="mui-navigate-right">
+						邢台地税党建文化-命名
+					</a>
+				</li>
+				<li class="mui-table-view-cell" id="kouhao">
+					<a class="mui-navigate-right">
+						邢台地税党建文化-核心理念
+					</a>
+				</li>
+				<li class="mui-table-view-cell" id="shipin">
+					<a class="mui-navigate-right">
+						邢台地税党建品牌视频
+					</a>
+				</li>
+			</ul>
+		</div>
+	</body>
+</html>
